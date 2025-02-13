@@ -60,19 +60,23 @@ For multiple environments or alternative deployments please copy and adapt this 
 ****
 endif::arc42help[]
 
-_**<Overview Diagram>**_
+image::DeploymentView.png[Deployment View]
 
 Motivation::
 
-_<explanation in text form>_
+The deployment diagram provides a clear overview of the system's architecture, illustrating how its components interact and are distributed. 
+It helps visualize the structure within Docker, showing the connections between the web server, database, and client.
 
 Quality and/or Performance Features::
 
-_<explanation in text form>_
+By deploying the application in Docker, we achieve a consistent and portable environment, reducing compatibility issues across different infrastructures.
+To enhance performance, the system leverages cloud services, optimizing resource usage and ensuring availability.
+The architecture is designed to handle multiple requests efficiently, maintaining low latency and high responsiveness for users.
 
 Mapping of Building Blocks to Infrastructure::
-_<description of the mapping>_
-
+The application is deployed in a Dockerized environment, running on a web server that connects to a cloud-hosted database. 
+The client-side interacts with the server via HTTP, while the backend communicates with the database to handle requests. 
+This setup ensures scalability, reliability, and efficient resource management.
 
 === Infrastructure Level 2
 
