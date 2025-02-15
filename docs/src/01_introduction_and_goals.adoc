@@ -17,6 +17,17 @@ These include
 ****
 endif::arc42help[]
 
+=== Introduction
+
+**WIChat** is a project that, following the path of the application developed in the past by the HappySw company, seeks to implement top-notch technologies to take the user experience to the next level when playing this online version of the famous quiz show “Saber y Ganar”.
+The project is developed by the company ChattySw, and the development team consists of the following programmers:
+
+* Pelayo García Varela (UO294381@uniovi.es / Github account: ElPandaP).
+* Pablo Pérez Álvarez (UO294197@uniovi.es / Github account: latiose).
+* Héctor Hernández Iglesias (UO296095@uniovi.es / Github account: HernandezIglesiasHector).
+* Juan Fernández López (UO296143@uniovi.es / Github account: juanferlop).
+* Lucas Gisbert López (UO295526@uniovi.es / Github account: LucasGisb).
+
 === Requirements Overview
 
 ifdef::arc42help[]
@@ -45,6 +56,14 @@ See https://docs.arc42.org/section-1/[Introduction and Goals] in the arc42 docum
 ****
 endif::arc42help[]
 
+To achieve this enhanced application experience, its main functionalities are:
+
+* **User Registration and Participation History:** Each user will have a personal account where their game data will be stored, allowing them to view their progress at any time.
+* **Question and Answer System based on Wikidata:** The various questions, accompanying images, and answer options will be generated based on information gathered from Wikidata.
+* **Chatbot and Hint System:** The user will have the optional functionality of a chatbot that, upon request, will provide a series of hints based on information retrieved from Wikidata, guiding them towards the correct answer without revealing it outright.
+* **User Interaction with the Application:** The user will interact with the application through a highly intuitive and user-friendly web front-end.
+
+
 === Quality Goals
 
 ifdef::arc42help[]
@@ -68,6 +87,16 @@ If you as an architect do not know how the quality of your work will be judged..
 A table with quality goals and concrete scenarios, ordered by priorities
 ****
 endif::arc42help[]
+
+[options="header",cols="1,2"]
+|===
+| Quality Goal | Description 
+| **Usability** | The interface should be intuitive and user-friendly to ensure the user can navigate the application optimally.  
+| **Performance** | The system should deliver responses within an acceptable time frame to ensure fast and efficient game sessions.
+| **Accuracy** | The hint generation mechanism should minimize errors and hallucinations to maximize the chatbot’s functionality.
+| **Scalability** | The architecture should allow easy updates and feature expansions, making it adaptable for future improvements.
+| **Security** | Because user well-being and comfort are of paramount importance, user data and interactions must be properly managed and protected.  
+|===
 
 === Stakeholders
 
@@ -95,7 +124,11 @@ endif::arc42help[]
 
 [options="header",cols="1,2,2"]
 |===
-|Role/Name|Contact|Expectations
-| _<Role-1>_ | _<Contact-1>_ | _<Expectation-1>_
-| _<Role-2>_ | _<Contact-2>_ | _<Expectation-2>_
+|Role/Name|Description|Expectations
+| _RTVE_ | _The client commissioning the development of the updated application._ | _Get a fully functional app that enhances the existing one by using AI Chat bot._
+| _ChattySw_ | _The software development company responsible for taking the project._ | _Being able to meet the client's needs on time and without any inconvenience._
+| _API providers_ | _WikiData and LLM Service._ | _The external service providing information and the LLM for hint generation._
+| _Final users_ | _General players who will use the WIChat application for entertainment and learning._ | _Being able to use the application without any impediment and enjoy and learn thanks to it._
+| _Development team_ | _The team responsible for developing the application, consisting of the previously mentioned members._ | _Develop the application and improve their communication and teamwork skills, taking a step forward toward their professional future._
+| _Evaluators (Teachers)_ | _The people who will oversee and evaluate the application and its correct development._ | _Keep track of project development, resolve development team issues, and evaluate the final product._
 |===
