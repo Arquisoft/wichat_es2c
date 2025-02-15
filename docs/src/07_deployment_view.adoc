@@ -78,7 +78,7 @@ The application is deployed in a Dockerized environment, running on a web server
 The client-side interacts with the server via HTTP, while the backend communicates with the database to handle requests. 
 This setup ensures scalability, reliability, and efficient resource management.
 
-=== Infrastructure Level 2
+=== Infrastructure Level 2a
 
 ifdef::arc42help[]
 [role="arc42help"]
