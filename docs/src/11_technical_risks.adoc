@@ -25,3 +25,43 @@ See https://docs.arc42.org/section-11/[Risks and Technical Debt] in the arc42 do
 
 ****
 endif::arc42help[]
+
+== Technical Risks
+
+When identifying and listing the project's *Technical Risks*, it is helpful to separate them into *Internal Risks* (arising within the system development process) and *External Risks* (coming from factors outside the direct control of the development team).
+
+Prioritized from highest to lowest, they are as follows:
+
+=== Internal Risks
+
+[cols="3,3,3", options="header"]
+|===
+| Internal Risk | Description | How to Deal With It
+| *Lack of a Clear Work Plan* | Since we are starting from scratch, we still have many decisions and tasks ahead, making it difficult to clearly determine how each of us should proceed with the project. | As we progress and become familiar with the framework, we should collaboratively outline a work plan.
+| *Adaptation to New Technologies* | The technologies we have chosen to work with are new to several team members, which may cause discomfort and future issues. | Watch instructional videos to learn how to use them and understand their main functionalities.
+| *Limited Experience Working in Large Teams* | Since we lack experience working in large teams, the communication process may be somewhat confusing. | Follow teamwork best practices and guidelines, and use tools like Pull Requests to ensure better version control.
+| *Project Deadlines Overlapping with Other Tasks* | Since all members are students, the various project deadlines may clash with other important dates, such as exams and assignments. | Keep up with the work, and if any such issues arise, inform the rest of the team so they are aware of the situation.
+| *Team Members with Limited Experience in GitHub and Pull Requests* | Not all team members are proficient with *Pull Requests*, which significantly limits their initial contributions. | Learn and practice using this functionality.
+|===
+
+=== External Risks
+
+[cols="2,3", options="header"]
+|===
+| External Risk | Description
+| *Dependence on API Functionality* | Since some application functionalities depend on external APIs, their proper operation is crucial for the app.
+| *Server Uptime Dependency* | The application is hosted and deployed on a server, making its uptime essential.
+| *New AI Technology* | This is a recent technology, and working with it presents a novelty, with less available information compared to other technologies.
+| *GitHub and Cloudflare Issues* | Due to recent cases of some companies blocking *Cloudflare* from their servers, this could negatively impact the project, as it affects GitHub.
+|===
+
+== Technical Debts
+
+At this stage, since we have only recently started working on this project, we have not yet accumulated *technical debt*. However, given our initial situation, we can anticipate the following:
+
+[cols="3,3,3", options="header"]
+|===
+| Debt | Description | How to Deal With It
+| *Limited Familiarity with the Base Project* | We have been given a template to work from, but we are not yet fully familiar with its contents, even though this would be highly beneficial. | During the application design process, the team should review what parts of the application were provided and what is missing.
+| *Technology Choices That Not All Members Are Experienced With* | We have chosen to work with certain programming languages in which we still lack experience, aiming to create the best possible application in the long run. | Try to become familiar with these technologies as soon as possible to avoid creating more problems in the future.
+|===
