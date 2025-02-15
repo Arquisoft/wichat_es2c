@@ -65,7 +65,7 @@ image::07-deploymentDiagram.png[Deployment View]
 Motivation::
 
 The deployment diagram provides a clear overview of the system's architecture, illustrating how its components interact and are distributed. 
-It helps visualize the structure within Docker, showing the connections between the web server, database, and client.
+It helps visualize the structure within Docker, showing the connections between the web server, database, apis and client.
 
 Quality and/or Performance Features::
 
