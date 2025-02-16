@@ -18,7 +18,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 === Technological decisions
 
-We have decided to develop the wikidata API on TypeSript because is similar to JavaScript but have also static type comprobation. 
+We have decided to develop the Wikidata API in TypeScript because it is similar to JavaScript but also has static type checking.
 
 === Architecture & Design
 
