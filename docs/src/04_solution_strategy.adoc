@@ -3,6 +3,69 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-solution-strategy]]
 == Solution Strategy
 
+=== Technologies
+* *React*: JavaScript library for web and native user interfaces. It allows developers to create interactive web applications by breaking down the UI into reusable components. React uses a declarative approach to efficiently update and render components, resulting in faster and more maintainable code. It's widely adopted in the industry due to its simplicity, performance, and robustness.
+* *Node.js*: JavaScript runtime that enables running JavaScript code outside of web browsers. It's renowned for its event-driven architecture and extensive collection of packages, making it ideal for building scalable server-side applications.
+    ** *Express.js*: Express.js, often simply called Express, is a minimalist web application framework for Node.js. It simplifies the process of building web applications by providing a robust set of features, including middleware support, routing, and templating engines. Express is known for its flexibility, simplicity, and performance, making it a popular choice for developing web applications and APIs in Node.js.
+* *Wikidata*: Wikidata provides a REST API for retrieving information related to any topic. It helps us to dynamically generate questions for our game using it from any programming language. 
+* *MongoDB*: popular NoSQL database known for its flexibility and scalability. It stores data in flexible JSON-like documents and is widely used in modern web development for its simplicity and ability to handle large volumes of data.
+* *SonarCloud*: Cloud-based service provided by SonarSource, which offers continuous code quality analysis and automated code reviews for software development projects. It helps developers identify and fix bugs, security vulnerabilities, and code smells in their codebase to improve overall software quality.
+* *Arc42*: framework (template) used for documenting and communicating software architectures. It provides a template for describing the architecture of a software system, covering aspects such as stakeholders, requirements, architecture decisions, components, interfaces, and quality attributes. arc42 helps teams create consistent and comprehensible architecture documentation, enabling better communication, understanding, and maintenance of software systems throughout their lifecycle.
+* *npm*: default package manager for Node.js, providing a command-line interface to install, manage, and publish JavaScript packages. With over a million packages available in its registry, npm simplifies adding functionality to Node.js projects by handling dependencies and providing tools for versioning and publishing packages.
+* *Docker*: platform that will be used for deploying our services inside containers. Containers are lightweight, portable, and self-sufficient units that contain everything needed to run an application, including the code, runtime, system tools, libraries, and settings. Docker enables developers to package their applications along with all dependencies into containers, ensuring consistency across different environments, such as development, testing, and production.
+* *GitHub Actions*: built-in automation tool on GitHub that allows us to automate some workflows that are triggered after some specific github branches actions at development. It provides as continuous integration of the game functionality.
+* *Gatling*: Load test tool that allows us to record some user interaction from our application and simulate it as if various differnet users were accessing the application.
+* *Prometheus*: monitoring and alerting toolkit designed for reliability and scalability. It collects metrics from configured targets at specified intervals, stores them efficiently, and provides a powerful query language for analyzing and alerting on these metrics. It's particularly well-suited for dynamic environments like cloud-native applications and microservices architectures.
+* *Grafana*: open-source platform for monitoring and observability, providing customizable dashboards and visualization tools for analyzing metrics, logs, and other data sources. It allows users to create dynamic, interactive dashboards to monitor the health and performance of their systems and applications.
+* *Azure*: Cloud computing service used for creating virtual machines and running Docker containers. Azure provides a scalable and flexible infrastructure for hosting our microservices-based application, ensuring high availability and reliability.
+* *GitHub*: Version control and project management platform used for managing our game project. GitHub provides features for collaboration, issue tracking, and code review, facilitating efficient development workflows and team communication.
+* *Tailwind CSS*: Utility-first CSS framework for creating custom designs without having to write CSS from scratch. Tailwind CSS offers a set of pre-defined utility classes that can be applied directly in HTML markup, enabling rapid development and consistent styling across the application.
+
+=== Technological decisions
+
+At the beggining of the project, the team decided to develop the wikidata API by means of .NET technology and C# programming language. 
+As part of continuous integration, the application was attempted to be deployed without success due to docker issues with .NET container. 
+Therefore, the team decided to migrate the whole API to Node.js using javascript and express framework.
+As a conclusion, it was worth spending time making the migration for reducing the number of potential issues at deployment time.
+
+=== Solution strategy in context with quality attributes
+
+[cols="1,2,2,1" options="header"]
+|===
+| **Quality goal** | **Scenario** | **Solution approach** | **Link to Details**
+| Reliability | Ensure system stability even under high loads or failure scenarios | Perform load test and asses the system reliability as well as providing the user with correct and consistent error messages when needed | Development concepts section inside <<section-concepts>>
+| Performance | Maintain fast response times even under heavy usage | Retrieve wikidata information before hand for giving quick response times and perform load test and asses the system reliability | <<>>
+| Security | Protect sensitive data and prevent unauthorized access | Implementing encryption and a logging system | User's login inside <<section-runtime-view>>
+| Usability | Ensure the system is intuitive and easy to use | Conducting user testing, improving user interface design | Usability tests inside <<section-concepts>>
+| Portability | Enable the system to run across different platforms | Using docker containerization, adhering to standards | <<section-deployment-view>>
+| Testability | Facilitate thorough testing and validation of system functionality | Implementing automated testing frameworks, ensuring code coverage | Testing inside <<section-concepts>>
+| Availability | Ensure the system is accessible and operational when needed | Implementing monitoring, proactive maintenance, and disaster recovery plans | Monitoring with Grafana inside <<section-concepts>>
+|===
+
+=== Architecture & Design
+
+* *Microservices*: Our game is built using a microservices architecture, which structures the application as a collection of loosely coupled services. Each service encapsulates a specific functionality or business capability, allowing for independent development, deployment, and scaling. By adopting microservices, we promote modularity and flexibility, enabling rapid iteration and innovation.
+
+* *Containerization with Docker*: We leverage Docker containerization to package each microservice and its dependencies into lightweight, portable containers. Docker provides a consistent environment across different stages of the development lifecycle, ensuring seamless deployment and scalability. With Docker, we can easily spin up new instances of services, manage dependencies, and streamline our development and deployment workflows.
+
+* *API Gateway*: We employ an API gateway as a centralized entry point for all client requests to our microservices. The API gateway serves as a reverse proxy, routing incoming requests to the appropriate microservice based on predefined rules and policies. It provides a unified interface for clients to interact with our system, abstracting away the complexities of the underlying microservices architecture. By consolidating access through the API gateway, we enhance security, governance, and performance while simplifying client interactions.
+
+* *Scalability and Elasticity*: With our microservices architecture orchestrated with Docker, we achieve horizontal scalability and elasticity to handle fluctuations in traffic and workload. Docker's container-based approach enables us to dynamically scale individual services based on demand, ensuring optimal resource utilization and cost efficiency. Combined with automated scaling policies and monitoring, we maintain responsiveness and availability during peak usage periods.
+
+* *Observability and Monitoring*: We prioritize observability and monitoring in our architecture to gain insights into the performance, health, and behavior of our microservices. Leveraging tools such as Prometheus, Grafana, and ELK stack, we collect metrics, logs, and traces from across our infrastructure, allowing us to detect anomalies, troubleshoot issues, and optimize system performance. With comprehensive observability, we ensure reliability, maintainability, and continuous improvement of our game platform.
+
+
+=== Team Organization
+
+For developing this project we are using Github as the control version systems. 
+The master branch contains the final version of the product, so that every accepted pull request to master branch will be considered as a new release.
+The production branch contains the work in production right now, from where everybody should create their own branch for their specific code development. 
+
+* *Documentation*: it must be always updated for making our work valuable and consistent.
+* *Weekly meetings*: Weekly discussions about what has been done and what needs to be done will be key for our team success. 
+* *Github*: this control version systems not only allows us to share and collabortively write code, but also provides other resources such as issues and project management (kanban board) tools for organizing the work to be done. Also, wiki section allows us to save all of our minutes from each scheduled meeting.
+* *Whatsapp*: will allow us to be in constant communication for helping each other out whenever needed. 
+* *Discord*: useful for making unofficial meetings and making decisions whenever is impossible for all of us to be present in an specific place.
 
 ifdef::arc42help[]
 [role="arc42help"]
