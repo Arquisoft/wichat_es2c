@@ -3,6 +3,22 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-design-decisions]]
 == Architecture Decisions
 
+The application will be carried out following a Microservices architecture. +
+
+The service in charge of comunicating with WikiData will be coded using TypeSript. 
+As the generation of questions is a huge part of our application we will play it safe by using TypeSript, a language that is similar to JavaSript but with static type checking.
+
+*03/02/2025*
+
+The backend will we use Node and React for the fronend.
+
+For the database, we have chosen MongoDB, which is a non-relational database.
+
+To deploy the application, we will use a server owned by one of the team members.
+
+
+[role="arc42help"]
+
 
 ifdef::arc42help[]
 [role="arc42help"]
