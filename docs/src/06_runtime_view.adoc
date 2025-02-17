@@ -4,7 +4,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 === Registering an user
 
 Scenario 1: Registering as a new user or log in as an existing user.
-
+&nbsp;
 
 image:06-registering.png["Runtime view - Registering User"]
 
@@ -14,7 +14,7 @@ When a new user registers, the process starts on the front end, where they enter
 
 
 === Logging in
-
+&nbsp;
 
 image:06-login.png["Runtime view - Logging in"]
 
