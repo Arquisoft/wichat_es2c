@@ -57,6 +57,6 @@ endif::arc42help[]
 
 | Issues | The work assigned to each member will be reflected as issues in GitHub, so that everything is recorded and everyone knows what they have to do.
 
-| Mid-term evaluations | Every 3 weeks the project will be evaluated, and corrections that need to be made for the next evaluation will be noted.
+| Mid-term evaluations | Every 3 weeks the project will be checked, and corrections that need to be made for the upcoming days will be noted.
 
 |===
