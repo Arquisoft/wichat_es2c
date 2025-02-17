@@ -2,13 +2,24 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 
 === Registering an user
+
 Scenario 1: Registering as a new user or log in as an existing user.
+
+
 image:06-registering.png["Runtime view - Registering User"]
+
+&nbsp;
 
 When a new user registers, the process starts on the front end, where they enter their details. The front end then sends this information to the back end, which validates it, ensuring, for example, that the username isn’t already taken and meets minimum length requirements. Once the data is verified, it is stored in the database, then the user is finally notified that their account has been succesfully created and they can low log in.
 
+
 === Logging in
+
+
 image:06-login.png["Runtime view - Logging in"]
+
+&nbsp;
+
 When it comes to logging in, the user firstly enters their credentials, then the back end retrieves the user's information from the database and verifies if it's correct.
 
 
