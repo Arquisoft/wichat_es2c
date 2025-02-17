@@ -27,3 +27,36 @@ See https://docs.arc42.org/section-2/[Architecture Constraints] in the arc42 doc
 
 ****
 endif::arc42help[]
+== Technical Constraints
+
+[options="header", cols="1,1"]
+|===
+| Restriction | Explanation
+
+| Wikidata API | We will use Wikidata as the database for the places where the player can be found.
+
+| Deploy the application | The application must be deployed on a server and accessible from a browser. In this case, we will use Docker to deploy it.
+
+| GitHub | We will use GitHub for version control and collaboration on the project.
+
+| Tests | The application must pass these tests to ensure its functionality; failure of any test will block deployment.
+
+| Documentation | The documentation of the entire project will be done following the Arc42 template for better clarity in its details and explanations.
+
+|===
+
+== Organizational Constraints
+
+[options="header", cols="1,1"]
+|===
+| Restriction | Explanation
+
+| Team of 5 people | The work will be distributed among the 5 members of the group.
+
+| Reports | Every week during the class practice time, we must write minutes documenting what we have done and the next steps to follow.
+
+| Issues | The work assigned to each member will be reflected as issues in GitHub, so that everything is recorded and everyone knows what they have to do.
+
+| Mid-term evaluations | Every 3 weeks the project will be checked, and corrections that need to be made for the upcoming days will be noted.
+
+|===
