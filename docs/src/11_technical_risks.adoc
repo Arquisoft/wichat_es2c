@@ -26,13 +26,13 @@ See https://docs.arc42.org/section-11/[Risks and Technical Debt] in the arc42 do
 ****
 endif::arc42help[]
 
-== Technical Risks
+=== Technical Risks
 
 When identifying and listing the project's *Technical Risks*, it is helpful to separate them into *Internal Risks* (arising within the system development process) and *External Risks* (coming from factors outside the direct control of the development team).
 
 Prioritized from highest to lowest, they are as follows:
 
-=== Internal Risks
+==== Internal Risks
 
 [cols="3,3,3", options="header"]
 |===
@@ -44,7 +44,7 @@ Prioritized from highest to lowest, they are as follows:
 | *Team Members with Limited Experience in GitHub and Pull Requests* | Not all team members are proficient with *Pull Requests*, which significantly limits their initial contributions. | Learn and practice using this functionality.
 |===
 
-=== External Risks
+==== External Risks
 
 [cols="2,3", options="header"]
 |===
@@ -55,7 +55,7 @@ Prioritized from highest to lowest, they are as follows:
 | *GitHub and Cloudflare Issues* | Due to recent cases of some companies blocking *Cloudflare* from their servers, this could negatively impact the project, as it affects GitHub.
 |===
 
-== Technical Debts
+=== Technical Debts
 
 At this stage, since we have only recently started working on this project, we have not yet accumulated *technical debt*. However, given our initial situation, we can anticipate the following:
 
