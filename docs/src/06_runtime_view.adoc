@@ -22,4 +22,10 @@ image:06-login.png["Runtime view - Logging in"]
 
 When it comes to logging in, the user firstly enters their credentials, then the back end retrieves the user's information from the database and verifies if it's correct.
 
+=== Future diagrams
 
+Once we have made progress in the development of the application, the following diagrams should be created according to the chosen implementation:
+
+==== Questions generation
+==== WiChat quiz game
+==== Obtaining hints via Chatbot
