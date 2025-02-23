@@ -57,18 +57,47 @@ See https://docs.arc42.org/section-8/[Concepts] in the arc42 documentation.
 ****
 endif::arc42help[]
 
-=== _<Concept 1>_
+=== _Continuous integration and development_
 
-_<explanation>_
+Our way of working with github is having one developing branch towards which all pull requests are done 
+and have to be reviewed by at least one team member. 
+Sonar Cloud is set up so we know the testing coverage and whether we pass the quality gate with every pull request.
+Once there is enough change in the develop branch with respect to the main one and it has enough quality we can 
+merge them and make a release.
 
 
+=== _Microservice based system_
 
-=== _<Concept 2>_
+Different business functionallities will be developed in different independent services.
+This will ensure that if one of them fails, the rest are still working (For example,
+if the rankings go down that will not affect the main game) as they have their own deployment
+as well. 
+Other benefits are increased maintainability due to separation in small, more readable modules
+and the possibillity of using different languages or technologies for each module if needed/prefered 
+without colliding with the rest.
 
-_<explanation>_
 
-...
+=== _Gateway service routing_
 
-=== _<Concept n>_
+We will use a speciallized service that will route the requests to the corresponding service, acting as 
+a single entry point for the application. Requests to the services are much simpler as only the api base 
+endpoint and the action needs to be known and the gateway can also act as a filter to manage requests 
+conditionally if needed. This approach also favors security as we can control which requests are actually 
+sent based on its content or the context of the app.
 
-_<explanation>_
+=== _Authentication_
+
+To keep our users' data secure an authentication mechanism has been developed with the use of JSON Web Tokens (JWT). If someone tries to access historical game records for certain users, our KaW application enforces to pass a valid token through the header of the message request.
+In this way, only authenticated users are able to consult the different data that our application enforces.
+
+=== _Internationalization_ 
+
+One of the things to increase accessibility is giving our application the capability of being in various languages so people around the world can play our game. Obviously, internationalization is more than just changing the language of the Application but due to time constraints we will just offer Spanish, English, Ukrainian and French languages ( although, our API can generate questions in other languages different from described, to see the whole list, refer to our API documentation ).
+
+The library used for language translation in our KaW game is called react-i18next. For simplicity (and due to just only having three languages), all of the translations of messages are stored locally in properties files. Eventually, if the Application grows and we wanted to have more than 4 languages the best approach is to store those properties in a server and let the application to request those on the fly. Again, for simplicity the option of having all bundle together in the Frontend just fits.
+
+The translation of questions is a bit different from the frontend part since it is done "on the fly" by using the Microsoft translation API . This change has been done since the questions are not fully known until they are generated so storing the translation locally does not provide any benefit. Also, one advantage of it, is its simplicity and ease to use. To meet the restrictions impose by the Free version of this API a series of formatting rules are carried out into the question generation phase to minimize the usage of it and avoid getting suspended.
+
+=== _Tests_
+
+One of the most important aspects is testing our application, and to achieve this, we will conduct different types of tests. On one hand, we will perform tests such as unit testing and usability testing. On the other hand, we will implement a continuous testing system using GitHub Actions, ensuring that all commits pass the required tests.
