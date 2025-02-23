@@ -30,8 +30,6 @@ We have decided to develop the Wikidata API in TypeScript because it is similar 
 
 * *Scalability and Elasticity*: With our microservices architecture orchestrated with Docker, we achieve horizontal scalability and elasticity to handle fluctuations in traffic and workload. Docker's container-based approach enables us to dynamically scale individual services based on demand, ensuring optimal resource utilization and cost efficiency. Combined with automated scaling policies and monitoring, we maintain responsiveness and availability during peak usage periods.
 
-* *Observability and Monitoring*: We prioritize observability and monitoring in our architecture to gain insights into the performance, health, and behavior of our microservices. Leveraging tools such as Prometheus, Grafana, and ELK stack, we collect metrics, logs, and traces from across our infrastructure, allowing us to detect anomalies, troubleshoot issues, and optimize system performance. With comprehensive observability, we ensure reliability, maintainability, and continuous improvement of our game platform.
-
 
 === Team Organization
 
