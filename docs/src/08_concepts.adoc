@@ -97,3 +97,7 @@ One of the things to increase accessibility is giving our application the capabi
 The library used for language translation in our KaW game is called react-i18next. For simplicity (and due to just only having three languages), all of the translations of messages are stored locally in properties files. Eventually, if the Application grows and we wanted to have more than 4 languages the best approach is to store those properties in a server and let the application to request those on the fly. Again, for simplicity the option of having all bundle together in the Frontend just fits.
 
 The translation of questions is a bit different from the frontend part since it is done "on the fly" by using the Microsoft translation API . This change has been done since the questions are not fully known until they are generated so storing the translation locally does not provide any benefit. Also, one advantage of it, is its simplicity and ease to use. To meet the restrictions impose by the Free version of this API a series of formatting rules are carried out into the question generation phase to minimize the usage of it and avoid getting suspended.
+
+=== _Tests_
+
+One of the most important aspects is testing our application, and to achieve this, we will conduct different types of tests. On one hand, we will perform tests such as unit testing and usability testing. On the other hand, we will implement a continuous testing system using GitHub Actions, ensuring that all commits pass the required tests.
