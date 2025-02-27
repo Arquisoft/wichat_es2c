@@ -102,7 +102,7 @@ paths:
                   example: pass
       responses:
         '200':
-          description: Login successful. Returns user token, username, and creation date.
+          description: Loginview successful. Returns user token, username, and creation date.
           content:
             application/json:
               schema:

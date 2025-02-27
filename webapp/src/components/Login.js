@@ -1,4 +1,4 @@
-// src/components/Login.js
+// src/components/Loginview.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Container, Typography, TextField, Button, Snackbar } from '@mui/material';
@@ -63,7 +63,7 @@ const Login = () => {
       ) : (
         <div>
           <Typography component="h1" variant="h5">
-            Login
+            Loginview
           </Typography>
           <TextField
             margin="normal"
@@ -81,9 +81,9 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           <Button variant="contained" color="primary" onClick={loginUser}>
-            Login
+            Loginview
           </Button>
-          <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar} message="Login successful" />
+          <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar} message="Loginview successful" />
           {error && (
             <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError('')} message={`Error: ${error}`} />
           )}
