@@ -73,12 +73,20 @@ services:
     profiles: ["dev", "prod"]
     build: 
       context: ./webapp
+      dockerfile: Dockerfile
       args:
         LLM_API_KEY: ${LLM_API_KEY}
+    volumes:
+      - ./webapp:/app
+      - /app/node_modules
     depends_on:
       - gatewayservice
     ports:
       - "3000:3000"
+    networks:
+      - mynetwork
+    environment:
+      - WATCHPACK_POLLING=true
 
   prometheus:
     image: prom/prometheus
