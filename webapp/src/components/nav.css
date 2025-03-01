@@ -1,7 +1,9 @@
-nav{
+nav {
     background-color: blue;
-    padding: 10px;
+    padding: 10px 20px;
     display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .auth-links {
@@ -15,25 +17,25 @@ nav{
     padding: 5px 10px;
 }
 
-
 .auth-link:visited {
     color: #e0e0e0;
 }
 
-
 .user-dropdown {
     position: relative;
     display: inline-block;
+    margin-right: 15px;
 }
 
 .dropdown-trigger {
     cursor: pointer;
+    align-items: center;
 }
 
 .dropdown-menu {
     position: absolute;
     right: 0;
-    top: 50px;
+    top: 55px;
     background-color: white;
     min-width: 180px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);

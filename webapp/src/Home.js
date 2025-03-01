@@ -1,35 +1,37 @@
 import React, { useState } from "react";
-import Container from "@mui/material/Container";
-import {  Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Nav from "./components/Nav";
 import "./Home.css";
-
 
 function Home() {
     const [user, setUser] = useState(null);
 
     return (
-        <>
+        <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
             <Nav />
-            <Container
-                component="main"
+            <div
                 className="container"
-                maxWidth={false}
-                sx={{
-                    height: "calc(100vh - 64px)",
+                style={{
+                    flex: 1,
                     backgroundImage: "url('/logo.jpg')",
                     backgroundSize: "cover",
-                    backgroundPosition: "center"
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    position: "relative"
                 }}
             >
-                <button className="boton-jugar">
-                    <Link to="/login" style={{color: "white"}}>Log in to play</Link>
+                <button className="play-button">
+                    <Link to="/login" style={{color: "white"}}>
+                        Log in to play
+                    </Link>
                 </button>
-                {/*<button className="boton-jugar">*/}
-                {/*    <Link to="/game" style={{color: "white"}}>Play the game</Link>*/}
+                {/*<button className="play-button">*/}
+                {/*    <Link to="/game" style={{color: "white"}}>*/}
+                {/*        Play the game*/}
+                {/*    </Link>*/}
                 {/*</button>*/}
-            </Container>
-        </>
+            </div>
+        </div>
     );
 }
 

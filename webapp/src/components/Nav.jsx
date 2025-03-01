@@ -33,7 +33,7 @@ export default function Nav() {
     return (
         <nav style={{ alignItems: "center", justifyContent: "space-between" }}>
             <Link to="/home">
-                <img src="/logo.jpg" alt="Logo" style={{ height: "50px" }} />
+                <img src="/logo.jpg" alt="Logo" style={{ height: "60px" }} />
             </Link>
 
             <div>
@@ -44,8 +44,8 @@ export default function Nav() {
                                 src="/logo.jpg"
                                 alt="User"
                                 style={{
-                                    height: "40px",
-                                    width: "40px",
+                                    height: "47px",
+                                    width: "47px",
                                     borderRadius: "50%",
                                     cursor: "pointer"
                                 }}
