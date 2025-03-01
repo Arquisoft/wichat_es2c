@@ -45,69 +45,108 @@ function Game() {
   };
 
   return (
-    <div>
-      <img src={`${process.env.PUBLIC_URL}/photo.jpg`} alt="Game" style={{ width: '100%', marginTop: '20px' }} />
-      <div style={{ marginTop: '20px' }}>
+    <div className={styles.containerLayout}>
+    {/* Sección de la imagen */}
+    <div className={styles.imageContainer}>
+      <img 
+        src={`${process.env.PUBLIC_URL}/photo.jpg`} 
+        alt="Game" 
+      />
+    </div>
+
+    {/* Sección de contenido */}
+    <div className={styles.contentContainer}>
+
+      {/* Pregunta */}
+      <div className={styles.questionContainer}>
+        {questions[0].question}
+      </div>
+
+      {/* Opciones en Grid */}
+      <div className={styles.optionsGrid}>
         {questions[0].options.map((option, index) => (
           <AwesomeButton
             key={index}
             type="secondary"
-            active={buttonsActive} // Usa el estado en lugar de hardcodear true
-            className={`${styles.awsBtn} ${questions[0].correctAnswer === index ? styles.buttonActive : styles.buttonInactive}`}
+            active={buttonsActive}
+            className={`${styles.awsBtn} ${
+              questions[0].correctAnswer === index ? styles.buttonActive : styles.buttonInactive
+            }`}
             onPress={() => handleButtonClick(index)}
           >
             {option}
           </AwesomeButton>
         ))}
       </div>
-      <Modal
-        disableEnforceFocus={true}
-        open={open}
-        onClose={null}
-        aria-labelledby="modal-title"
-        aria-describedby="modal-description"
-        closeAfterTransition
-        slotProps={{
-          backdrop: {
-            timeout: 800
-          },
-        }}
-      >
-        <Box
-          className={fadeIn ? styles.fadeIn : styles.fadeOut}
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '80%',
-            maxWidth: 600,
-            minHeight: 400,
-            bgcolor: 'background.paper',
-            border: '2px solid #000',
-            borderRadius: 4,
-            boxShadow: 24,
-            p: 4,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+
+      {/* Chatbot */}
+      <div className={styles.additionalButton} >
+      <AwesomeButton 
+        type="primary" 
+        onPress={() => console.log("Funcionalidad extra")}>
+        Botón Extra
+      </AwesomeButton>  
+      </div>
+
+          
+        <Modal
+          disableEnforceFocus={true}
+          open={open}
+          onClose={null}
+          aria-labelledby="modal-title"
+          aria-describedby="modal-description"
+          closeAfterTransition
+          slotProps={{
+            backdrop: {
+              timeout: 800
+            },
           }}
         >
-          <h1 id="modal-title" className={styles.winnerTitle}>tonto quien lo lea jiji</h1>
-          <div className={styles.scoreContainer}>
-            <h2 className={styles.scoreText}>Puntuación: NO 😡😡😡</h2>
-          </div>
+          <Box
+            className={fadeIn ? styles.fadeIn : styles.fadeOut}
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '80%',
+              maxWidth: 600,
+              minHeight: 400,
+              bgcolor: 'background.paper',
+              border: '2px solid #000',
+              borderRadius: 4,
+              boxShadow: 24,
+              p: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <h1 id="modal-title" className={styles.winnerTitle}>tonto quien lo lea jiji</h1>
+            <div className={styles.scoreContainer}>
+              <h2 className={styles.scoreText}>Puntuación: NO 😡😡😡</h2>
+            </div>
 
-          <ButtonContainer>
-            <HomeButton onClick={handleHomeClick} />
-            <ChartButton onClick={handleHistoryClick} />
-            <ReplayButton onClick={handleReplayClick} />
-          </ButtonContainer>
-        </Box>
-      </Modal>
+            <ButtonContainer>
+              <HomeButton onClick={handleHomeClick} />
+              <ChartButton onClick={handleHistoryClick} />
+              <ReplayButton onClick={handleReplayClick} />
+            </ButtonContainer>
+          </Box>
+        </Modal>
+      </div>
     </div>
   );
 }
 
 export default Game;
+
+
+
+
+/*
+Importar chat bot:
+ Instalar en webapp: npm install @upstash/rag-component
+
+*/
