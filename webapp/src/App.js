@@ -17,7 +17,7 @@ function App() {
 
   return (
     <Router>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth={false}>{/* maxWidth="xs"  sx={{ maxWidth: '100% !important' }} */}
         <CssBaseline />
         <Typography component="h1" variant="h5" align="center" sx={{ marginTop: 2 }}>
           Welcome to the 2025 edition of the Software Architecture course

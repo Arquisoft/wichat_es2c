@@ -7,6 +7,9 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { HomeButton, ChartButton, ReplayButton, ButtonContainer } from './ModelButtons';
 
+import ChatBot from './ChatBot';
+
+
 function Game() {
   const navigate = useNavigate();
   
@@ -21,11 +24,16 @@ function Game() {
   const [open, setOpen] = useState(false);
   const [fadeIn, setFadeIn] = useState(false);
   const [buttonsActive, setButtonsActive] = useState(true);
+  const [showChatBot, setShowChatBot] = useState(false);
 
   const handleButtonClick = (index) => {
     setTimeout(() => {
       setOpen(true);
     }, 0);
+  };
+
+  const handleChatBotToggle = () => {
+    setShowChatBot(!showChatBot);
   };
 
   useEffect(() => {
@@ -43,6 +51,7 @@ function Game() {
     setButtonsActive(false);
     setTimeout(() => setButtonsActive(true), 50);
   };
+
 
   return (
     <div className={styles.containerLayout}>
@@ -79,14 +88,20 @@ function Game() {
         ))}
       </div>
 
-      {/* Chatbot */}
-      <div className={styles.additionalButton} >
-      <AwesomeButton 
-        type="primary" 
-        onPress={() => console.log("Funcionalidad extra")}>
-        Botón Extra
-      </AwesomeButton>  
-      </div>
+      {/* Botón para mostrar el chatbot */}
+      <div className={styles.additionalButton}>
+          {/* Chatbot */}
+          {showChatBot && (
+          <div className={styles.chatBotContainer}>
+            <ChatBot />
+          </div>
+          )}
+          <button 
+            type="button" 
+            onClick={handleChatBotToggle}>
+            {showChatBot ? "Hide ChatBot" : "Show ChatBot"}
+          </button>  
+        </div>
 
           
         <Modal
@@ -141,12 +156,3 @@ function Game() {
 }
 
 export default Game;
-
-
-
-
-/*
-Importar chat bot:
- Instalar en webapp: npm install @upstash/rag-component
-
-*/
