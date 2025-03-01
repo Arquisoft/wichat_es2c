@@ -53,7 +53,7 @@ paths:
                     example: '2024-03-17T20:47:23.935Z'
                   ___v:
                     type: integer
-                    example: '0'                                        
+                    example: '0'
         '400':
           description: Failed to add user.
           content:
@@ -102,7 +102,7 @@ paths:
                   example: pass
       responses:
         '200':
-          description: Loginview successful. Returns user token, username, and creation date.
+          description: Login successful. Returns user token, username, and creation date.
           content:
             application/json:
               schema:
