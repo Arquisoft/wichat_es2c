@@ -29,13 +29,13 @@ It executes the production version using the package `serve`. For this command t
 
 ### Unitary tests (`npm test`)
 
-Unitary tests can be found in the same directory where the react components lie. Each react component (for instance, App.js), will have its own test file (App.test.js).
+Unitary tests can be found in the same directory where the react components lie. Each react component (for instance, LoginSignup.js), will have its own test file (Loginview.test.js).
 
-Here is an example of the tests for App.js:
+Here is an example of the tests for LoginSignup.js:
 
 ```javascript
 test('renders welcome message', () => {
-  render(<App />);
+  render(<Loginview />);
   const welcomeMessage = screen.getByText(/Welcome to the 2025 edition of the Software Architecture course/i);
   expect(welcomeMessage).toBeInTheDocument();
 });
