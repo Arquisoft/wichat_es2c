@@ -39,8 +39,12 @@
     --button-secondary-color-active: red;
 }
 
-.buttonPressed {
-    --button-secondary-color-active: blue;
-    --button-raise-level: 0px; /* Prevent the button from raising back */
-    transform: translateY(4px); /* Keep the button visually pressed */
+.fadeIn {
+    opacity: 1;
+    transition: opacity 0.4s ease-in;
+  }
+  
+.fadeOut {
+    opacity: 0;
+    transition: opacity 5s ease-out;
 }

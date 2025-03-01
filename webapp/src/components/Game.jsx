@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AwesomeButton } from 'react-awesome-button';
 import 'react-awesome-button/dist/styles.css';
 import styles from './Game.module.css';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
-import Fade from '@mui/material/Fade';
+import { HomeButton, ChartButton, ReplayButton, ButtonContainer } from './ModelButtons';
 
 function Game() {
+  const navigate = useNavigate();
+  
   const questions = [
     {
       question: "What is the capital of France?",
@@ -16,14 +19,30 @@ function Game() {
   ];
 
   const [open, setOpen] = useState(false);
+  const [fadeIn, setFadeIn] = useState(false);
+  const [buttonsActive, setButtonsActive] = useState(true);
 
   const handleButtonClick = (index) => {
     setTimeout(() => {
       setOpen(true);
-    }, 2000);
+    }, 0);
   };
 
-  const handleClose = () => setOpen(false);
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => setFadeIn(true), 250);
+    } else {
+      setFadeIn(false);
+    }
+  }, [open]);
+
+  const handleHomeClick = () => navigate('/');
+  const handleHistoryClick = () => navigate('/history');
+  const handleReplayClick = () => {
+    setOpen(false);
+    setButtonsActive(false);
+    setTimeout(() => setButtonsActive(true), 50);
+  };
 
   return (
     <div>
@@ -33,7 +52,7 @@ function Game() {
           <AwesomeButton
             key={index}
             type="secondary"
-            active={true}
+            active={buttonsActive} // Usa el estado en lugar de hardcodear true
             className={`${styles.awsBtn} ${questions[0].correctAnswer === index ? styles.buttonActive : styles.buttonInactive}`}
             onPress={() => handleButtonClick(index)}
           >
@@ -42,25 +61,50 @@ function Game() {
         ))}
       </div>
       <Modal
+        disableEnforceFocus={true}
         open={open}
-        onClose={handleClose}
+        onClose={null}
         aria-labelledby="modal-title"
         aria-describedby="modal-description"
         closeAfterTransition
-        slots={{ backdrop: Fade }}
         slotProps={{
           backdrop: {
-            timeout: 500,
-            onClick: (e) => e.stopPropagation()
-          }
+            timeout: 800
+          },
         }}
       >
-        <Fade in={open}>
-          <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', border: '2px solid #000', boxShadow: 24, p: 4 }}>
-            <h2 id="modal-title">Modal Title</h2>
-            <p id="modal-description">This is the content of the modal.</p>
-          </Box>
-        </Fade>
+        <Box
+          className={fadeIn ? styles.fadeIn : styles.fadeOut}
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '80%',
+            maxWidth: 600,
+            minHeight: 400,
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            borderRadius: 4,
+            boxShadow: 24,
+            p: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <h1 id="modal-title" className={styles.winnerTitle}>tonto quien lo lea jiji</h1>
+          <div className={styles.scoreContainer}>
+            <h2 className={styles.scoreText}>Puntuación: NO 😡😡😡</h2>
+          </div>
+
+          <ButtonContainer>
+            <HomeButton onClick={handleHomeClick} />
+            <ChartButton onClick={handleHistoryClick} />
+            <ReplayButton onClick={handleReplayClick} />
+          </ButtonContainer>
+        </Box>
       </Modal>
     </div>
   );
