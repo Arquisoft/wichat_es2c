@@ -7,7 +7,7 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { HomeButton, ChartButton, ReplayButton, ButtonContainer } from './ModelButtons';
 
-import ChatBot from './ChatBot';
+import PopChat from './ChatBot/Popchat';
 
 
 function Game() {
@@ -20,6 +20,13 @@ function Game() {
       correctAnswer: 2
     }
   ];
+
+  //Mensajes del chatbot
+  const [msgs, setMsgs] = useState(["Guayaba"]); //de esta manera uso el estado y se muestran los cambios de mensajes en el chat
+  const getMessage = (msg) => {
+    //msgs.push(msg);
+    setMsgs((prevMsgs) => [...prevMsgs, msg]);
+  };
 
   const [open, setOpen] = useState(false);
   const [fadeIn, setFadeIn] = useState(false);
@@ -88,21 +95,10 @@ function Game() {
         ))}
       </div>
 
-      {/* Botón para mostrar el chatbot */}
-      <div className={styles.additionalButton}>
-          {/* Chatbot */}
-          {showChatBot && (
-          <div className={styles.chatBotContainer}>
-            <ChatBot />
-          </div>
-          )}
-          <button 
-            type="button" 
-            onClick={handleChatBotToggle}>
-            {showChatBot ? "Hide ChatBot" : "Show ChatBot"}
-          </button>  
-        </div>
-
+      {/* Seccion para mostrar el chatbot */}
+      <div className={styles.chatContainer}>
+        <PopChat messages={msgs} getMessage={getMessage}/>
+      </div>
           
         <Modal
           disableEnforceFocus={true}
