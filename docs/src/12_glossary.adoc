@@ -36,8 +36,8 @@ endif::arc42help[]
 |===
 |Term |Definition
 
-|<TypeScript>
-|<TypeScript is a strongly typed, object-oriented, compiled programming language that builds on JavaScript by adding static typing. Is the programming lenguage we are using>
+|<JavaScript>
+|<JavaScript is the programming language we are using.>
 
 |<Node.js>
 |<An open-source, cross-platform runtime environment that allows you to run JavaScript(or TypeScript in our case) code outside of a web browser. We are using it in the back-end. We are using it in the front-end part of the app.>
