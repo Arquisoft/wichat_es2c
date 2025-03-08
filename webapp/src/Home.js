@@ -13,7 +13,7 @@ function Home() {
                 className="container"
                 style={{
                     flex: 1,
-                    backgroundImage: "url('/logo.jpg')",
+                    backgroundImage: "url('/bg.jpg')",
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",

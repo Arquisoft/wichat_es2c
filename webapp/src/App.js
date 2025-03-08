@@ -3,8 +3,8 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import Home from "./Home";
-import Login from "./Login";
-import AddUser from "./AddUser";
+import Login from "./components/Login";
+import AddUser from "./components/AddUser";
 
 
 function App() {

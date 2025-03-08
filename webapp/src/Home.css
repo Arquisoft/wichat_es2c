@@ -17,6 +17,12 @@ body, html {
   align-items: center;
   padding: 0;
   margin: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: crisp-edges;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .play-button {

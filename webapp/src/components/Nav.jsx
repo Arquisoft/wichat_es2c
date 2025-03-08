@@ -38,19 +38,19 @@ export default function Nav() {
     return (
         <nav style={{ alignItems: "center", justifyContent: "space-between" }}>
             <Link to="/home">
-                <img src="/logo.jpg" alt="Logo" style={{ height: "60px" }} />
+                <img src="/logo512.png" alt="Logo" style={{ height: "60px" }} />
             </Link>
             <div>
                 {isLoggedIn ? (
                     <div className="user-dropdown" ref={dropdownRef}>
                         <div className="dropdown-trigger" onClick={toggleDropdown}>
                             <img
-                                src="/logo.jpg"
+                                src="/pfp.png"
                                 alt="User"
                                 style={{
                                     height: "47px",
                                     width: "47px",
-                                    borderRadius: "50%",
+                                    borderRadius: "60%",
                                     cursor: "pointer"
                                 }}
                             />
