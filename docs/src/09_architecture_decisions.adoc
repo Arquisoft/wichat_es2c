@@ -10,17 +10,35 @@ As the generation of questions is a huge part of our application we will play it
 
 *03/02/2025*
 
-The backend will we use Node and React for the fronend.
+Microservices Architecture:
+The application will follow a Microservices architecture to ensure scalability, flexibility, and easier maintenance. This approach allows different services to be developed, deployed, and scaled independently, improving fault tolerance and facilitating continuous deployment.
 
-For the database, we have chosen MongoDB, which is a non-relational database.
+WikiData Service - TypeScript:
+The service responsible for communicating with WikiData will be developed using TypeScript. Since generating questions is a critical part of our application, we decided to use TypeScript due to its static type checking, which helps prevent runtime errors and makes the codebase more maintainable. Additionally, TypeScript provides better tooling support and improves developer productivity by reducing debugging time.
 
-To deploy the application, we will use a server owned by one of the team members.
+Backend & Frontend Technologies:
+The backend will be built using Node.js, as it is efficient for handling asynchronous operations and provides a vast ecosystem of libraries.
+The frontend will be developed with React, a popular JavaScript library known for its component-based structure, performance optimizations, and reusability. React's virtual DOM improves rendering efficiency, making it a great choice for dynamic applications.
+
+Database - MongoDB:
+We have chosen MongoDB, a NoSQL database, because it provides flexibility in handling unstructured data, horizontal scalability, and high availability. Given that our data structure may evolve over time, MongoDB’s schema-less nature allows us to adapt without complex migrations.
+
+Deployment Strategy:
+The application will be deployed on a server owned by one of the team members. This decision allows us to have full control over the deployment environment, reduce costs, and customize configurations based on our needs.
 
 *03/03/2025*
 
-We have decided to switch from using TypeScript to JavaScript due to issues when working with it. Initially, we thought it would help us write more readable code since TypeScript is JavaScript with static typing, but in the end, we will use JavaScript.
+Switching from TypeScript to JavaScript:
+We initially opted for TypeScript to improve code quality through static typing. However, after encountering integration issues, increased complexity, and longer development time, we decided to switch to JavaScript. JavaScript allows for faster iteration, broader community support, and reduced setup overhead, making it more practical for our project timeline.
 
-We have decided to use CSS Modules because it prevents style collisions, is more organized, and easier to maintain.
+CSS Modules for Styling:
+We have chosen to use CSS Modules for styling because it:
+
+Prevents style conflicts by scoping styles to individual components.
+Improves maintainability by keeping styles modular and easy to manage.
+Enhances reusability as styles are encapsulated within their respective components, reducing the risk of unintended global overrides.
+
+These decisions were made to optimize performance, maintainability, and scalability while ensuring smooth development and deployment of our application.
 
 
 [role="arc42help"]
