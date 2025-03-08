@@ -1,0 +1,87 @@
+.gameSummaryContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border: 2px solid black;
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%; /* Ahora ocupa todo el espacio disponible */
+    font-family: "Arial", sans-serif;
+
+    background-color: lightgray; /* CAMBIAR TRAS DECIDIR COLORES */
+}
+
+.dateANDhourElement,
+.TimesElement,
+.QuestionButtonElement {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    flex: 1;
+    text-align: center;
+}
+
+.dateANDhourElement {
+    border-right: 2px solid black;
+}
+
+.answersContainer {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.answersElement {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    flex: 1; 
+    text-align: center;
+}
+
+.QuestionButtonElement {
+    border-right: none;
+}
+
+h3, h4 {
+    margin: 5px 0;
+    font-weight: normal;
+}
+
+.correctAnswersElement {
+    color: green;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.answersSeparator {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 0 5px;
+}
+
+.wrongAnswersElement {
+    color: red;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.questionButton {
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.questionButton:hover {
+    background-color: lightgray;
+}

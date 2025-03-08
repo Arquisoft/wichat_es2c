@@ -2,7 +2,6 @@
   margin: 0 auto;
   padding: 1rem;
   width: 800px;
-  height:3000px;
   border: 2px solid #333;
   border-radius: 8px;
   margin: 2rem auto;
@@ -71,4 +70,10 @@
   grid-row: 2;
   text-align: left;
   align-self: center;
+}
+
+.gamesHistoryContainer {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
 }

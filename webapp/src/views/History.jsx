@@ -3,6 +3,7 @@ import "./History.css"
 import styles from "./History.module.css";
 import Nav from "../components/Nav";
 import { PieChart } from "@mui/x-charts/PieChart";
+import {GameSummary} from "../components/GameSummary"
 
 const History = () => {
   const statistics = {
@@ -20,6 +21,72 @@ const History = () => {
   const correctPercentage = Math.round(
     (statistics.rightAnswers / totalAnswers) * 100
   );
+
+  const games = [
+    {
+      date: "2021-10-10",
+      hour: "10:00",
+      correctAnswers: 10,
+      wrongAnswers: 5,
+      time: 10,
+    },
+    {
+      date: "2021-10-10",
+      hour: "10:00",
+      correctAnswers: 10,
+      wrongAnswers: 5,
+      time: 10,
+    },
+    {
+      date: "2021-10-10",
+      hour: "10:00",
+      correctAnswers: 10,
+      wrongAnswers: 5,
+      time: 10,
+    },
+    {
+      date: "2021-10-10",
+      hour: "10:00",
+      correctAnswers: 10,
+      wrongAnswers: 5,
+      time: 10,
+    },
+    {
+      date: "2021-10-10",
+      hour: "10:00",
+      correctAnswers: 10,
+      wrongAnswers: 5,
+      time: 10,
+    },
+    {
+      date: "2021-10-10",
+      hour: "10:00",
+      correctAnswers: 10,
+      wrongAnswers: 5,
+      time: 10,
+    },
+    {
+      date: "2021-10-10",
+      hour: "10:00",
+      correctAnswers: 10,
+      wrongAnswers: 5,
+      time: 10,
+    },
+    {
+      date: "2021-10-10",
+      hour: "10:00",
+      correctAnswers: 10,
+      wrongAnswers: 5,
+      time: 10,
+    },
+    {
+      date: "2021-10-10",
+      hour: "10:00",
+      correctAnswers: 10,
+      wrongAnswers: 5,
+      time: 10,
+    },
+  ];
 
   return (
     <>
@@ -39,12 +106,12 @@ const History = () => {
                     data: [
                       {
                         value: statistics.rightAnswers,
-                        label: "Acertadas",
+                        label: "Right answers",
                         color: "#1fff71",
                       },
                       {
                         value: statistics.wrongAnswers,
-                        label: "Falladas",
+                        label: "Wrong answers",
                         color: "#db3535",
                       },
                     ],
@@ -92,6 +159,25 @@ const History = () => {
             <p>Average Time: {statistics.averageTime}</p>
           </div>
         </div>
+
+        
+        <h1></h1>  {/* TEMPORAL.- Agregar un espacio entre los elementos */}
+        
+
+        <div className={styles.gamesHistoryContainer}>
+          {games.map((game, index) => (
+            <GameSummary
+              key={index}
+              date={game.date}
+              hour={game.hour}
+              correctAnswers={game.correctAnswers}
+              wrongAnswers={game.wrongAnswers}
+              time={game.time}
+            />
+          ))}
+        </div>
+
+
       </div>
     </>
   );
