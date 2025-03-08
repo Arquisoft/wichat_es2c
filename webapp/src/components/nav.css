@@ -8,13 +8,20 @@ nav {
 
 .auth-links {
     display: flex;
-    gap: 20px;
+    gap: 16px;
 }
 
 .auth-link {
-    color: white;
+    color: #1976d2;
     text-decoration: none;
-    padding: 5px 10px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.auth-link:hover {
+    background-color: rgba(25, 118, 210, 0.08);
 }
 
 .auth-link:visited {
@@ -71,6 +78,11 @@ nav {
 
 .dropdown-item:hover {
     background-color: #f1f1f1;
+}
+.dropdown-user-info {
+    padding: 8px 16px;
+    border-bottom: 1px solid #eee;
+    font-weight: bold;
 }
 
 .logout-button {

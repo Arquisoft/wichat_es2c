@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import Nav from "./components/Nav";
 import "./Home.css";
 
 function Home() {
-    const [user, setUser] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
 
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
@@ -13,23 +13,26 @@ function Home() {
                 className="container"
                 style={{
                     flex: 1,
-                    backgroundImage: "url('/logo.jpg')",
+                    backgroundImage: "url('/bg.jpg')",
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",
                     position: "relative"
                 }}
             >
-                <button className="play-button">
+                {!isLoggedIn?( <button className="play-button">
                     <Link to="/login" style={{color: "white"}}>
                         Log in to play
                     </Link>
+                </button> )
+             : (
+                <button className="play-button">
+                    <Link to="/game" style={{color: "white"}}>
+                        Play the game
+                    </Link>
                 </button>
-                {/*<button className="play-button">*/}
-                {/*    <Link to="/game" style={{color: "white"}}>*/}
-                {/*        Play the game*/}
-                {/*    </Link>*/}
-                {/*</button>*/}
+                    )
+            }
             </div>
         </div>
     );
