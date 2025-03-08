@@ -16,6 +16,12 @@ For the database, we have chosen MongoDB, which is a non-relational database.
 
 To deploy the application, we will use a server owned by one of the team members.
 
+*03/03/2025*
+
+We have decided to switch from using TypeScript to JavaScript due to issues when working with it. Initially, we thought it would help us write more readable code since TypeScript is JavaScript with static typing, but in the end, we will use JavaScript.
+
+We have decided to use CSS Modules because it prevents style collisions, is more organized, and easier to maintain.
+
 
 [role="arc42help"]
 
