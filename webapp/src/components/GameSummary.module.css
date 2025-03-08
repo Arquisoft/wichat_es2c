@@ -28,6 +28,19 @@
     border-right: 2px solid black;
 }
 
+.TimesElement{
+    align-items: flex-start;
+}
+
+.totalTime{
+    text-align: left;
+    
+}
+
+.timePerQuestion{
+    text-align: left;
+}
+
 .answersContainer {
     flex: 1;
     display: flex;

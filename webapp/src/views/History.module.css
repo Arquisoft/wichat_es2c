@@ -77,3 +77,10 @@
   grid-template-columns: 1fr;
   gap: 20px;
 }
+
+
+
+.pagination{
+  background-color: white;
+  justify-content: center;
+}

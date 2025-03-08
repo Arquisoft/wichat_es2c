@@ -20,8 +20,8 @@ export const GameSummary = ({ date, hour, correctAnswers, wrongAnswers, time }) 
             </div>
 
             <div className={styles.TimesElement}>
-                <h3>Total time: {time}</h3>
-                <h4>Time per question: {timePerQuestion}</h4>
+                <h3 className={styles.totalTime}>Total time: {time}</h3>
+                <h3 className={styles.timePerQuestion}>Time per question: {timePerQuestion}</h3>
             </div>
 
             <div className={styles.QuestionButtonElement}>

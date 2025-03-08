@@ -3,7 +3,9 @@ import "./History.css"
 import styles from "./History.module.css";
 import Nav from "../components/Nav";
 import { PieChart } from "@mui/x-charts/PieChart";
-import {GameSummary} from "../components/GameSummary"
+import {GameSummary} from "../components/GameSummary";
+
+import Pagination from '@mui/material/Pagination';
 
 const History = () => {
   const statistics = {
@@ -23,70 +25,32 @@ const History = () => {
   );
 
   const games = [
-    {
-      date: "2021-10-10",
-      hour: "10:00",
-      correctAnswers: 10,
-      wrongAnswers: 5,
-      time: 10,
-    },
-    {
-      date: "2021-10-10",
-      hour: "10:00",
-      correctAnswers: 10,
-      wrongAnswers: 5,
-      time: 10,
-    },
-    {
-      date: "2021-10-10",
-      hour: "10:00",
-      correctAnswers: 10,
-      wrongAnswers: 5,
-      time: 10,
-    },
-    {
-      date: "2021-10-10",
-      hour: "10:00",
-      correctAnswers: 10,
-      wrongAnswers: 5,
-      time: 10,
-    },
-    {
-      date: "2021-10-10",
-      hour: "10:00",
-      correctAnswers: 10,
-      wrongAnswers: 5,
-      time: 10,
-    },
-    {
-      date: "2021-10-10",
-      hour: "10:00",
-      correctAnswers: 10,
-      wrongAnswers: 5,
-      time: 10,
-    },
-    {
-      date: "2021-10-10",
-      hour: "10:00",
-      correctAnswers: 10,
-      wrongAnswers: 5,
-      time: 10,
-    },
-    {
-      date: "2021-10-10",
-      hour: "10:00",
-      correctAnswers: 10,
-      wrongAnswers: 5,
-      time: 10,
-    },
-    {
-      date: "2021-10-10",
-      hour: "10:00",
-      correctAnswers: 10,
-      wrongAnswers: 5,
-      time: 10,
-    },
+    { date: "2021-10-10", hour: "10:00", correctAnswers: 10, wrongAnswers: 5, time: 10 },
+    { date: "pipom", hour: "10:00", correctAnswers: 10, wrongAnswers: 5, time: 10 },
+    { date: "papom", hour: "10:00", correctAnswers: 10, wrongAnswers: 5, time: 10 },
+    { date: "2021-10-10", hour: "10:00", correctAnswers: 10, wrongAnswers: 5, time: 10 },
+    { date: "2021-10-10", hour: "10:00", correctAnswers: 10, wrongAnswers: 5, time: 10 },
+    { date: "2021-10-10", hour: "10:00", correctAnswers: 10, wrongAnswers: 5, time: 10 },
+    { date: "parapa", hour: "10:00", correctAnswers: 10, wrongAnswers: 5, time: 10 },
+    { date: "2021-10-10", hour: "10:00", correctAnswers: 10, wrongAnswers: 5, time: 10 },
+    { date: "popem", hour: "10:00", correctAnswers: 10, wrongAnswers: 5, time: 10 },
+    { date: "pempo", hour: "10:00", correctAnswers: 10, wrongAnswers: 5, time: 10 },
   ];
+
+  const [page, setPage] = React.useState(1);
+  const itemsPerPage = 5;
+
+  const numPages = Math.ceil(games.length / itemsPerPage);
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
+  const indexOfLastItem = page * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const gamesCurrentPage = games.slice(indexOfFirstItem, indexOfLastItem);
+
+
 
   return (
     <>
@@ -161,11 +125,10 @@ const History = () => {
         </div>
 
         
-        <h1></h1>  {/* TEMPORAL.- Agregar un espacio entre los elementos */}
-        
+         {/*Mirar de agregar un espacio entre los elementos */}
 
         <div className={styles.gamesHistoryContainer}>
-          {games.map((game, index) => (
+          {gamesCurrentPage.map((game, index) => (
             <GameSummary
               key={index}
               date={game.date}
@@ -177,6 +140,9 @@ const History = () => {
           ))}
         </div>
 
+        <div className={styles.paginationContainer}>
+          <Pagination count={numPages} page={page} onChange={handlePageChange} color="primary" className={styles.pagination}/>
+        </div>
 
       </div>
     </>
