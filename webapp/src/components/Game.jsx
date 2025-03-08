@@ -8,11 +8,12 @@ import Box from '@mui/material/Box';
 import { HomeButton, ChartButton, ReplayButton, ButtonContainer } from './ModelButtons';
 
 import PopChat from './ChatBot/Popchat';
+import Timer from './Timer'; // Importamos el componente Timer
 
 
 function Game() {
   const navigate = useNavigate();
-  
+
   const questions = [
     {
       question: "What is the capital of France?",
@@ -32,6 +33,8 @@ function Game() {
   const [fadeIn, setFadeIn] = useState(false);
   const [buttonsActive, setButtonsActive] = useState(true);
   const [showChatBot, setShowChatBot] = useState(false);
+  const [timeOut, setTimeOut] = useState(false); // Contador
+  const [showTimeOutModal, setShowTimeOutModal] = useState(false); // Nuevo estado para el dialogo modal que aparece cuando se acaba el tiempo
 
   const handleButtonClick = (index) => {
     setTimeout(() => {
@@ -54,52 +57,98 @@ function Game() {
   const handleHomeClick = () => navigate('/');
   const handleHistoryClick = () => navigate('/history');
   const handleReplayClick = () => {
-    setOpen(false);
+    setTimeOut(false);
+    setShowTimeOutModal(false);
     setButtonsActive(false);
-    setTimeout(() => setButtonsActive(true), 50);
+    setTimeout(() => {
+      setButtonsActive(true);  // Habilitar los botones
+    }, 50);
   };
 
+  // Función que se llama cuando el tiempo se ha agotado
+  const handleTimeOut = () => {
+    setTimeOut(true);
+    setShowTimeOutModal(true);  // Muestra el modal de tiempo agotado
+  };
 
   return (
     <div className={styles.containerLayout}>
-    {/* Sección de la imagen */}
-    <div className={styles.imageContainer}>
-      <img 
-        src={`${process.env.PUBLIC_URL}/photo.jpg`} 
-        alt="Game" 
-      />
-    </div>
-
-    {/* Sección de contenido */}
-    <div className={styles.contentContainer}>
-
-      {/* Pregunta */}
-      <div className={styles.questionContainer}>
-        {questions[0].question}
+      {/* Sección de la imagen */}
+      <div className={styles.imageContainer}>
+        <img
+          src={`${process.env.PUBLIC_URL}/photo.jpg`}
+          alt="Game"
+        />
       </div>
 
-      {/* Opciones en Grid */}
-      <div className={styles.optionsGrid}>
-        {questions[0].options.map((option, index) => (
-          <AwesomeButton
-            key={index}
-            type="secondary"
-            active={buttonsActive}
-            className={`${styles.awsBtn} ${
-              questions[0].correctAnswer === index ? styles.buttonActive : styles.buttonInactive
-            }`}
-            onPress={() => handleButtonClick(index)}
+      {/* Sección de contenido */}
+      <div className={styles.contentContainer}>
+
+        {/* Pregunta */}
+        <div className={styles.questionContainer}>
+          {questions[0].question}
+        </div>
+
+        {/* Opciones en Grid */}
+        <div className={styles.optionsGrid}>
+          {questions[0].options.map((option, index) => (
+            <AwesomeButton
+              key={index}
+              type="secondary"
+              active={buttonsActive && !timeOut} // Cuando el tiempo se acaba se desactivan los botones.
+              className={`${styles.awsBtn} ${questions[0].correctAnswer === index ? styles.buttonActive : styles.buttonInactive
+                }`}
+              onPress={() => handleButtonClick(index)}
+            >
+              {option}
+            </AwesomeButton>
+          ))}
+        </div>
+
+        {/* Usamos el componente Timer */}
+        <Timer onTimeOut={handleTimeOut} resetTimer={!timeOut} />
+
+        {timeOut && (
+          <div className={styles.timeOutMessage}>
+            <h2>¡El tiempo se ha acabado!</h2>
+          </div>
+        )}
+
+        {/* Seccion para mostrar el chatbot */}
+        <div className={styles.chatContainer}>
+          <PopChat messages={msgs} getMessage={getMessage} />
+        </div>
+
+        {/* Modal para el tiempo agotado */}
+        <Modal
+          open={showTimeOutModal}  // Este estado controlará la visibilidad del modal
+          onClose={() => setShowTimeOutModal(false)}  // Permite que el modal se cierre cuando se haga clic fuera
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 400,
+              bgcolor: 'background.paper',
+              borderRadius: '10px',
+              boxShadow: 24,
+              p: 4,
+              textAlign: 'center',
+            }}
           >
-            {option}
-          </AwesomeButton>
-        ))}
-      </div>
+            <h2>⏳ ¡El tiempo se ha acabado!</h2>
+            <p>¿Quieres intentarlo de nuevo?</p>
+            <ButtonContainer>
+              <ReplayButton onClick={handleReplayClick}>🔄 Reintentar</ReplayButton>
+              <HomeButton onClick={handleHomeClick}>🏠 Volver a Inicio</HomeButton>
+            </ButtonContainer>
+          </Box>
+        </Modal>
 
-      {/* Seccion para mostrar el chatbot */}
-      <div className={styles.chatContainer}>
-        <PopChat messages={msgs} getMessage={getMessage}/>
-      </div>
-          
+
+
         <Modal
           disableEnforceFocus={true}
           open={open}
@@ -134,9 +183,18 @@ function Game() {
               justifyContent: 'space-between',
             }}
           >
-            <h1 id="modal-title" className={styles.winnerTitle}>tonto quien lo lea jiji</h1>
+            {timeOut ? (
+              <h1 className={styles.winnerTitle}>¡El tiempo se ha acabado! ⏳</h1>
+            ) : (
+              <h1 className={styles.winnerTitle}>tonto quien lo lea jiji</h1>
+            )}
+
             <div className={styles.scoreContainer}>
-              <h2 className={styles.scoreText}>Puntuación: NO 😡😡😡</h2>
+              {timeOut ? (
+                <h2 className={styles.scoreText}>Se acabó el tiempo 😡</h2>
+              ) : (
+                <h2 className={styles.scoreText}>Puntuación: NO 😡😡😡</h2>
+              )}
             </div>
 
             <ButtonContainer>
