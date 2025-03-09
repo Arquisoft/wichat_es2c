@@ -55,24 +55,29 @@ endif::arc42help[]
 
 [options="header"]
 |===
-| Quality Requirement | Scenario | Expected Outcome
+| Prority | Quality Requirement | Scenario | Expected Outcome
 
+| 1
 | Usability
 | A user enters the game and wants to play.
 | They should have no issues logging in and understanding the game rules.
 
+| 4
 | Performance
 | A large number of people join the game.
 | This should not impact waiting times.
 
+| 2
 | Accuracy
 | A player asks the chatbot for hints.
 | The chatbot should not give the answer but also should not provide false hints.
 
+| 3
 | Scalability
 | A new feature is added to the game.
 | Other features should not be affected.
 
+| 5
 | Security
 | A user registers with a password.
 | The password must be securely encrypted and stored in the database.

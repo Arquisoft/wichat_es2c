@@ -1,22 +1,27 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Nav.module.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Nav() {
-    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
 
     const handleLogout = () => {
-        setUser(null);
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        setIsLoggedIn(false);
         setDropdownOpen(false);
+        navigate('/login');
     };
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
     };
 
-    // Close dropdown when clicking outside
+
+
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -33,18 +38,18 @@ export default function Nav() {
     return (
         <nav className={styles.navContainer}>
             <Link to="/home">
-                <img src="/logo.jpg" alt="Logo" className={styles.logo} />
+                <img src="/logo512.png" alt="Logo" className={styles.logo} />
             </Link>
-
             <div>
-                <div className={styles.userDropdown} ref={dropdownRef}>
-                    <div className={styles.dropdownTrigger} onClick={toggleDropdown}>
-                        <img
-                            src="/logo.jpg"
-                            alt="User"
-                            className={styles.userAvatar}
-                        />
-                    </div>
+                {isLoggedIn ? (
+                    <div className={styles.userDropdown} ref={dropdownRef}>
+                        <div className={styles.dropdownTrigger} onClick={toggleDropdown}>
+                            <img
+                                src="/pfp.jpg"
+                                alt="User"
+                                className={styles.userAvatar}
+                            />
+                        </div>  
 
                     {dropdownOpen && (
                         <div className={styles.dropdownMenu}>
@@ -66,15 +71,16 @@ export default function Nav() {
                         </div>
                     )}
                 </div>
-
-                {/*<div className={styles.authLinks}>*/}
-                {/*    <Link to="/login" className={styles.authLink}>*/}
-                {/*        Log in*/}
-                {/*    </Link>*/}
-                {/*    <Link to="/signup" className={styles.authLink}>*/}
-                {/*        Register*/}
-                {/*    </Link>*/}
-                {/*</div>*/}
+            ) : (
+                    <div className={styles.authLinks}>
+                        <Link to="/login" className={styles.authLink}>
+                            Log in
+                        </Link>
+                        <Link to="/signup" className={styles.authLink}>
+                            Register
+                        </Link>
+                    </div>
+                )}
             </div>
         </nav>
     );

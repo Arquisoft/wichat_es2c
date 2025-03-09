@@ -3,7 +3,8 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import Home from "./Home";
-import LoginSignup from "./LoginSignup";
+import Login from "./components/Login";
+import AddUser from "./components/AddUser";
 import History from "./views/History";
 
 
@@ -14,8 +15,9 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/home" element={<Home />} />
-                <Route path="/login" element={<LoginSignup />} />
-                <Route path="/signup" element={<LoginSignup />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<AddUser />} />
+                <Route path="/register" element={<AddUser />} />
                 <Route path="/history" element={<History />} />
             </Routes>
         </>

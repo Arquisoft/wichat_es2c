@@ -1,60 +1,123 @@
-// src/components/AddUser.js
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
+import { TextField, Button, Typography, Box, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
-import { Container, Typography, TextField, Button, Snackbar } from '@mui/material';
-
+import {useNavigate} from "react-router-dom";
+import { Link } from "react-router-dom";
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
-const AddUser = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [openSnackbar, setOpenSnackbar] = useState(false);
+function AddUser() {
+    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
-  const addUser = async () => {
-    try {
-      await axios.post(`${apiEndpoint}/adduser`, { username, password });
-      setOpenSnackbar(true);
-    } catch (error) {
-      setError(error.response.data.error);
-    }
-  };
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate('/home');
+        }
+    }, [isLoggedIn, navigate]);
 
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-  return (
-    <Container component="main" maxWidth="xs" sx={{ marginTop: 4 }}>
-      <Typography component="h1" variant="h5">
-        Add User
-      </Typography>
-      <TextField
-        name="username"
-        margin="normal"
-        fullWidth
-        label="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <TextField
-        name="password"
-        margin="normal"
-        fullWidth
-        label="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <Button variant="contained" color="primary" onClick={addUser}>
-        Add User
-      </Button>
-      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar} message="User added successfully" />
-      {error && (
-        <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError('')} message={`Error: ${error}`} />
-      )}
-    </Container>
-  );
-};
+        if (!username || !password) {
+            setError('Please enter both username and password');
+            return;
+        }
+
+        if (password.length < 3) {
+            setError('Password must be at least 3 characters long');
+            return;
+        }
+
+        if (username.length < 3) {
+            setError('Username must be at least 3 characters long');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const response = await axios.post(`${apiEndpoint}/adduser`, { username, password });
+            setError('');
+            setSuccess(true);
+            setTimeout(() => {
+                navigate('/login');
+            }, 1500);
+        } catch (err) {
+            console.error('Registration error:', err);
+            if (err.response) {
+                setError(err.response.data?.error || 'Registration failed: Server error');
+            } else if (err.request) {
+                setError('Registration failed: No response from server. Please try again.');
+            } else {
+                setError(`Registration failed: ${err.message}`);
+            }
+            setSuccess(false);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Box sx={{ maxWidth: 400, mx: 'auto', p: 2 }}>
+            <Typography variant="h5" component="h1" gutterBottom>
+                Register
+            </Typography>
+            {success && (
+                <Alert severity="success" sx={{ mb: 2 }}>
+                    Successfully registered! Redirecting to login page...
+                </Alert>
+            )}
+            <form onSubmit={handleSubmit}>
+                <TextField
+                    name="username"
+                    label="Username"
+                    fullWidth
+                    margin="normal"
+                    disabled={loading || success}
+                    required
+                    onChange={(e) => setUsername(e.target.value)}
+                    helperText="Username must be at least 3 characters long"
+                />
+                <TextField
+                    name="password"
+                    label="Password"
+                    type="password"
+                    fullWidth
+                    margin="normal"
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading || success}
+                    required
+                    helperText="Password must be at least 3 characters long"
+                />
+                {error && (
+                    <Typography color="error" sx={{ mt: 2 }}>
+                        {error}
+                    </Typography>
+                )}
+                <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    sx={{ mt: 3 }}
+                    disabled={loading || success}
+                >
+                    {loading ? <CircularProgress size={24} /> : 'Register'}
+                </Button>
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                    <Typography variant="body2">
+                        Already have an account?{' '}
+                        <Link to="/login" style={{ textDecoration: 'none' }}>
+                            Login here
+                        </Link>
+                    </Typography>
+                </Box>
+            </form>
+        </Box>
+    );
+}
 
 export default AddUser;
