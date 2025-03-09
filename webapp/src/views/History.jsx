@@ -58,6 +58,9 @@ const History = () => {
 
       <div className={styles.mainContainer}>
         <h1 className={styles.sectionTitle}>Statistics</h1>
+
+        <div className={styles.divider}></div>
+
         <div className={styles.statisticsContainer}>
           <h2 className={styles.scItem1}>CHUPETE 😈😈🔥</h2>
           <h2 className={styles.scItem2}>Games played: 15</h2>
@@ -124,8 +127,7 @@ const History = () => {
           </div>
         </div>
 
-        
-         {/*Mirar de agregar un espacio entre los elementos */}
+        <div className={styles.divider}></div>
 
         <div className={styles.gamesHistoryContainer}>
           {gamesCurrentPage.map((game, index) => (
@@ -139,6 +141,8 @@ const History = () => {
             />
           ))}
         </div>
+
+        <div className={styles.divider}></div>
 
         <div className={styles.paginationContainer}>
           <Pagination count={numPages} page={page} onChange={handlePageChange} color="primary" className={styles.pagination}/>
