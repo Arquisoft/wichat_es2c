@@ -5,11 +5,12 @@
     justify-content: space-between;
     border: 2px solid black;
     border-radius: 10px;
-    padding: 10px;
     width: 100%; /* Ahora ocupa todo el espacio disponible */
     font-family: "Arial", sans-serif;
 
-    background-color: lightgray; /* CAMBIAR TRAS DECIDIR COLORES */
+    /*background-color: #f0eee7;*/
+    /*background-color: #E7E3D4;*/
+    background-color: #f4ebcb;
 }
 
 .dateANDhourElement,
@@ -22,6 +23,10 @@
     padding: 10px;
     flex: 1;
     text-align: center;
+}
+
+.TimesElement {
+    font-style: bold;
 }
 
 .dateANDhourElement {
@@ -56,6 +61,7 @@
     padding: 10px;
     flex: 1; 
     text-align: center;
+    font-size: 1.5rem;
 }
 
 .QuestionButtonElement {
@@ -68,20 +74,21 @@ h3, h4 {
 }
 
 .correctAnswersElement {
-    color: green;
-    font-size: 20px;
+    /*color: green;*/
+    color: #18ba53;
+    /*font-size: 20px;*/
     font-weight: bold;
 }
 
 .answersSeparator {
-    font-size: 22px;
+    /*font-size: 22px;*/
     font-weight: bold;
     margin: 0 5px;
 }
 
 .wrongAnswersElement {
     color: red;
-    font-size: 20px;
+    /*font-size: 20px;*/
     font-weight: bold;
 }
 
