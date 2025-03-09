@@ -22,6 +22,12 @@ function validateRequiredFields(req, requiredFields) {
       if (!(field in req.body)) {
         throw new Error(`Missing required field: ${field}`);
       }
+
+    }
+
+    if (req.body.username.length < 3||
+        req.body.password.length < 3 ) {
+        throw new Error(`Username and password length must be at least 3`);
     }
 }
 
