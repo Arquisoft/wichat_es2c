@@ -8,14 +8,21 @@ const answerSchema = new mongoose.Schema({
 
 const questionSchema = new mongoose.Schema({
     text: String,
-    answers: { type: [answerSchema], required: true},
-})
+    answers: {
+        type: [answerSchema],
+        required: true,
+        validate: {
+            validator: function(v) {
+                return v.length === 4;
+            },
+        },
+} })
+
 
 const matchSchema = new mongoose.Schema({
     date: { type: Date, default: Date.now },
     question: { type: [questionSchema], required: true },
     time: { type: Number, required: true },
-    dni: { type: String, required: true },
     score : { type: Number, required: true },
 });
 
