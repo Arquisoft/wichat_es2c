@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import "./nav.css";
+import styles from "./Nav.module.css";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Nav() {
@@ -36,55 +36,47 @@ export default function Nav() {
     }, []);
 
     return (
-        <nav style={{ alignItems: "center", justifyContent: "space-between" }}>
+        <nav className={styles.navContainer}>
             <Link to="/home">
-                <img src="/logo512.png" alt="Logo" style={{ height: "60px" }} />
+                <img src="/logo512.png" alt="Logo" className={styles.logo} />
             </Link>
             <div>
                 {isLoggedIn ? (
-                    <div className="user-dropdown" ref={dropdownRef}>
-                        <div className="dropdown-trigger" onClick={toggleDropdown}>
+                    <div className={styles.userDropdown} ref={dropdownRef}>
+                        <div className={styles.dropdownTrigger} onClick={toggleDropdown}>
                             <img
-                                src="/pfp.png"
+                                src="/pfp.jpg"
                                 alt="User"
-                                style={{
-                                    height: "47px",
-                                    width: "47px",
-                                    borderRadius: "60%",
-                                    cursor: "pointer"
-                                }}
+                                className={styles.userAvatar}
                             />
-                        </div>
+                        </div>  
 
-                        {dropdownOpen && (
-                            <div className="dropdown-menu">
-                                <div className="dropdown-content">
-                                    <div className="dropdown-user-info">
-                                        <p>Hello, {localStorage.getItem('username') || 'User'}</p>
-                                    </div>
-                                    <Link
-                                        to="/history"
-                                        className="dropdown-item"
-                                        onClick={() => setDropdownOpen(false)}
-                                    >
-                                        View History
-                                    </Link>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="dropdown-item logout-button"
-                                    >
-                                        Log out
-                                    </button>
-                                </div>
+                    {dropdownOpen && (
+                        <div className={styles.dropdownMenu}>
+                            <div className={styles.dropdownContent}>
+                                <Link
+                                    to="/history"
+                                    className={styles.dropdownItem}
+                                    onClick={() => setDropdownOpen(false)}
+                                >
+                                    View History
+                                </Link>
+                                <button
+                                    onClick={handleLogout}
+                                    className={`${styles.dropdownItem} ${styles.logoutButton}`}
+                                >
+                                    Log out
+                                </button>
                             </div>
-                        )}
-                    </div>
-                ) : (
-                    <div className="auth-links">
-                        <Link to="/login" className="auth-link">
+                        </div>
+                    )}
+                </div>
+            ) : (
+                    <div className={styles.authLinks}>
+                        <Link to="/login" className={styles.authLink}>
                             Log in
                         </Link>
-                        <Link to="/signup" className="auth-link">
+                        <Link to="/signup" className={styles.authLink}>
                             Register
                         </Link>
                     </div>

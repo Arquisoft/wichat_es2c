@@ -1,0 +1,9 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+
+  /*background-color: #E7E3D4 !important;*/
+  background-color: #8590AA !important;
+}
