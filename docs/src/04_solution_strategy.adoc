@@ -3,6 +3,43 @@ ifndef::imagesdir[:imagesdir: ../images]
 [[section-solution-strategy]]
 == Solution Strategy
 
+=== Technologies
+* *React*: JavaScript library for web and native user interfaces. It allows developers to create interactive web applications by breaking down the UI into reusable components. React uses a declarative approach to efficiently update and render components, resulting in faster and more maintainable code. It's widely adopted in the industry due to its simplicity, performance, and robustness.
+* *Node.js*: JavaScript runtime that enables running JavaScript code outside of web browsers. It's renowned for its event-driven architecture and extensive collection of packages, making it ideal for building scalable server-side applications.
+* *Wikidata*: Wikidata provides a REST API for retrieving information related to any topic. It helps us to dynamically generate questions for our game using it from any programming language. 
+* *MongoDB*: popular NoSQL database known for its flexibility and scalability. It stores data in flexible JSON-like documents and is widely used in modern web development for its simplicity and ability to handle large volumes of data.
+* *Arc42*: framework (template) used for documenting and communicating software architectures. It provides a template for describing the architecture of a software system, covering aspects such as stakeholders, requirements, architecture decisions, components, interfaces, and quality attributes. arc42 helps teams create consistent and comprehensible architecture documentation, enabling better communication, understanding, and maintenance of software systems throughout their lifecycle.
+* *npm*: default package manager for Node.js, providing a command-line interface to install, manage, and publish JavaScript packages. With over a million packages available in its registry, npm simplifies adding functionality to Node.js projects by handling dependencies and providing tools for versioning and publishing packages.
+* *Docker*: platform that will be used for deploying our services inside containers. Containers are lightweight, portable, and self-sufficient units that contain everything needed to run an application, including the code, runtime, system tools, libraries, and settings. Docker enables developers to package their applications along with all dependencies into containers, ensuring consistency across different environments, such as development, testing, and production.
+* *GitHub Actions*: built-in automation tool on GitHub that allows us to automate some workflows that are triggered after some specific github branches actions at development. It provides as continuous integration of the game functionality.
+* *Azure*: Cloud computing service used for creating virtual machines and running Docker containers. Azure provides a scalable and flexible infrastructure for hosting our microservices-based application, ensuring high availability and reliability.
+* *GitHub*: Version control and project management platform used for managing our game project. GitHub provides features for collaboration, issue tracking, and code review, facilitating efficient development workflows and team communication.
+
+
+=== Technological decisions
+
+We have decided to develop the Wikidata API in TypeScript because it is similar to JavaScript but also has static type checking.
+
+=== Architecture & Design
+
+* *Microservices*: Our game is built using a microservices architecture, which structures the application as a collection of loosely coupled services. Each service encapsulates a specific functionality or business capability, allowing for independent development, deployment, and scaling. By adopting microservices, we promote modularity and flexibility, enabling rapid iteration and innovation.
+
+* *Containerization with Docker*: We leverage Docker containerization to package each microservice and its dependencies into lightweight, portable containers. Docker provides a consistent environment across different stages of the development lifecycle, ensuring seamless deployment and scalability. With Docker, we can easily spin up new instances of services, manage dependencies, and streamline our development and deployment workflows.
+
+* *API Gateway*: We employ an API gateway as a centralized entry point for all client requests to our microservices. The API gateway serves as a reverse proxy, routing incoming requests to the appropriate microservice based on predefined rules and policies. It provides a unified interface for clients to interact with our system, abstracting away the complexities of the underlying microservices architecture. By consolidating access through the API gateway, we enhance security, governance, and performance while simplifying client interactions.
+
+* *Scalability and Elasticity*: With our microservices architecture orchestrated with Docker, we achieve horizontal scalability and elasticity to handle fluctuations in traffic and workload. Docker's container-based approach enables us to dynamically scale individual services based on demand, ensuring optimal resource utilization and cost efficiency. Combined with automated scaling policies and monitoring, we maintain responsiveness and availability during peak usage periods.
+
+
+=== Team Organization
+
+For developing this project we are using Github as the control version systems. 
+The master branch contains the final version of the product, so that every accepted pull request to master branch will be considered as a new release.
+
+* *Documentation*: it must be always updated for making our work valuable and consistent.
+* *Weekly meetings*: Weekly discussions about what has been done and what needs to be done will be key for our team success. 
+* *Github*: this control version systems not only allows us to share and collabortively write code, but also provides other resources such as issues and project management (kanban board) tools for organizing the work to be done. Also, wiki section allows us to save all of our minutes from each scheduled meeting.
+* *Whatsapp*: will allow us to be in constant communication for helping each other out whenever needed. 
 
 ifdef::arc42help[]
 [role="arc42help"]

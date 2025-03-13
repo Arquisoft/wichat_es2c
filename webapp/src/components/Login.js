@@ -1,96 +1,103 @@
-// src/components/Login.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
-import { Container, Typography, TextField, Button, Snackbar } from '@mui/material';
-import { Typewriter } from "react-simple-typewriter";
+import { useNavigate } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const [loginSuccess, setLoginSuccess] = useState(false);
-  const [createdAt, setCreatedAt] = useState('');
-  const [openSnackbar, setOpenSnackbar] = useState(false);
+function Login() {
+    const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+   // const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
+   // const message = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey })
+   // setMessage(message.data.answer); left this as a reference for future use
 
-  const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-  const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate('/home');
+        }
+    }, [isLoggedIn, navigate]);
 
-  const loginUser = async () => {
-    try {
-      const response = await axios.post(`${apiEndpoint}/login`, { username, password });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-      const question = "Please, generate a greeting message for a student called " + username + " that is a student of the Software Architecture course in the University of Oviedo. Be nice and polite. Two to three sentences max.";
-      const model = "empathy"
+        if (!username || !password) {
+            setError('Please enter both username and password');
+            return;
+        }
+        setLoading(true);
+        try {
+            const response = await axios.post(`${apiEndpoint}/login`, { username, password });
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('username', response.data.username);
+            setIsLoggedIn(true);
+        } catch (err) {
+            if (err.response) {
+                setError(err.response.data?.error || 'Login failed: Server error');
+            } else if (err.request) {
+                setError('Login failed: No response from server. Please try again.');
+            } else {
+                setError(`Login failed: ${err.message}`);
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      if (apiKey==='None'){
-        setMessage("LLM API key is not set. Cannot contact the LLM.");
-      }
-      else{
-        const message = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey })
-        setMessage(message.data.answer);
-      }
-      // Extract data from the response
-      const { createdAt: userCreatedAt } = response.data;
-
-      setCreatedAt(userCreatedAt);
-      setLoginSuccess(true);
-
-      setOpenSnackbar(true);
-    } catch (error) {
-      setError(error.response.data.error);
-    }
-  };
-
-  const handleCloseSnackbar = () => {
-    setOpenSnackbar(false);
-  };
-
-  return (
-    <Container component="main" maxWidth="xs" sx={{ marginTop: 4 }}>
-      {loginSuccess ? (
-        <div>
-          <Typewriter
-            words={[message]} // Pass your message as an array of strings
-            cursor
-            cursorStyle="|"
-            typeSpeed={50} // Typing speed in ms
-          />
-          <Typography component="p" variant="body1" sx={{ textAlign: 'center', marginTop: 2 }}>
-            Your account was created on {new Date(createdAt).toLocaleDateString()}.
-          </Typography>
-        </div>
-      ) : (
-        <div>
-          <Typography component="h1" variant="h5">
-            Login
-          </Typography>
-          <TextField
-            margin="normal"
-            fullWidth
-            label="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <TextField
-            margin="normal"
-            fullWidth
-            label="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button variant="contained" color="primary" onClick={loginUser}>
-            Login
-          </Button>
-          <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar} message="Login successful" />
-          {error && (
-            <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError('')} message={`Error: ${error}`} />
-          )}
-        </div>
-      )}
-    </Container>
-  );
-};
+    return (
+        <Box sx={{ maxWidth: 400, mx: 'auto', p: 2 }}>
+            <Typography variant="h5" component="h1" gutterBottom>
+                Login
+            </Typography>
+            <form onSubmit={handleSubmit}>
+                <TextField
+                    name="username"
+                    label="Username"
+                    fullWidth
+                    margin="normal"
+                    disabled={loading}
+                    required
+                    onChange={(e) => setUsername(e.target.value)}
+                />
+                <TextField
+                    name="password"
+                    label="Password"
+                    type="password"
+                    fullWidth
+                    margin="normal"
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading}
+                    required
+                />
+                {error && (
+                    <Typography color="error" sx={{ mt: 2 }}>
+                        {error}
+                    </Typography>
+                )}
+                <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    sx={{ mt: 3 }}
+                    disabled={loading}
+                >
+                    {loading ? <CircularProgress size={24} /> : 'Login'}
+                </Button>
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                    <Typography variant="body2">
+                        Don't have an account?{' '}
+                        <Link to="/signup" style={{ textDecoration: 'none' }}>
+                            Register here
+                        </Link>
+                    </Typography>
+                </Box>
+            </form>
+        </Box>
+    );
+}
 
 export default Login;

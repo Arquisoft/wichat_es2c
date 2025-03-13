@@ -1,0 +1,49 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  overflow: hidden;
+}
+
+.container {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: crisp-edges;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.play-button {
+  font-size: 2rem;
+  padding: 20px 40px;
+  background-color: blue;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  position: absolute;
+  bottom: 5%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.play-button:hover {
+  background-color: #0056b3;
+}
+
+.play-button a {
+  color: white;
+  text-decoration: none;
+  display: block;
+}
