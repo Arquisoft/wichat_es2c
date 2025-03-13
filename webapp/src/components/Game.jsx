@@ -8,12 +8,13 @@ import Box from '@mui/material/Box';
 import { HomeButton, ChartButton, ReplayButton, ButtonContainer } from './ModelButtons';
 
 import PopChat from './ChatBot/Popchat';
-import Timer from './Timer'; // Importamos el componente Timer
+import Timer from './Timer';
+import axios from "axios"; // Importamos el componente Timer
 
 
 function Game() {
   const navigate = useNavigate();
-
+  const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8004';
   const questions = [
     {
       question: "What is the capital of France?",
@@ -22,7 +23,31 @@ function Game() {
     }
   ];
 
-  //Mensajes del chatbot
+    useEffect(() => {
+        const addMatch = async () => {
+            //si no pones esto se llama dos veces ns por que
+            const matchAdded = localStorage.getItem("matchAdded");
+            if (matchAdded) return;
+            try {
+                const response = await axios.post(`${apiEndpoint}/addMatch`, {
+                    username: localStorage.getItem("username"),
+                });
+                localStorage.setItem("matchAdded", "true");
+                //console.log("Match añadido con éxito:", response.data);
+            } catch (error) {
+                console.error("Error al añadir el match:", error);
+            }
+        };
+
+        addMatch();
+
+        return () => {
+            localStorage.removeItem("matchAdded");
+        };
+    }, [apiEndpoint]);
+
+
+    //Mensajes del chatbot
   const [msgs, setMsgs] = useState(["Guayaba"]); //de esta manera uso el estado y se muestran los cambios de mensajes en el chat
   const getMessage = (msg) => {
     //msgs.push(msg);
@@ -36,13 +61,28 @@ function Game() {
   const [timeOut, setTimeOut] = useState(false); // Contador
   const [showTimeOutModal, setShowTimeOutModal] = useState(false); // Nuevo estado para el dialogo modal que aparece cuando se acaba el tiempo
 
-  const handleButtonClick = (index) => {
-    setTimeout(() => {
-      setOpen(true);
-    }, 0);
-  };
+    const handleButtonClick = async (index) => {
+        const selectedOption = questions[0].options[index];
+        const questionText = questions[0].question;
+        try {
+            const response = await axios.post(`${apiEndpoint}/addQuestion`, {
+                username: localStorage.getItem("username"),
+                question: questionText,
+                questions: [questions[0]],
+                answers: questions[0].options,
+                selectedAnswer: selectedOption,
+            });
 
-  const handleChatBotToggle = () => {
+        } catch (error) {
+            console.error(error);
+        }
+
+        setTimeout(() => {
+            setOpen(true);
+        }, 0);
+    };
+
+    const handleChatBotToggle = () => {
     setShowChatBot(!showChatBot);
   };
 
@@ -66,10 +106,20 @@ function Game() {
   };
 
   // Función que se llama cuando el tiempo se ha agotado
-  const handleTimeOut = () => {
-    setTimeOut(true);
-    setShowTimeOutModal(true);  // Muestra el modal de tiempo agotado
-  };
+    const handleTimeOut = async () => {
+        try {
+            // Add 'await' here to wait for the response
+            const response = await axios.post(`${apiEndpoint}/endMatch`, {
+                username: localStorage.getItem("username"),
+                time: 60, //no se donde se guarda el tiempo asi que pongo 60
+            });
+            //console.log("Match actualizado", response.data);
+        } catch (error) {
+            console.error("Error al enviar la pregunta:", error);
+        }
+        setTimeOut(true);
+        setShowTimeOutModal(true);  // Muestra el modal de tiempo agotado
+    };
 
   return (
     <div className={styles.containerLayout}>
