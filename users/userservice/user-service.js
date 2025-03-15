@@ -22,6 +22,12 @@ function validateRequiredFields(req, requiredFields) {
       if (!(field in req.body)) {
         throw new Error(`Missing required field: ${field}`);
       }
+
+    }
+
+    if (req.body.username.length < 3||
+        req.body.password.length < 3 ) {
+        throw new Error(`Username and password length must be at least 3`);
     }
 }
 
@@ -29,7 +35,10 @@ app.post('/adduser', async (req, res) => {
     try {
         // Check if required fields are present in the request body
         validateRequiredFields(req, ['username', 'password']);
-
+        const existingUser = await User.findOne({ username: req.body.username });
+        if (existingUser) {
+            return res.status(400).json({ error: 'Username already exists' });
+        }
         // Encrypt the password before saving it
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
@@ -37,7 +46,6 @@ app.post('/adduser', async (req, res) => {
             username: req.body.username,
             password: hashedPassword,
         });
-
         await newUser.save();
         res.json(newUser);
     } catch (error) {

@@ -1,8 +1,8 @@
 ifndef::imagesdir[:imagesdir: ../images]
-
+Wichat is a trivia-like game that retrieves information from Wikimedia and uses it to ask users questions accompanied by images. It also features its own trained AI chatbot to assist users by providing hints.
 [[section-context-and-scope]]
 == Context and Scope
-
+image::scope.png["Overall System"]
 
 ifdef::arc42help[]
 [role="arc42help"]
@@ -51,9 +51,14 @@ The title of the table is the name of your system, the three columns contain the
 ****
 endif::arc42help[]
 
-**<Diagram or Table>**
-
-**<optionally: Explanation of external domain interfaces>**
+[options="header",cols="1,2,2"]
+|===
+| Communications | Ins | Outs
+| _User_ | Interactions with the application | Responses to said interactions.
+| _Wichat_ | WikiData information | Various information received from the APIs and the database.
+| _Wikidata_ | Requests by the application | Responses to said requests with the information stored in Wikidata.
+| _AI chat bot_ | Questions by the user | Responses in text format with hints about the user's question, from Wikidata.
+|===
 
 === Technical Context
 
@@ -73,8 +78,17 @@ together with a mapping table showing the relationships between channels and inp
 ****
 endif::arc42help[]
 
-**<Diagram or Table>**
+[options="header",cols="1,2"]
+|===
+| Technology | Description
+| _TypeScript_ | Language used for most of the application development.
+| _React_ | For user interfaces.
+| _Wikidata_ | Information base used to formulate questions.
+| _MongoDB_ | Database used to store question data.
+| _GitHub_ | Code collaboration platform.
+| _Undecided_ | AI help bot.
+| _Undecided_ | Web host.
+|===
 
-**<optionally: Explanation of technical interfaces>**
 
-**<Mapping Input/Output to Channels>**
+

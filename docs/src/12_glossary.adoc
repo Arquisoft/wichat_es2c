@@ -36,9 +36,30 @@ endif::arc42help[]
 |===
 |Term |Definition
 
-|<Term-1>
-|<definition-1>
+|<TypeScript>
+|<TypeScript is a strongly typed, object-oriented, compiled programming language that builds on JavaScript by adding static typing. Is the programming lenguage we are using>
 
-|<Term-2>
-|<definition-2>
+|<Node.js>
+|<An open-source, cross-platform runtime environment that allows you to run JavaScript(or TypeScript in our case) code outside of a web browser. We are using it in the back-end. We are using it in the front-end part of the app.>
+
+|<React>
+|<React is an open-source JavaScript library used to build user interfaces.We are using it in the front-end part of the app.>
+
+|<MVC>
+|< It is a software architectural pattern commonly used for developing user interfaces. It divides an application into three interconnected components, Model, View and Controller.>
+
+|<Arc42>
+|<A set of different guidelines to follow for the documentation of a software process.>
+
+|<Docker>
+|<An open-source platform that automates the deployment of applications within software containers.>
+
+|<Front-end>
+|<The part of a website or application that users interact with directly, including the design, layout, and user interface (UI).>
+
+|<Back-end>
+|<The server-side of an application, where data processing, storage, and business logic happen, and it communicates with the front-end.>
+
+|<Wikidata>
+|<Wikidata is a free, collaborative, multilingual knowledge base that stores structured data.>
 |===
