@@ -45,7 +45,7 @@ export default function Nav() {
                     <div className={styles.userDropdown} ref={dropdownRef}>
                         <div className={styles.dropdownTrigger} onClick={toggleDropdown}>
                             <img
-                                src="/pfp.jpg"
+                                src="/pfp.png"
                                 alt="User"
                                 className={styles.userAvatar}
                             />
