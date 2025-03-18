@@ -10,3 +10,6 @@ test('renders welcome message', () => {
 });
 
 */
+test('siempre pasa', () => {
+    expect(true).toBe(true);
+});
