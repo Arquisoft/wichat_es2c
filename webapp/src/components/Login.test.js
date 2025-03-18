@@ -1,10 +1,10 @@
-import React from 'react';
+/*import React from 'react';
 import { render, fireEvent, screen, waitFor, act } from '@testing-library/react';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 
 const mockAxios = new MockAdapter(axios);
-
+*/
 //describe('Loginview component', () => {
  // beforeEach(() => {
   //  mockAxios.reset();
