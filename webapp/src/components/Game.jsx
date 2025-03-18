@@ -19,6 +19,7 @@ function Game() {
     const [isCorrect, setIsCorrect] = useState(false); // Estado para saber si la respuesta es correcta
     const [msgs, setMsgs] = useState(["Guayaba"]); // Mensajes del chatbot
 
+    const [showFailModal, setShowFailModal] = useState(false); // Estado para el modal de fallo
     const [buttonsActive, setButtonsActive] = useState(true);
     const [timeOut, setTimeOut] = useState(false); // Estado para controlar el tiempo
     const [showTimeOutModal, setShowTimeOutModal] = useState(false); // Modal para el tiempo agotado
@@ -55,29 +56,42 @@ function Game() {
     const handleButtonClick = async (index) => {
         if (!questionData) return;
 
+        // Deshabilitar los botones temporalmente
+        setButtonsActive(false);
+
         const selectedOption = questionData.choices[index];
         setSelectedAnswer(selectedOption); // Guardar la respuesta seleccionada
 
         // Verificar si la respuesta es correcta
         if (selectedOption === questionData.correctAnswer) {
             setIsCorrect(true); // Marcar como correcta
-
-            // Reiniciar el contador y cargar una nueva pregunta después de 1 segundo
             setTimerReset(true); // Activar el reinicio del contador
+
+            // Esperar 1 segundo antes de cargar una nueva pregunta
             setTimeout(() => {
                 fetchNewQuestion(); // Cargar una nueva pregunta
+                setButtonsActive(true); // Reactivar los botones
                 setTimerReset(false); // Desactivar el reinicio del contador
-            }, 1000); // Esperar 1 segundo antes de cambiar
+            }, 200); // Esperar 1 segundo
         } else {
             setIsCorrect(false); // Marcar como incorrecta
             setTimeOut(true); // Detener el contador
-            setShowTimeOutModal(true); // Mostrar modal de tiempo agotado
+            setShowFailModal(true); // Mostrar modal de fallo
+            setButtonsActive(true); // Reactivar los botones
         }
     };
 
     // Función para manejar los mensajes del chatbot
     const getMessage = (msg) => {
         setMsgs((prevMsgs) => [...prevMsgs, msg]);
+    };
+
+    const handleRestartGame = () => {
+        setShowFailModal(false); // Ocultar el modal de fallo
+        setTimeOut(false); // Reiniciar el estado de tiempo agotado
+        setButtonsActive(true); // Reactivar los botones
+        setTimerReset(true); // Reiniciar el contador
+        fetchNewQuestion(); // Cargar una nueva pregunta
     };
 
     // Funciones de navegación
@@ -131,6 +145,34 @@ function Game() {
                     </div>
                 )}
 
+                {/* Modal para cuando el usuario falle */}
+                <Modal
+                    open={showFailModal}
+                    onClose={() => setShowFailModal(false)}
+                >
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: 400,
+                            bgcolor: 'background.paper',
+                            borderRadius: '10px',
+                            boxShadow: 24,
+                            p: 4,
+                            textAlign: 'center',
+                        }}
+                    >
+                        <h2>❌ ¡Respuesta incorrecta!</h2>
+                        <p>La respuesta correcta era: <strong>{questionData?.correctAnswer}</strong></p>
+                        <ButtonContainer>
+                            <ReplayButton onClick={handleRestartGame}>🔄 Reintentar</ReplayButton>
+                            <HomeButton onClick={handleHomeClick}>🏠 Volver a Inicio</HomeButton>
+                        </ButtonContainer>
+                    </Box>
+                </Modal>
+
                 {/* Opciones en Grid */}
                 {questionData && (
                     <div className={styles.optionsGrid}>
@@ -138,12 +180,12 @@ function Game() {
                             <AwesomeButton
                                 key={index}
                                 type="secondary"
-                                active={buttonsActive && !timeOut} // Desactivar botones si el tiempo se acaba
+                                active={buttonsActive && !timeOut} // Desactivar botones si el tiempo se acaba o están deshabilitados
                                 className={`${styles.awsBtn} ${
                                     selectedAnswer === option
                                         ? isCorrect
-                                            ? styles.correctAnswer // Estilo para respuesta correcta
-                                            : styles.incorrectAnswer // Estilo para respuesta incorrecta
+                                            ? styles.buttonActive// Estilo para respuesta correcta
+                                            : styles.buttonInactive // Estilo para respuesta incorrecta
                                         : ""
                                 }`}
                                 onPress={() => handleButtonClick(index)}
@@ -198,6 +240,7 @@ function Game() {
             </div>
         </div>
     );
+
 }
 
 export default Game;

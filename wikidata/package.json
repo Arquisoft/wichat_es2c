@@ -1,21 +1,25 @@
 {
-  "name": "webapp",
+  "name": "wikidata",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "react-scripts start"
+    "start": "node question-service.js",
+    "test": "jest"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Arquisoft/wichat_es2c.git"
-  },
-  "private": true,
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "homepage": "https://github.com/arquisoft/wichat_es2c#readme",
   "dependencies": {
     "axios": "^1.8.3",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "react-scripts": "^5.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
   }
 }
+
+
+
