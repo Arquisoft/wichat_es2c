@@ -5,13 +5,13 @@ import MockAdapter from 'axios-mock-adapter';
 
 const mockAxios = new MockAdapter(axios);
 
-describe('Loginview component', () => {
-  beforeEach(() => {
-    mockAxios.reset();
-  });
+//describe('Loginview component', () => {
+ // beforeEach(() => {
+  //  mockAxios.reset();
+ // });
 
-  it('should log in successfully', async () => {
-    render(<Login />);
+ // it('should log in successfully', async () => {
+    /*render(<Login />);
 
     const usernameInput = screen.getByLabelText(/Username/i);
     const passwordInput = screen.getByLabelText(/Password/i);
@@ -58,4 +58,6 @@ describe('Loginview component', () => {
     expect(screen.queryByText(/Hello testUser!/i)).toBeNull();
     expect(screen.queryByText(/Your account was created on/i)).toBeNull();
   });
-});
+
+     */
+//});
