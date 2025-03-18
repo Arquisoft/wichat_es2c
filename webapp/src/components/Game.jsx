@@ -31,6 +31,7 @@ function Game() {
             try {
                 const response = await axios.post(`${apiEndpoint}/addMatch`, {
                     username: localStorage.getItem("username"),
+                    difficulty: 2,
                 });
                 localStorage.setItem("matchAdded", "true");
                 //console.log("Match añadido con éxito:", response.data);

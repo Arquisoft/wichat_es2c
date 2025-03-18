@@ -14,7 +14,7 @@ const questionSchema = new mongoose.Schema({
 
 const matchSchema = new mongoose.Schema({
     date: Date,
-    difficulty: Number,
+    difficulty: Number, //1 normal 2 dificil
     questions: [questionSchema],
     time: Number ,
     score : Number,

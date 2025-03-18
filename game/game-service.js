@@ -53,8 +53,8 @@ app.post('/addQuestion', async (req, res) => {
 
 app.post('/addMatch', async (req, res) => {
   try {
-    const { username} = req.body;
-
+    const { username} = req.body.username;
+    const { difficulty } = req.body.difficutly;
     const user = await User.findOne({ username });
 
     if (!user) {
@@ -62,7 +62,7 @@ app.post('/addMatch', async (req, res) => {
     }
 
     const newMatch = new Match({
-
+    difficulty:difficulty
     });
 
     user.matches.push(newMatch);
