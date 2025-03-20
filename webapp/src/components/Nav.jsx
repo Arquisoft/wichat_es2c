@@ -43,35 +43,47 @@ export default function Nav() {
             <div>
                 {isLoggedIn ? (
                     <div className={styles.userDropdown} ref={dropdownRef}>
-                        <div className={styles.dropdownTrigger} onClick={toggleDropdown}>
+                        <div
+                            className={styles.dropdownTrigger}
+                            onClick={toggleDropdown}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    toggleDropdown();
+                                }
+                            }}
+                            tabIndex={0}
+                            role="button"
+                            aria-haspopup="true"
+                            aria-expanded={dropdownOpen}
+                        >
                             <img
                                 src="/pfp.png"
                                 alt="User"
                                 className={styles.userAvatar}
                             />
-                        </div>  
-
-                    {dropdownOpen && (
-                        <div className={styles.dropdownMenu}>
-                            <div className={styles.dropdownContent}>
-                                <Link
-                                    to="/history"
-                                    className={styles.dropdownItem}
-                                    onClick={() => setDropdownOpen(false)}
-                                >
-                                    View History
-                                </Link>
-                                <button
-                                    onClick={handleLogout}
-                                    className={`${styles.dropdownItem} ${styles.logoutButton}`}
-                                >
-                                    Log out
-                                </button>
-                            </div>
                         </div>
-                    )}
-                </div>
-            ) : (
+
+                        {dropdownOpen && (
+                            <div className={styles.dropdownMenu}>
+                                <div className={styles.dropdownContent}>
+                                    <Link
+                                        to="/history"
+                                        className={styles.dropdownItem}
+                                        onClick={() => setDropdownOpen(false)}
+                                    >
+                                        View History
+                                    </Link>
+                                    <button
+                                        onClick={handleLogout}
+                                        className={`${styles.dropdownItem} ${styles.logoutButton}`}
+                                    >
+                                        Log out
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ) : (
                     <div className={styles.authLinks}>
                         <Link to="/login" className={styles.authLink}>
                             Log in

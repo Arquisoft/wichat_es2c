@@ -1,17 +1,17 @@
-/*import React from 'react';
+import React from 'react';
 import { render, fireEvent, screen, waitFor, act } from '@testing-library/react';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 
 const mockAxios = new MockAdapter(axios);
-*/
-//describe('Loginview component', () => {
- // beforeEach(() => {
-  //  mockAxios.reset();
- // });
 
- // it('should log in successfully', async () => {
-    /*render(<Login />);
+describe('Loginview component', () => {
+ beforeEach(() => {
+   mockAxios.reset();
+ });
+
+  it('should log in successfully', async () => {
+    render(<Login />);
 
     const usernameInput = screen.getByLabelText(/Username/i);
     const passwordInput = screen.getByLabelText(/Password/i);
@@ -59,8 +59,8 @@ const mockAxios = new MockAdapter(axios);
     expect(screen.queryByText(/Your account was created on/i)).toBeNull();
   });
 
-     */
-//});
+
+});
 test('siempre pasa', () => {
     expect(true).toBe(true);
 });

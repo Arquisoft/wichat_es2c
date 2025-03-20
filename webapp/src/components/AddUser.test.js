@@ -1,4 +1,4 @@
-/*
+
 import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
@@ -57,8 +57,4 @@ describe('AddUser component', () => {
       expect(screen.getByText(/Error: Internal Server Error/i)).toBeInTheDocument();
     });
   });
-});
-*/
-test('siempre pasa', () => {
-    expect(true).toBe(true);
 });
