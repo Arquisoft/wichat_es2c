@@ -136,7 +136,7 @@ function Game() {
 
         {/* Pregunta */}
         <div className={styles.questionContainer}>
-          {questions[0].question}
+          <p>{questions[0].question}</p>
         </div>
 
         {/* Opciones en Grid */}
@@ -156,18 +156,16 @@ function Game() {
         </div>
 
         {/* Usamos el componente Timer */}
+        {/*
         <Timer onTimeOut={handleTimeOut} resetTimer={!timeOut} />
-
         {timeOut && (
           <div className={styles.timeOutMessage}>
             <h2>¡El tiempo se ha acabado!</h2>
           </div>
         )}
+        */}
 
-        {/* Seccion para mostrar el chatbot */}
-        <div className={styles.chatContainer}>
-          <PopChat messages={msgs} getMessage={getMessage} />
-        </div>
+        
 
         {/* Modal para el tiempo agotado */}
         <Modal
@@ -255,7 +253,13 @@ function Game() {
           </Box>
         </Modal>
       </div>
+
+      {/* Seccion para mostrar el chatbot. Creo que mejor aqui, porque por como esta el componente siempre va a salir en su esquina */}
+      <div className={styles.chatContainer}>
+          <PopChat messages={msgs} getMessage={getMessage} />
+        </div>
     </div>
+    
   );
 }
 
