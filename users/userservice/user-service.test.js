@@ -23,23 +23,23 @@ afterAll(async () => {
 describe('User Service', () => {
   it('should add a new user on POST /adduser', async () => {
     const newUser = {
-      username: process.env.TEST_USER,
-      password: process.env.TEST_PASSWORD
+      username: 'testuser', // NOSONAR
+      password: 'testpassword', // NOSONAR
     };
 
     const response = await request(app).post('/adduser').send(newUser);
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('username', process.env.TEST_USER);
+    expect(response.body).toHaveProperty('username', 'testuser'); // NOSONAR
 
     // Check if the user is inserted into the database
-    const userInDb = await User.findOne({ username: process.env.TEST_USER});
+    const userInDb = await User.findOne({ username: 'testuser' }); // NOSONAR
 
     // Assert that the user exists in the database
     expect(userInDb).not.toBeNull();
-    expect(userInDb.username).toBe(process.env.TEST_USER);
+    expect(userInDb.username).toBe('testuser'); // NOSONAR
 
     // Assert that the password is encrypted
-    const isPasswordValid = await bcrypt.compare(process.env.TEST_PASSWORD, userInDb.password);
+    const isPasswordValid = await bcrypt.compare('testpassword', userInDb.password); // NOSONAR
     expect(isPasswordValid).toBe(true);
   });
 });

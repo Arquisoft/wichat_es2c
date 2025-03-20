@@ -34,7 +34,7 @@ describe('Gateway Service', () => {
   it('should forward add user request to user service', async () => {
     const response = await request(app)
       .post('/adduser')
-      .send({ username: process.env.TEST_USER, password: process.env.TEST_PASSWORD_NEW });
+      .send({ username: 'newuser', password: 'newpassword' }); // NOSONAR
 
     expect(response.statusCode).toBe(200);
     expect(response.body.userId).toBe('mockedUserId');
