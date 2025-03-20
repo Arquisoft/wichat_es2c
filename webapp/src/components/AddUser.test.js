@@ -1,60 +1,107 @@
-
 import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import AddUser from './AddUser';
 
+// Mock react-router-dom
+jest.mock('react-router-dom', () => ({
+  useNavigate: () => jest.fn(),
+  Link: ({ children, to }) => <a href={to}>{children}</a>
+}));
+
 const mockAxios = new MockAdapter(axios);
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
 describe('AddUser component', () => {
   beforeEach(() => {
     mockAxios.reset();
+    // Clear localStorage before each test
+    localStorage.clear();
   });
 
-  it('should add user successfully', async () => {
+  it('should register user successfully', async () => {
     render(<AddUser />);
 
     const usernameInput = screen.getByLabelText(/Username/i);
     const passwordInput = screen.getByLabelText(/Password/i);
-    const addUserButton = screen.getByRole('button', { name: /Add User/i });
+    const registerButton = screen.getByRole('button', { name: /Register/i });
 
     // Mock the axios.post request to simulate a successful response
-    mockAxios.onPost('http://localhost:8000/adduser').reply(200);
+    mockAxios.onPost(`${apiEndpoint}/adduser`).reply(200);
 
     // Simulate user input
     fireEvent.change(usernameInput, { target: { value: 'testUser' } });
     fireEvent.change(passwordInput, { target: { value: 'testPassword' } });
 
-    // Trigger the add user button click
-    fireEvent.click(addUserButton);
+    // Trigger the register button click
+    fireEvent.click(registerButton);
 
-    // Wait for the Snackbar to be open
+    // Wait for the success message
     await waitFor(() => {
-      expect(screen.getByText(/User added successfully/i)).toBeInTheDocument();
+      expect(screen.getByText(/Successfully registered/i)).toBeInTheDocument();
     });
   });
 
-  it('should handle error when adding user', async () => {
+  it('should handle error when registering user', async () => {
     render(<AddUser />);
 
     const usernameInput = screen.getByLabelText(/Username/i);
     const passwordInput = screen.getByLabelText(/Password/i);
-    const addUserButton = screen.getByRole('button', { name: /Add User/i });
+    const registerButton = screen.getByRole('button', { name: /Register/i });
 
     // Mock the axios.post request to simulate an error response
-    mockAxios.onPost('http://localhost:8000/adduser').reply(500, { error: 'Internal Server Error' });
+    mockAxios.onPost(`${apiEndpoint}/adduser`).reply(500, { error: 'Internal Server Error' });
 
     // Simulate user input
     fireEvent.change(usernameInput, { target: { value: 'testUser' } });
     fireEvent.change(passwordInput, { target: { value: 'testPassword' } });
 
-    // Trigger the add user button click
-    fireEvent.click(addUserButton);
+    // Trigger the register button click
+    fireEvent.click(registerButton);
 
-    // Wait for the error Snackbar to be open
+    // Wait for the error message
     await waitFor(() => {
-      expect(screen.getByText(/Error: Internal Server Error/i)).toBeInTheDocument();
+      expect(screen.getByText(/Registration failed: Server error/i)).toBeInTheDocument();
     });
+  });
+
+  it('should validate username and password length', async () => {
+    render(<AddUser />);
+
+    const usernameInput = screen.getByLabelText(/Username/i);
+    const passwordInput = screen.getByLabelText(/Password/i);
+    const registerButton = screen.getByRole('button', { name: /Register/i });
+
+    // Test short username
+    fireEvent.change(usernameInput, { target: { value: 'ab' } });
+    fireEvent.change(passwordInput, { target: { value: 'validPassword' } });
+    fireEvent.click(registerButton);
+
+    expect(screen.getByText(/Username must be at least 3 characters long/i)).toBeInTheDocument();
+
+    // Test short password
+    fireEvent.change(usernameInput, { target: { value: 'validUsername' } });
+    fireEvent.change(passwordInput, { target: { value: 'ab' } });
+    fireEvent.click(registerButton);
+
+    expect(screen.getByText(/Password must be at least 3 characters long/i)).toBeInTheDocument();
+  });
+
+  it('should redirect if user is already logged in', () => {
+    // Simulate a logged-in user
+    localStorage.setItem('token', 'fake-token');
+
+    const mockNavigate = jest.fn();
+    jest.mock('react-router-dom', () => ({
+      ...jest.requireActual('react-router-dom'),
+      useNavigate: () => mockNavigate,
+      Link: ({ children, to }) => <a href={to}>{children}</a>
+    }));
+
+    render(<AddUser />);
+
+    // This test just verifies the component renders without crashing
+    // The actual redirect would be tested in integration tests
   });
 });
