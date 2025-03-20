@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { TextField, Button, Typography, Box, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
-import {useNavigate} from "react-router-dom";
-import { Link } from "react-router-dom";
+import {useNavigate,Link} from "react-router-dom";
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
 function AddUser() {

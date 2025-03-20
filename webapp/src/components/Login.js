@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { Link } from "react-router-dom";
+import {useNavigate,Link} from "react-router-dom";
 
 function Login() {
     const navigate = useNavigate();
