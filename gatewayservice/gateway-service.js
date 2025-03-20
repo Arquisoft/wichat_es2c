@@ -86,6 +86,19 @@ app.post('/askllm', async (req, res) => {
   }
 });
 
+//get las partidas para el historial (usa luego el game-service)
+app.get('/userMatches', async (req, res) => {
+  try {
+    const userResponse = await axios.get(`${gameServiceUrl}/userMatches`, {
+      params: req.query //esto para pasar los params de la query
+    });
+    res.json(userResponse.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.response?.data?.error || 'Error desconocido' });
+  }
+});
+
+
 // Read the OpenAPI YAML file synchronously
 openapiPath='./openapi.yaml'
 if (fs.existsSync(openapiPath)) {

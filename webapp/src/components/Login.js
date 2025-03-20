@@ -3,6 +3,7 @@ import { TextField, Button, Typography, Box, CircularProgress } from '@mui/mater
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
+import "./LoginRegister.css";
 
 function Login() {
     const navigate = useNavigate();
@@ -49,53 +50,62 @@ function Login() {
     };
 
     return (
-        <Box sx={{ maxWidth: 400, mx: 'auto', p: 2 }}>
-            <Typography variant="h5" component="h1" gutterBottom>
-                Login
-            </Typography>
-            <form onSubmit={handleSubmit}>
-                <TextField
-                    name="username"
-                    label="Username"
-                    fullWidth
-                    margin="normal"
-                    disabled={loading}
-                    required
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <TextField
-                    name="password"
-                    label="Password"
-                    type="password"
-                    fullWidth
-                    margin="normal"
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={loading}
-                    required
-                />
-                {error && (
-                    <Typography color="error" sx={{ mt: 2 }}>
-                        {error}
-                    </Typography>
-                )}
-                <Button
-                    type="submit"
-                    variant="contained"
-                    fullWidth
-                    sx={{ mt: 3 }}
-                    disabled={loading}
-                >
-                    {loading ? <CircularProgress size={24} /> : 'Login'}
-                </Button>
-                <Box sx={{ mt: 2, textAlign: 'center' }}>
-                    <Typography variant="body2">
-                        Don't have an account?{' '}
-                        <Link to="/signup" style={{ textDecoration: 'none' }}>
-                            Register here
-                        </Link>
-                    </Typography>
-                </Box>
-            </form>
+        <Box className="boxContainer" sx={{ maxWidth: 400, mx: 'auto', p: 2 }}>
+            <Link to="/home">
+                <img src="/logo512.png" alt="Logo" className="logoAplicacion" />
+            </Link>
+            
+            <div className="mainContent">
+                <Typography variant="h5" component="h1" gutterBottom>
+                    Login
+                </Typography>
+
+                <div className="divider"></div>
+
+                <form onSubmit={handleSubmit}>
+                    <TextField
+                        name="username"
+                        label="Username"
+                        fullWidth
+                        margin="normal"
+                        disabled={loading}
+                        required
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <TextField
+                        name="password"
+                        label="Password"
+                        type="password"
+                        fullWidth
+                        margin="normal"
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={loading}
+                        required
+                    />
+                    {error && (
+                        <Typography color="error" sx={{ mt: 2 }}>
+                            {error}
+                        </Typography>
+                    )}
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        fullWidth
+                        sx={{ mt: 3 }}
+                        disabled={loading}
+                    >
+                        {loading ? <CircularProgress size={24} /> : 'Login'}
+                    </Button>
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                        <Typography variant="body2">
+                            Don't have an account?{' '}
+                            <Link to="/signup" style={{ textDecoration: 'none' }}>
+                                Register here
+                            </Link>
+                        </Typography>
+                    </Box>
+                </form>
+            </div>
         </Box>
     );
 }

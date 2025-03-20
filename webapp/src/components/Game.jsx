@@ -9,7 +9,7 @@ import { HomeButton, ChartButton, ReplayButton, ButtonContainer } from './ModelB
 
 import PopChat from './ChatBot/Popchat';
 import Timer from './Timer';
-import axios from "axios"; // Importamos el componente Timer
+import axios from "axios";
 
 
 function Game() {

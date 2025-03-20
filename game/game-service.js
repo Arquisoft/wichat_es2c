@@ -104,6 +104,59 @@ app.post('/endMatch', async (req, res) => {
 });
 
 
+//sacar las partidas de un usuario Y su info
+app.get('/userMatches', async (req, res) => {
+  try {
+    const username = req.query.username;
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    
+    //Saco las partidas y, ademas, calcular estadísticas generales
+    const formattedMatches = user.matches.map(match => {
+      // Calcular respuestas correctas e incorrectas
+      let correctAnswers = 0;
+      let wrongAnswers = 0;
+      
+      match.questions.forEach(question => {
+        question.answers.forEach(answer => {
+          if (answer.selected) {
+            if (answer.correct) {
+              correctAnswers++;
+            } else {
+              wrongAnswers++;
+            }
+          }
+        });
+      });
+      
+      return {
+        id: match._id,
+        date: match.date,
+        time: match.time || 0,
+        score: match.score || 0,
+        correctAnswers,
+        wrongAnswers,
+        questions: match.questions.map(q => ({
+          text: q.text,
+          answers: q.answers.map(a => ({
+            text: a.text,
+            selected: a.selected,
+            correct: a.correct
+          }))
+        }))
+      };
+    });
+    
+    res.json({ matches: formattedMatches });
+  } catch (error) {
+    console.error('Error al obtener partidas:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+
 // Start the server
 const server = app.listen(port, () => {
   console.log(`Game Service listening at http://localhost:${port}`);
