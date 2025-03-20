@@ -1,12 +1,12 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import Home from "./Home";
-
-// Mock react-router-dom
+// Mock react-router-dom module before importing components
 jest.mock('react-router-dom', () => ({
     useNavigate: () => jest.fn(),
     Link: ({ children, to }) => <a href={to}>{children}</a>
 }));
+
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import Home from "./Home";
 
 // Mock localStorage
 const localStorageMock = (function() {

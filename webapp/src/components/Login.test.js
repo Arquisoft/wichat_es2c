@@ -1,14 +1,14 @@
+// Mock react-router-dom module before importing components
+jest.mock('react-router-dom', () => ({
+    useNavigate: () => jest.fn(),
+    Link: ({ children, to }) => <a href={to}>{children}</a>
+}));
+
 import React from 'react';
 import { render, fireEvent, screen, waitFor, act } from '@testing-library/react';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import Login from "./Login";
-
-// Mock react-router-dom
-jest.mock('react-router-dom', () => ({
-    useNavigate: () => jest.fn(),
-    Link: ({ children, to }) => <a href={to}>{children}</a>
-}));
 
 // Mock localStorage
 const localStorageMock = (function() {

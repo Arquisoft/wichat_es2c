@@ -1,14 +1,14 @@
+// Mock react-router-dom module before importing components
+jest.mock('react-router-dom', () => ({
+  useNavigate: () => jest.fn(),
+  Link: ({ children, to }) => <a href={to}>{children}</a>
+}));
+
 import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import AddUser from './AddUser';
-
-// Mock react-router-dom
-jest.mock('react-router-dom', () => ({
-  useNavigate: () => jest.fn(),
-  Link: ({ children, to }) => <a href={to}>{children}</a>
-}));
 
 const mockAxios = new MockAdapter(axios);
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
@@ -91,13 +91,6 @@ describe('AddUser component', () => {
   it('should redirect if user is already logged in', () => {
     // Simulate a logged-in user
     localStorage.setItem('token', 'fake-token');
-
-    const mockNavigate = jest.fn();
-    jest.mock('react-router-dom', () => ({
-      ...jest.requireActual('react-router-dom'),
-      useNavigate: () => mockNavigate,
-      Link: ({ children, to }) => <a href={to}>{children}</a>
-    }));
 
     render(<AddUser />);
 
