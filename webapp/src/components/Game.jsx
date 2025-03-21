@@ -25,6 +25,9 @@ function Game() {
     const [showTimeOutModal, setShowTimeOutModal] = useState(false); // Modal para el tiempo agotado
     const [timerReset, setTimerReset] = useState(false); // Estado para reiniciar el contador
 
+    const [timeLeft, setTimeLeft] = useState(60); // Estado para el tiempo restante en el temporizador
+
+
     // Cargar la primera pregunta cuando el componente se monta
     useEffect(() => {
         fetchNewQuestion();
@@ -46,11 +49,19 @@ function Game() {
             // Reiniciar los estados de la respuesta seleccionada y si es correcta
             setSelectedAnswer(null);
             setIsCorrect(false);
-            setTimerReset(true); // Activar el reinicio del contador
+            setTimerReset(false); // Activar el reinicio del contador
         } catch (error) {
             console.error("Error fetching question:", error);
         }
     };
+
+    // Funcion para modificar el tiempo en funcion de si se acierta o se falla una pregunta :
+    // Si se acierta + 5 segundos; Si se falla - 10 segundos.
+    const adjustTime = (amount) => {
+        setTimerReset(false); // Evitar un reinicio completo del timer
+        setTimeLeft((prevTime) => Math.max(prevTime + amount, 0)); // Asegurar que no sea negativo
+    };
+    
 
     // Función para manejar el clic en las opciones
     const handleButtonClick = async (index) => {
@@ -65,18 +76,18 @@ function Game() {
         // Verificar si la respuesta es correcta
         if (selectedOption === questionData.correctAnswer) {
             setIsCorrect(true); // Marcar como correcta
-            setTimerReset(true); // Activar el reinicio del contador
+            adjustTime(5); // 🔹 Sumar 5 segundos al acertar
 
             // Esperar 1 segundo antes de cargar una nueva pregunta
             setTimeout(() => {
                 fetchNewQuestion(); // Cargar una nueva pregunta
                 setButtonsActive(true); // Reactivar los botones
-                setTimerReset(false); // Desactivar el reinicio del contador
+                //setTimerReset(false); // Desactivar el reinicio del contador
             }, 200); // Esperar 1 segundo
         } else {
             setIsCorrect(false); // Marcar como incorrecta
-            setTimeOut(true); // Detener el contador
-            setShowFailModal(true); // Mostrar modal de fallo
+            adjustTime(-10); // 🔹 Restar 10 segundos al fallar
+            //setShowFailModal(true); // Mostrar modal de fallo
             setButtonsActive(true); // Reactivar los botones
         }
     };
@@ -98,6 +109,7 @@ function Game() {
     const handleHomeClick = () => navigate('/');
     const handleHistoryClick = () => navigate('/history');
     const handleReplayClick = () => {
+        setTimerReset(true); // Reiniciar el contador
         setTimeOut(false);
         setShowTimeOutModal(false);
         setButtonsActive(false);
@@ -174,7 +186,7 @@ function Game() {
                 </Modal>
 
                 {/* Usamos el componente Timer */}
-                <Timer onTimeOut={handleTimeOut} resetTimer={timerReset} />
+                <Timer timeLeft={timeLeft} setTimeLeft={setTimeLeft} onTimeOut={handleTimeOut} resetTimer={timerReset} />
 
                 {/* Opciones en Grid */}
                 {questionData && (

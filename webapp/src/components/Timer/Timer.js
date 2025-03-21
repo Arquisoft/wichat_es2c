@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, setTimeLeft } from 'react';
 import "./Timer.css"; // Archivo de estilos para el reloj
 
-function Timer({ onTimeOut, resetTimer }) {
-    const [timeLeft, setTimeLeft] = useState(10); // Tiempo inicial de 10 segundos
+function Timer({ timeLeft, setTimeLeft, onTimeOut, resetTimer }) {
     const [timerActive, setTimerActive] = useState(true); // Nuevo estado para controlar si el timer está activo
 
-    const totalTime = 10; // Duración total en segundos
+    const totalTime = 60; // Duración total en segundos
     const radius = 35; // Radio del círculo
     const circumference = 2 * Math.PI * radius; // Circunferencia del círculo
 
     // Reinicia el tiempo cuando el usuario pulsa Replay
     useEffect(() => {
         if (resetTimer) {
-            setTimeLeft(10);
+            setTimeLeft(60);
             setTimerActive(true);  // Reactiva el temporizador
         }
     }, [resetTimer]);
