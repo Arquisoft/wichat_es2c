@@ -8,8 +8,8 @@ let app;
 
 //test user
 const user = {
-  username: 'testuser',
-  password: 'testpassword',
+  username: 'testuser', // NOSONAR
+  password: 'testpassword', // NOSONAR
 };
 
 async function addUser(user){
@@ -40,6 +40,6 @@ describe('Auth Service', () => {
   it('Should perform a login operation /login', async () => {
     const response = await request(app).post('/login').send(user);
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('username', 'testuser');
+    expect(response.body).toHaveProperty('username', 'testuser'); // NOSONAR
   });
 });

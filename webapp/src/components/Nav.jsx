@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Nav.module.css";
-import { Link, useNavigate } from "react-router-dom";
 
 export default function Nav() {
-    const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -13,14 +11,12 @@ export default function Nav() {
         localStorage.removeItem('username');
         setIsLoggedIn(false);
         setDropdownOpen(false);
-        navigate('/login');
+        window.location.href = '/login';
     };
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
     };
-
-
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -37,48 +33,60 @@ export default function Nav() {
 
     return (
         <nav className={styles.navContainer}>
-            <Link to="/home">
+            <a href="/home">
                 <img src="/logo512.png" alt="Logo" className={styles.logo} />
-            </Link>
+            </a>
             <div>
                 {isLoggedIn ? (
                     <div className={styles.userDropdown} ref={dropdownRef}>
-                        <div className={styles.dropdownTrigger} onClick={toggleDropdown}>
+                        <div
+                            className={styles.dropdownTrigger}
+                            onClick={toggleDropdown}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    toggleDropdown();
+                                }
+                            }}
+                            tabIndex={0}
+                            role="button"
+                            aria-haspopup="true"
+                            aria-expanded={dropdownOpen}
+                        >
                             <img
                                 src="/pfp.png"
                                 alt="User"
                                 className={styles.userAvatar}
                             />
-                        </div>  
-
-                    {dropdownOpen && (
-                        <div className={styles.dropdownMenu}>
-                            <div className={styles.dropdownContent}>
-                                <Link
-                                    to="/history"
-                                    className={styles.dropdownItem}
-                                    onClick={() => setDropdownOpen(false)}
-                                >
-                                    View History
-                                </Link>
-                                <button
-                                    onClick={handleLogout}
-                                    className={`${styles.dropdownItem} ${styles.logoutButton}`}
-                                >
-                                    Log out
-                                </button>
-                            </div>
                         </div>
-                    )}
-                </div>
-            ) : (
+
+                        {dropdownOpen && (
+                            <div className={styles.dropdownMenu}>
+                                <div className={styles.dropdownContent}>
+                                    <a
+                                        href="/history"
+                                        className={styles.dropdownItem}
+                                        onClick={() => setDropdownOpen(false)}
+                                    >
+                                        View History
+                                    </a>
+                                    <button
+                                        onClick={handleLogout}
+                                        className={`${styles.dropdownItem} ${styles.logoutButton}`}
+                                    >
+                                        Log out
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                ) : (
                     <div className={styles.authLinks}>
-                        <Link to="/login" className={styles.authLink}>
+                        <a href="/login" className={styles.authLink}>
                             Log in
-                        </Link>
-                        <Link to="/signup" className={styles.authLink}>
+                        </a>
+                        <a href="/signup" className={styles.authLink}>
                             Register
-                        </Link>
+                        </a>
                     </div>
                 )}
             </div>

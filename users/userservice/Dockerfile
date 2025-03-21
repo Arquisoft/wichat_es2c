@@ -8,7 +8,7 @@ WORKDIR /usr/src/userservice
 COPY package*.json ./
 
 # Install app dependencies
-RUN npm install
+RUN npm install --ignore-scripts
 
 # Copy the app source code to the working directory
 COPY . .
