@@ -31,9 +31,13 @@ function Game() {
     }, [apiEndpoint]);
 
     // Función para obtener una nueva pregunta de la API
-    const fetchNewQuestion = async () => {
+    const fetchNewQuestion = async (typeQuestion = 'cartoon') => {
         try {
-            const response = await axios.get(`${apiEndpoint}/question`);
+            const response = await axios.get(`${apiEndpoint}/question`, {
+                params: {
+                    type: typeQuestion, // Pasar el tipo de pregunta
+                },
+            });
             const data = response.data;
 
             setQuestionData({
