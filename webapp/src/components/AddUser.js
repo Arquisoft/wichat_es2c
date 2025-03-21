@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
-import {useNavigate,Link} from "react-router-dom";
+
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
 function AddUser() {
@@ -11,13 +11,12 @@ function AddUser() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (isLoggedIn) {
-            navigate('/home');
+            window.location.href = '/home';
         }
-    }, [isLoggedIn, navigate]);
+    }, [isLoggedIn]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -39,11 +38,11 @@ function AddUser() {
 
         setLoading(true);
         try {
-            const response = await axios.post(`${apiEndpoint}/adduser`, { username, password });
+            await axios.post(`${apiEndpoint}/adduser`, { username, password });
             setError('');
             setSuccess(true);
             setTimeout(() => {
-                navigate('/login');
+                window.location.href = '/login';
             }, 1500);
         } catch (err) {
             console.error('Registration error:', err);
@@ -109,9 +108,9 @@ function AddUser() {
                 <Box sx={{ mt: 2, textAlign: 'center' }}>
                     <Typography variant="body2">
                         Already have an account?{' '}
-                        <Link to="/login" style={{ textDecoration: 'none' }}>
+                        <a href="/login" style={{ textDecoration: 'none' }}>
                             Login here
-                        </Link>
+                        </a>
                     </Typography>
                 </Box>
             </form>

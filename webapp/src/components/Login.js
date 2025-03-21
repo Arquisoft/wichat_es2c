@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
-import {useNavigate,Link} from "react-router-dom";
 
 function Login() {
-    const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-   // const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
-   // const message = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey })
-   // setMessage(message.data.answer); left this as a reference for future use
 
     useEffect(() => {
         if (isLoggedIn) {
-            navigate('/home');
+            window.location.href = '/home';
         }
-    }, [isLoggedIn, navigate]);
+    }, [isLoggedIn]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -89,9 +84,9 @@ function Login() {
                 <Box sx={{ mt: 2, textAlign: 'center' }}>
                     <Typography variant="body2">
                         Don't have an account?{' '}
-                        <Link to="/signup" style={{ textDecoration: 'none' }}>
+                        <a href="/signup" style={{ textDecoration: 'none' }}>
                             Register here
-                        </Link>
+                        </a>
                     </Typography>
                 </Box>
             </form>

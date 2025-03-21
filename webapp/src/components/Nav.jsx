@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Nav.module.css";
-import { Link, useNavigate } from "react-router-dom";
 
 export default function Nav() {
-    const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -13,14 +11,12 @@ export default function Nav() {
         localStorage.removeItem('username');
         setIsLoggedIn(false);
         setDropdownOpen(false);
-        navigate('/login');
+        window.location.href = '/login';
     };
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
     };
-
-
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -37,9 +33,9 @@ export default function Nav() {
 
     return (
         <nav className={styles.navContainer}>
-            <Link to="/home">
+            <a href="/home">
                 <img src="/logo512.png" alt="Logo" className={styles.logo} />
-            </Link>
+            </a>
             <div>
                 {isLoggedIn ? (
                     <div className={styles.userDropdown} ref={dropdownRef}>
@@ -66,13 +62,13 @@ export default function Nav() {
                         {dropdownOpen && (
                             <div className={styles.dropdownMenu}>
                                 <div className={styles.dropdownContent}>
-                                    <Link
-                                        to="/history"
+                                    <a
+                                        href="/history"
                                         className={styles.dropdownItem}
                                         onClick={() => setDropdownOpen(false)}
                                     >
                                         View History
-                                    </Link>
+                                    </a>
                                     <button
                                         onClick={handleLogout}
                                         className={`${styles.dropdownItem} ${styles.logoutButton}`}
@@ -85,12 +81,12 @@ export default function Nav() {
                     </div>
                 ) : (
                     <div className={styles.authLinks}>
-                        <Link to="/login" className={styles.authLink}>
+                        <a href="/login" className={styles.authLink}>
                             Log in
-                        </Link>
-                        <Link to="/signup" className={styles.authLink}>
+                        </a>
+                        <a href="/signup" className={styles.authLink}>
                             Register
-                        </Link>
+                        </a>
                     </div>
                 )}
             </div>

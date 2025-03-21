@@ -1,5 +1,4 @@
-import React, {useEffect, useState} from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import Nav from "./components/Nav";
 import "./Home.css";
 
@@ -20,19 +19,19 @@ function Home() {
                     position: "relative"
                 }}
             >
-                {!isLoggedIn?( <button className="play-button">
-                    <Link to="/login" style={{color: "white"}}>
-                        Log in to play
-                    </Link>
-                </button> )
-             : (
-                <button className="play-button">
-                    <Link to="/game" style={{color: "white"}}>
-                        Play the game
-                    </Link>
-                </button>
-                    )
-            }
+                {!isLoggedIn ? (
+                    <button className="play-button">
+                        <a href="/login" style={{ color: "white" }}>
+                            Log in to play
+                        </a>
+                    </button>
+                ) : (
+                    <button className="play-button">
+                        <a href="/game" style={{ color: "white" }}>
+                            Play the game
+                        </a>
+                    </button>
+                )}
             </div>
         </div>
     );
