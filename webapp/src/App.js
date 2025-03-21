@@ -6,7 +6,7 @@ import Home from "./Home";
 import Login from "./components/Login";
 import AddUser from "./components/AddUser";
 import History from "./views/History";
-import Game from "./components/Game";
+import Game from "./components/Game"
 
 
 function App() {

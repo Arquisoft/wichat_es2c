@@ -43,7 +43,7 @@
     opacity: 1;
     transition: opacity 0.4s ease-in;
   }
-  
+
 .fadeOut {
     opacity: 0;
     transition: opacity 5s ease-out;
@@ -55,7 +55,7 @@
 .containerLayout {
     display: grid;
     grid-template-columns: 1fr 1fr; /* Mitad imagen, mitad contenido */
-    
+
     height: 80vh;
 
     max-height: 80%;
