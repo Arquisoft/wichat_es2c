@@ -15,9 +15,9 @@ mongoose.connect(mongoUri);
 
 app.post('/addQuestion', async (req, res) => {
   try {
-    const { username, question, selectedAnswer,questions,answers } = req.body;
+    const { username, question, selectedAnswer, correctAnswer, answers } = req.body;
 
-    if (!username || !question || !selectedAnswer || !questions || !answers) {
+    if (!username || !question || !selectedAnswer || correctAnswer === undefined || !answers) {
       return res.status(400).json({ error: "Error when processing the request" });
     }
 
@@ -26,19 +26,19 @@ app.post('/addQuestion', async (req, res) => {
     if (!user || user.matches.length === 0) {
       return res.status(404).json({ error: "User or match not found" });
     }
-    const lastMatch = user.matches[user.matches.length - 1]; //debería ser siempre la que está en curso
+
+    const lastMatch = user.matches[user.matches.length - 1];
 
     const newQuestion = {
-      text: question,
+      text: String(question),
       answers: answers.map((option, index) => ({
         text: option,
         selected: option === selectedAnswer,
-        correct: index === questions[0].correctAnswer
+        correct: index === correctAnswer
       }))
     };
 
     lastMatch.questions.push(newQuestion);
-
     await user.save();
 
     res.status(201).json({ message: "Pregunta añadida al último match", match: lastMatch });
@@ -50,11 +50,10 @@ app.post('/addQuestion', async (req, res) => {
 });
 
 
-
 app.post('/addMatch', async (req, res) => {
   try {
-    const { username} = req.body.username;
-    const { difficulty } = req.body.difficutly;
+    const { username, difficulty } = req.body;
+
     const user = await User.findOne({ username });
 
     if (!user) {
@@ -88,20 +87,33 @@ app.post('/endMatch', async (req, res) => {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    const lastMatch = user.matches[user.matches.length - 1]; //debería ser siempre la que está en curso
+    const lastMatch = user.matches[user.matches.length - 1]; // Última partida
+
+    if (!lastMatch) {
+      return res.status(404).json({ error: 'No se encontró una partida activa' });
+    }
+
+    const correctAnswers = lastMatch.questions.filter(q =>
+        q.answers.some(answer => answer.selected && answer.correct)
+    ).length;
+
+    const incorrectAnswers = lastMatch.questions.length - correctAnswers;
 
     lastMatch.date = new Date();
     lastMatch.time = req.body.time;
-    lastMatch.score = lastMatch.time * 100;
+
+    lastMatch.score = (lastMatch.difficulty * (correctAnswers * 30)) - (incorrectAnswers * 20);
+
     await user.save();
 
-    res.status(201).json({ message: 'Match actualizado'});
+    res.status(201).json({ message: 'Match actualizado', score: lastMatch.score });
 
   } catch (error) {
-    console.error("Error al añadir el match:", error);
+    console.error("Error al finalizar el match:", error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
 
 
 // Start the server
