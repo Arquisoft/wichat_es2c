@@ -137,6 +137,13 @@ function Game() {
         {/* Pregunta */}
         <div className={styles.questionContainer}>
           <p>{questions[0].question}</p>
+          {/* Usamos el componente Timer */}
+          <Timer onTimeOut={handleTimeOut} resetTimer={!timeOut} />
+          {timeOut && (
+            <div className={styles.timeOutMessage}>
+              <h2>¡El tiempo se ha acabado!</h2>
+            </div>
+          )}
         </div>
 
         {/* Opciones en Grid */}
@@ -154,18 +161,6 @@ function Game() {
             </AwesomeButton>
           ))}
         </div>
-
-        {/* Usamos el componente Timer */}
-        {/*
-        <Timer onTimeOut={handleTimeOut} resetTimer={!timeOut} />
-        {timeOut && (
-          <div className={styles.timeOutMessage}>
-            <h2>¡El tiempo se ha acabado!</h2>
-          </div>
-        )}
-        */}
-
-        
 
         {/* Modal para el tiempo agotado */}
         <Modal

@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const { Match, Answer, User,Question } = require('./game-model');
+const {  Match, Answer, Statistics, User, Question } = require('./game-model');
 const app = express();
 const port = 8004;
 const cors = require('cors');
@@ -93,6 +93,18 @@ app.post('/endMatch', async (req, res) => {
     lastMatch.date = new Date();
     lastMatch.time = req.body.time;
     lastMatch.score = lastMatch.time * 100;
+
+    //Actualizo las estadisticas del jugador
+    user.statistics.gamesPlayed++;
+    user.statistics.averageScore = (user.statistics.averageScore * (user.statistics.gamesPlayed - 1) + lastMatch.score) / user.statistics.gamesPlayed; //deshago el calculo de la media para hacerlo con lo nuevo
+    user.statistics.bestScore = Math.max(user.statistics.bestScore, lastMatch.score);
+    user.statistics.averageTime = formatTime((user.statistics.averageTime * (user.statistics.gamesPlayed - 1) + lastMatch.time) / user.statistics.gamesPlayed);
+    user.statistics.bestTime = formatTime(Math.min(user.statistics.bestTime, lastMatch.time));
+    user.statistics.rightAnswers += lastMatch.questions.reduce((sum, question) => sum + question.answers.filter(answer => answer.selected && answer.correct).length, 0);
+    user.statistics.wrongAnswers += lastMatch.questions.reduce((sum, question) => sum + question.answers.filter(answer => answer.selected && !answer.correct).length, 0);
+    
+
+
     await user.save();
 
     res.status(201).json({ message: 'Match actualizado'});
@@ -103,22 +115,32 @@ app.post('/endMatch', async (req, res) => {
   }
 });
 
+const formatTime = (seconds) => { //funcion extra para pasar de segundos a horas y minutos, cuestion de presentacion
+  if (!seconds || seconds <= 0) return "0h 0m";
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  return `${hours}h ${minutes}m`;
+};
 
-//sacar las partidas de un usuario Y su info
+
+//sacar las partidas de un usuario
+        //ACTUALIZAR PARA QUE NO SAQUE TODOS, SOLO CIERTO NUMERO EN BASE A LA PAGINACION
+
 app.get('/userMatches', async (req, res) => {
   try {
     const username = req.query.username;
+    
     const user = await User.findOne({ username });
+
     if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
-    
+
     //Saco las partidas y, ademas, calcular estadísticas generales
     const formattedMatches = user.matches.map(match => {
       // Calcular respuestas correctas e incorrectas
       let correctAnswers = 0;
       let wrongAnswers = 0;
-      
       match.questions.forEach(question => {
         question.answers.forEach(answer => {
           if (answer.selected) {
@@ -130,14 +152,15 @@ app.get('/userMatches', async (req, res) => {
           }
         });
       });
-      
       return {
         id: match._id,
         date: match.date,
         time: match.time || 0,
         score: match.score || 0,
         correctAnswers,
-        wrongAnswers,
+        wrongAnswers
+
+        /*  Corresponderia al boton Ver preguntas, no aqui
         questions: match.questions.map(q => ({
           text: q.text,
           answers: q.answers.map(a => ({
@@ -146,10 +169,15 @@ app.get('/userMatches', async (req, res) => {
             correct: a.correct
           }))
         }))
+          */
       };
     });
+      
     
-    res.json({ matches: formattedMatches });
+    res.json({  //DEVUELTO TANTO LAS ESTADISTICAS COMO LAS PARTIDAS
+      matches: formattedMatches,
+      statistics: user.statistics
+    });
   } catch (error) {
     console.error('Error al obtener partidas:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
