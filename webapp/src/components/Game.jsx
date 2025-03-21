@@ -7,7 +7,7 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { HomeButton, ChartButton, ReplayButton, ButtonContainer } from './ModelButtons';
 import PopChat from './ChatBot/Popchat';
-import Timer from './Timer';
+import Timer from './Timer/Timer';
 import axios from "axios";
 
 function Game() {
@@ -173,6 +173,9 @@ function Game() {
                     </Box>
                 </Modal>
 
+                {/* Usamos el componente Timer */}
+                <Timer onTimeOut={handleTimeOut} resetTimer={timerReset} />
+
                 {/* Opciones en Grid */}
                 {questionData && (
                     <div className={styles.optionsGrid}>
@@ -195,9 +198,6 @@ function Game() {
                         ))}
                     </div>
                 )}
-
-                {/* Usamos el componente Timer */}
-                <Timer onTimeOut={handleTimeOut} resetTimer={timerReset} />
 
                 {timeOut && (
                     <div className={styles.timeOutMessage}>

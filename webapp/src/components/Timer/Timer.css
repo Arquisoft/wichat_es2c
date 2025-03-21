@@ -1,0 +1,46 @@
+.timer-container {
+    position: absolute;
+    top: 12%; /* Ajusta según la posición de la pregunta */
+    left: 75%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.timer-svg {
+    /*background-color: white;*/ /* Fondo blanco para mayor contraste */
+    transform: rotate(-90deg); /* Hace que la animación empiece desde arriba */
+}
+
+.timer-background {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 4;
+}
+
+.timer-mark {
+    stroke: black;
+    stroke-width: 2;
+}
+
+.timer-mark-quarter {
+    stroke-width: 4; /* Marcas más grandes para los cuartos */
+}
+
+.timer-circle {
+    fill: none;
+    stroke: red;
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear;
+}
+
+.timer-text {
+    fill: black; /* Cambia el color del texto a negro para mayor visibilidad */
+    font-size: 18px;
+    font-weight: bold;
+}
