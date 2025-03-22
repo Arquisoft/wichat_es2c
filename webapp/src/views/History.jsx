@@ -16,8 +16,8 @@ const History = () => {
     gamesPlayed: 0,
     averageScore: 0,
     bestScore: 0,
-    averageTime: "0h 0m",
-    bestTime: "0h 0m",
+    averageTime: 0,
+    bestTime: 0,
     rightAnswers: 0,
     wrongAnswers: 0
   });
@@ -134,50 +134,57 @@ const History = () => {
 
           <div className={styles.scItem3}>
             <div className={styles.pieChartTitle}>
-              <PieChart
-                series={[
-                  {
-                    data: [
-                      {
-                        value: statistics.rightAnswers,
-                        label: "Right answers",
-                        color: "#1fff71",
-                      },
-                      {
-                        value: statistics.wrongAnswers,
-                        label: "Wrong answers",
-                        color: "#db3535",
-                      },
-                    ],
-                    innerRadius: 65,
-                    outerRadius: 100,
-                    paddingAngle: 2,
-                    cornerRadius: 5,
-                    cx: 100,
-                    cy: 100,
-                  },
-                ]}
-                
-                width={200}
-                height={200}
-                margin={{ top: 0, right: 0, bottom: 0, left: 0 }} // Eliminar todos los márgenes
-                slots={{ legend: () => null }} // Eliminar la leyenda
-                children={
-                  <text
-                    x={100} // Debe coincidir con cx
-                    y={100} // Debe coincidir con cy
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    style={{
-                      fontSize: "30px",
-                      fontWeight: "bold",
-                      fill: "#000",
-                    }}
-                  >
-                    {correctPercentage}%
-                  </text>
-                }
-              />
+
+            {statistics.gamesPlayed > 0 ? (
+                <PieChart
+                  series={[
+                    {
+                      data: [
+                        {
+                          value: statistics.rightAnswers,
+                          label: "Right answers",
+                          color: "#1fff71",
+                        },
+                        {
+                          value: statistics.wrongAnswers,
+                          label: "Wrong answers",
+                          color: "#db3535",
+                        },
+                      ],
+                      innerRadius: 65,
+                      outerRadius: 100,
+                      paddingAngle: 2,
+                      cornerRadius: 5,
+                      cx: 100,
+                      cy: 100,
+                    },
+                  ]}
+                  width={200}
+                  height={200}
+                  margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                  slots={{ legend: () => null }}
+                  children={
+                    <text
+                      x={100}
+                      y={100}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      style={{
+                        fontSize: "30px",
+                        fontWeight: "bold",
+                        fill: "#000",
+                      }}
+                    >
+                      {correctPercentage}%
+                    </text>
+                  }
+                />
+              ) : (
+                <div className={styles.noChartMessage}>
+                  <p>There are no statistics available yet.</p>
+                </div>
+              )}
+
             </div>
             <div className={styles.answersContainer}>
               <p>Right Answers: {statistics.rightAnswers}</p>
@@ -210,7 +217,7 @@ const History = () => {
                 ))
               ) : (
                 <div className={styles.noGamesMessage}>
-                  <p>No hay partidas para mostrar en esta página</p>
+                  <p>There are no matches to display on this page.</p>
                 </div>
               )}
         </div>

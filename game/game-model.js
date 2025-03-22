@@ -24,8 +24,8 @@ const statisticsSchema = new mongoose.Schema({
     gamesPlayed: { type: Number},
     averageScore: { type: Number},
     bestScore: { type: Number},
-    averageTime: { type: String},
-    bestTime: { type: String },
+    averageTime: { type: Number},
+    bestTime: { type: Number },
     rightAnswers: { type: Number },
     wrongAnswers: { type: Number},
 });

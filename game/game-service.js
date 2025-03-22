@@ -119,18 +119,18 @@ app.post('/endMatch', async (req, res) => {
         gamesPlayed: 0,
         averageScore: 0,
         bestScore: 0,
-        averageTime: "0h 0m",
-        bestTime: "0h 0m",
+        averageTime: 0,
+        bestTime: 0,
         rightAnswers: 0,
         wrongAnswers: 0
       };
     } else {
       // Asegúrate de que todas las propiedades existan
       user.statistics.gamesPlayed++;
-      user.statistics.averageScore = (user.statistics.averageScore * (user.statistics.gamesPlayed - 1) + lastMatch.score) / user.statistics.gamesPlayed; //deshago el calculo de la media para hacerlo con lo nuevo
-      user.statistics.bestScore = Math.max(user.statistics.bestScore, lastMatch.score);
-      user.statistics.averageTime = formatTime((user.statistics.averageTime * (user.statistics.gamesPlayed - 1) + lastMatch.time) / user.statistics.gamesPlayed);
-      user.statistics.bestTime = formatTime(Math.min(user.statistics.bestTime, lastMatch.time));
+      user.statistics.averageScore = ((user.statistics.averageScore * (user.statistics.gamesPlayed - 1) + lastMatch.score) / user.statistics.gamesPlayed).toFixed(2); //deshago el calculo de la media para hacerlo con lo nuevo
+      user.statistics.bestScore = (Math.max(user.statistics.bestScore, lastMatch.score)).toFixed(2);
+      user.statistics.averageTime = ((user.statistics.averageTime * (user.statistics.gamesPlayed - 1) + lastMatch.time) / user.statistics.gamesPlayed).toFixed(2);
+      user.statistics.bestTime = (Math.max(user.statistics.bestTime, lastMatch.time));
       user.statistics.rightAnswers += lastMatch.questions.reduce((sum, question) => sum + question.answers.filter(answer => answer.selected && answer.correct).length, 0);
       user.statistics.wrongAnswers += lastMatch.questions.reduce((sum, question) => sum + question.answers.filter(answer => answer.selected && !answer.correct).length, 0);
     }
