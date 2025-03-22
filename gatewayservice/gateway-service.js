@@ -99,6 +99,18 @@ app.get('/userMatches', async (req, res) => {
   }
 });
 
+//get las estadisticas del usuario (usa luego el game-service)
+app.get('/userStatistics', async (req, res) => {
+  try {
+    const userResponse = await axios.get(`${gameServiceUrl}/userStatistics`, {
+      params: req.query
+    });
+    res.json(userResponse.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.response?.data?.error || 'Error desconocido' });
+  }
+});
+
 
 // Read the OpenAPI YAML file synchronously
 openapiPath='./openapi.yaml'

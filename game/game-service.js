@@ -56,10 +56,20 @@ app.post('/addMatch', async (req, res) => {
     const { username} = req.body;
 
     const user = await User.findOne({ username });
-
     if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
+
+    //ESTO AQUI PORQUE POR LO VISTO SE LLAMA DOS VECES A addMatch AL ABRIR
+    /*
+    const unfinishedMatch = user.matches.find(match => !match.date);
+        if (unfinishedMatch) {
+            return res.json({ 
+                message: 'Ya existe un partido en curso',
+                matchId: unfinishedMatch._id 
+            });
+      }
+    */
 
     const newMatch = new Match({
 
@@ -95,15 +105,27 @@ app.post('/endMatch', async (req, res) => {
     lastMatch.score = lastMatch.time * 100;
 
     //Actualizo las estadisticas del jugador
-    user.statistics.gamesPlayed++;
-    user.statistics.averageScore = (user.statistics.averageScore * (user.statistics.gamesPlayed - 1) + lastMatch.score) / user.statistics.gamesPlayed; //deshago el calculo de la media para hacerlo con lo nuevo
-    user.statistics.bestScore = Math.max(user.statistics.bestScore, lastMatch.score);
-    user.statistics.averageTime = formatTime((user.statistics.averageTime * (user.statistics.gamesPlayed - 1) + lastMatch.time) / user.statistics.gamesPlayed);
-    user.statistics.bestTime = formatTime(Math.min(user.statistics.bestTime, lastMatch.time));
-    user.statistics.rightAnswers += lastMatch.questions.reduce((sum, question) => sum + question.answers.filter(answer => answer.selected && answer.correct).length, 0);
-    user.statistics.wrongAnswers += lastMatch.questions.reduce((sum, question) => sum + question.answers.filter(answer => answer.selected && !answer.correct).length, 0);
+    if (!user.statistics) {
+      user.statistics = {
+        gamesPlayed: 0,
+        averageScore: 0,
+        bestScore: 0,
+        averageTime: "0h 0m",
+        bestTime: "0h 0m",
+        rightAnswers: 0,
+        wrongAnswers: 0
+      };
+    } else {
+      // Asegúrate de que todas las propiedades existan
+      user.statistics.gamesPlayed++;
+      user.statistics.averageScore = (user.statistics.averageScore * (user.statistics.gamesPlayed - 1) + lastMatch.score) / user.statistics.gamesPlayed; //deshago el calculo de la media para hacerlo con lo nuevo
+      user.statistics.bestScore = Math.max(user.statistics.bestScore, lastMatch.score);
+      user.statistics.averageTime = formatTime((user.statistics.averageTime * (user.statistics.gamesPlayed - 1) + lastMatch.time) / user.statistics.gamesPlayed);
+      user.statistics.bestTime = formatTime(Math.min(user.statistics.bestTime, lastMatch.time));
+      user.statistics.rightAnswers += lastMatch.questions.reduce((sum, question) => sum + question.answers.filter(answer => answer.selected && answer.correct).length, 0);
+      user.statistics.wrongAnswers += lastMatch.questions.reduce((sum, question) => sum + question.answers.filter(answer => answer.selected && !answer.correct).length, 0);
+    }
     
-
 
     await user.save();
 
@@ -123,66 +145,94 @@ const formatTime = (seconds) => { //funcion extra para pasar de segundos a horas
 };
 
 
-//sacar las partidas de un usuario
-        //ACTUALIZAR PARA QUE NO SAQUE TODOS, SOLO CIERTO NUMERO EN BASE A LA PAGINACION
-
-app.get('/userMatches', async (req, res) => {
+//sacar las estadisticas de un usuario
+app.get('/userStatistics', async (req, res) => {
   try {
     const username = req.query.username;
     
     const user = await User.findOne({ username });
-
     if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
+    
+    // Devolver solo las estadísticas
+    res.json({
+      statistics: user.statistics
+    });
+  } catch (error) {
+    console.error('Error al obtener estadísticas:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
 
-    //Saco las partidas y, ademas, calcular estadísticas generales
-    const formattedMatches = user.matches.map(match => {
-      // Calcular respuestas correctas e incorrectas
+// Obtener las partidas paginadas
+app.get('/userMatches', async (req, res) => {
+  try {
+    const username = req.query.username;
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    
+    // Calcular total de partidas y páginas
+    const totalMatches = user.matches.length;
+    const totalPages = Math.ceil(totalMatches / limit);
+    
+    // Obtener solo las partidas de la página actual
+    const startIndex = (page - 1) * limit;
+    const endIndex = startIndex + limit;
+    const paginatedMatches = user.matches.slice(startIndex, endIndex);
+    
+    const formattedMatches = paginatedMatches.map(match => {
       let correctAnswers = 0;
       let wrongAnswers = 0;
-      match.questions.forEach(question => {
-        question.answers.forEach(answer => {
-          if (answer.selected) {
-            if (answer.correct) {
-              correctAnswers++;
-            } else {
-              wrongAnswers++;
-            }
+      if (match.questions && Array.isArray(match.questions)) {
+        match.questions.forEach(question => {
+          if (question.answers && Array.isArray(question.answers)) {
+            question.answers.forEach(answer => {
+              if (answer.selected) {
+                if (answer.correct) {
+                  correctAnswers++;
+                } else {
+                  wrongAnswers++;
+                }
+              }
+            });
           }
         });
-      });
+      }
+      
       return {
         id: match._id,
         date: match.date,
-        time: match.time || 0,
-        score: match.score || 0,
+        time: match.time,
+        score: match.score,
         correctAnswers,
         wrongAnswers
-
-        /*  Corresponderia al boton Ver preguntas, no aqui
-        questions: match.questions.map(q => ({
-          text: q.text,
-          answers: q.answers.map(a => ({
-            text: a.text,
-            selected: a.selected,
-            correct: a.correct
-          }))
-        }))
-          */
       };
     });
-      
     
-    res.json({  //DEVUELTO TANTO LAS ESTADISTICAS COMO LAS PARTIDAS
+    // Devolver datos paginados junto con metadatos de paginación
+    res.json({ 
       matches: formattedMatches,
-      statistics: user.statistics
+      pagination: {
+        totalMatches,
+        totalPages,
+        currentPage: page,
+        limit
+      }
     });
   } catch (error) {
     console.error('Error al obtener partidas:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
+
+
 
 
 // Start the server

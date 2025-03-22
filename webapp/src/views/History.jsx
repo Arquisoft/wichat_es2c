@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import "./History.css"
 import styles from "./History.module.css";
 import Nav from "../components/Nav";
 import { PieChart } from "@mui/x-charts/PieChart";
 import {GameSummary} from "../components/GameSummary";
-
 import Pagination from '@mui/material/Pagination';
-
 import axios from "axios";
 
 const History = () => {
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000'; //'http://localhost:8004'
 
   const [statistics, setStatistics] = useState({
+    //declaracion default
     userName: "",
     gamesPlayed: 0,
     averageScore: 0,
@@ -24,75 +23,99 @@ const History = () => {
   });
 
   const [games, setGames] = React.useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const itemsPerPage = 5;
 
-  //Cargo los datos (partidas del usuario, e info de estas)
-  useEffect(() => {
-    const fetchUserHistory = async () => {
-      const username = localStorage.getItem("username");
-      if (!username) {
-        setError("Usuario no autenticado");
-        setLoading(false);
-        return;
-      }
+  //cargar SOLO las estadísticas (solo se llama una vez)
+  const fetchStatistics = useCallback(async () => {
+    const username = localStorage.getItem("username");
+    if (!username) {
+      console.error("Usuario no autenticado");
+      return;
+    }
+    
+    try {
+      const response = await axios.get(`${apiEndpoint}/userStatistics`, {
+        params: { username }
+      });
       
-      try {
-        const response = await axios.get(`${apiEndpoint}/userMatches`, {
-          params: { username }
+      if (response.data && response.data.statistics) {
+        setStatistics({
+          userName: username,
+          gamesPlayed: response.data.statistics.gamesPlayed,
+          averageScore: response.data.statistics.averageScore,
+          bestScore: response.data.statistics.bestScore,
+          averageTime: response.data.statistics.averageTime,
+          bestTime: response.data.statistics.bestTime,
+          rightAnswers: response.data.statistics.rightAnswers,
+          wrongAnswers: response.data.statistics.wrongAnswers
         });
-        
-        if (response.data) {
+      }
+    } catch (err) {
+      console.error("Error al obtener estadísticas:", err);
+    }
+  }, [apiEndpoint]);
 
-          // Obtener las partidas
-          if (response.data.matches) {
-            setGames(response.data.matches);
-          }
-          // Obtener las estadísticas
-          if (response.data.statistics) {
-            setStatistics({
-              userName: username,
-              gamesPlayed: response.data.statistics.gamesPlayed,
-              averageScore: response.data.statistics.averageScore,
-              bestScore: response.data.statistics.bestScore,
-              averageTime: response.data.statistics.averageTime,
-              bestTime: response.data.statistics.bestTime,
-              rightAnswers: response.data.statistics.rightAnswers,
-              wrongAnswers: response.data.statistics.wrongAnswers
-            });
-          }
+  //cargar los partidos de la pagina actual
+  const fetchPageData = useCallback(async (pageNumber) => {
+    const username = localStorage.getItem("username");
+    if (!username) {
+      return;
+    }
+    
+    try {
+      const response = await axios.get(`${apiEndpoint}/userMatches`, {
+        params: { 
+          username,
+          page: pageNumber,
+          limit: itemsPerPage
+        }
+      });
+      
+      if (response.data) {
+        if (response.data.matches) {
+          setGames(response.data.matches);
         }
         
-        setLoading(false);
-      } catch (err) {
-        console.error("Error al obtener el historial:", err);
-        setError("Error al cargar el historial");
-        setLoading(false);
+        if (response.data.pagination) {
+          setTotalPages(response.data.pagination.totalPages);
+        }
       }
-    };
+      
+    } catch (err) {
+      console.error("Error al obtener partidas:", err);
+    }
+  }, [apiEndpoint, itemsPerPage]);
+
+  // Cargar estadísticas al montar el componente (una sola vez)
+  useEffect(() => {
+    fetchStatistics();
+  }, [fetchStatistics]);
+
+  // Cargar partidas cuando cambia la página
+  useEffect(() => {
+    fetchPageData(page);
+  }, [page, fetchPageData]);
+
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
   
-    fetchUserHistory(); // la llamada para obtener todo
-  }, [apiEndpoint]); 
-
-
   const totalAnswers = statistics.rightAnswers + statistics.wrongAnswers;
   const correctPercentage = totalAnswers > 0 
     ? Math.round((statistics.rightAnswers / totalAnswers) * 100)
     : 0;
 
 
-  const [page, setPage] = React.useState(1);
-  const itemsPerPage = 5;
+  //const [page, setPage] = React.useState(1);
+  //const itemsPerPage = 5;
+  //const numPages = Math.ceil(games.length / itemsPerPage);
 
-  const numPages = Math.ceil(games.length / itemsPerPage);
-
-  const handlePageChange = (event, value) => {
-    setPage(value);
-  };
-
-  const indexOfLastItem = page * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const gamesCurrentPage = games.slice(indexOfFirstItem, indexOfLastItem);
+  //const indexOfLastItem = page * itemsPerPage;
+  //const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  //const gamesCurrentPage = games.slice(indexOfFirstItem, indexOfLastItem);
 
 
 
@@ -174,24 +197,28 @@ const History = () => {
         <div className={styles.divider}></div>
 
         <div className={styles.gamesHistoryContainer}>
-          {gamesCurrentPage.map((game, index) => (
-            <GameSummary
-              key={index}
-              //date={game.date}
-              //hour={game.hour}
-              date={new Date(game.date).toLocaleDateString()}
-              hour={new Date(game.date).toLocaleTimeString()}
-              correctAnswers={game.correctAnswers}
-              wrongAnswers={game.wrongAnswers}
-              time={game.time}
-            />
-          ))}
+              {games.length > 0 ? (
+                games.map((game, index) => (
+                  <GameSummary
+                    key={game.id || index}
+                    date={new Date(game.date).toLocaleDateString()}
+                    hour={new Date(game.date).toLocaleTimeString()}
+                    correctAnswers={game.correctAnswers}
+                    wrongAnswers={game.wrongAnswers}
+                    time={game.time}
+                  />
+                ))
+              ) : (
+                <div className={styles.noGamesMessage}>
+                  <p>No hay partidas para mostrar en esta página</p>
+                </div>
+              )}
         </div>
 
         <div className={styles.divider}></div>
 
         <div className={styles.paginationContainer}>
-          <Pagination count={numPages} page={page} onChange={handlePageChange} color="primary" className={styles.pagination}/>
+          <Pagination count={totalPages} page={page} onChange={handlePageChange} color="primary" className={styles.pagination}/>
         </div>
 
       </div>
