@@ -86,8 +86,10 @@ function Game() {
         setButtonsActive(false);
 
         const selectedOption = questionData.choices[index];
-        const questionText = questionData.choices;
         setSelectedAnswer(selectedOption);
+
+        const questionText = questionData.choices;
+        
         try {
             const response = await axios.post(`${apiEndpointGame}/addQuestion`, {
                 username: localStorage.getItem("username"),
@@ -313,21 +315,21 @@ function Game() {
                     <div className={styles.questionContainer}>
                         {questionData.question}
                         {!showDifficultyModal && (
-                    <Timer
+                      <Timer
                         onTimeOut={handleTimeOut}
                         resetTimer={timerReset}
                         initialTime={timeLeft}
-                    />
-                )}
+                      />
+                      )}
 
 
-                {timeOut && (
-                    <div className={styles.timeOutMessage}>
-                        <h2>¡El tiempo se ha acabado!</h2>
-                    </div>
-                )}
-                    </div>
-                )}
+                      {timeOut && (
+                          <div className={styles.timeOutMessage}>
+                              <h2>¡El tiempo se ha acabado!</h2>
+                          </div>
+                      )}
+                          </div>
+                      )}
 
                 {/* Modal para cuando el usuario falle */}
                 <Modal
