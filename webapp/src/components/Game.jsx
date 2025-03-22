@@ -312,6 +312,20 @@ function Game() {
                 {questionData && (
                     <div className={styles.questionContainer}>
                         {questionData.question}
+                        {!showDifficultyModal && (
+                    <Timer
+                        onTimeOut={handleTimeOut}
+                        resetTimer={timerReset}
+                        initialTime={timeLeft}
+                    />
+                )}
+
+
+                {timeOut && (
+                    <div className={styles.timeOutMessage}>
+                        <h2>¡El tiempo se ha acabado!</h2>
+                    </div>
+                )}
                     </div>
                 )}
 
@@ -368,20 +382,7 @@ function Game() {
                     </div>
                 )}
 
-                {!showDifficultyModal && (
-                    <Timer
-                        onTimeOut={handleTimeOut}
-                        resetTimer={timerReset}
-                        initialTime={timeLeft}
-                    />
-                )}
-
-
-                {timeOut && (
-                    <div className={styles.timeOutMessage}>
-                        <h2>¡El tiempo se ha acabado!</h2>
-                    </div>
-                )}
+                
 
                 {/* Sección para mostrar el chatbot */}
                 <div className={styles.chatContainer}>
