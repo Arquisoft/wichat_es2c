@@ -7,17 +7,17 @@ const answerSchema = new mongoose.Schema({
 });
 
 const questionSchema = new mongoose.Schema({
-    text: String ,
-    answers: {
-        type: [answerSchema],
-    } })
+    text: String,
+    answers: [answerSchema],
+})
 
 
 const matchSchema = new mongoose.Schema({
-    date: { type: Date },
-    questions: { type: [questionSchema] },
-    time: { type: Number },
-    score : { type: Number },
+    date: Date,
+    difficulty: Number, //1 normal 2 dificil
+    questions: [questionSchema],
+    time: Number ,
+    score : Number,
 });
 
 const statisticsSchema = new mongoose.Schema({

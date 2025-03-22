@@ -1,29 +1,37 @@
 import React, { useState, useEffect } from 'react';
 
-function Timer({ onTimeOut, resetTimer }) {
-    const [timeLeft, setTimeLeft] = useState(5); // Tiempo inicial de 15 segundos
-    const [timerActive, setTimerActive] = useState(true); // Nuevo estado para controlar si el timer está activo
+function Timer({ onTimeOut, resetTimer, initialTime = 60 }) {
+    const [timeLeft, setTimeLeft] = useState(initialTime);
+    const [timerActive, setTimerActive] = useState(true);
 
-    // Reinicia el tiempo cuando el usuario pulsa Replay
+    // Update timeLeft when initialTime changes
+    useEffect(() => {
+        setTimeLeft(initialTime);
+        setTimerActive(true);
+    }, [initialTime]);
+
+    // Reset timer when resetTimer changes
     useEffect(() => {
         if (resetTimer) {
-            setTimeLeft(5);
-            setTimerActive(true);  // 🔹 Reactiva el temporizador
+            setTimeLeft(initialTime);
+            setTimerActive(true);
         }
-    }, [resetTimer]);
+    }, [resetTimer, initialTime]);
 
+    // Handle countdown
     useEffect(() => {
+        let timer;
         if (timeLeft > 0 && timerActive) {
-            const timer = setInterval(() => {
+            timer = setInterval(() => {
                 setTimeLeft((prevTime) => prevTime - 1);
             }, 1000);
-
-            return () => clearInterval(timer); // Limpiar el intervalo cuando el componente se desmonte
-        } else if (timeLeft === 0 && timerActive) {
-            setTimerActive(false);  // 🔹 Desactiva el temporizador para evitar múltiples llamadas
-            onTimeOut(); // Llamar a la función cuando el tiempo se haya agotado
+        } else if (timeLeft <= 0 && timerActive) {
+            setTimerActive(false);
+            onTimeOut();
         }
-    }, [timeLeft, onTimeOut]);
+
+        return () => clearInterval(timer);
+    }, [timeLeft, timerActive, onTimeOut]);
 
     return (
         <div style={{ textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>
