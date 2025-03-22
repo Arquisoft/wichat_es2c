@@ -246,6 +246,7 @@ function Game() {
                         <ButtonContainer>
                             <ReplayButton onClick={handleReplayClick}>🔄 Reintentar</ReplayButton>
                             <HomeButton onClick={handleHomeClick}>🏠 Volver a Inicio</HomeButton>
+                            <ChartButton onClick={handleHistoryClick}>📈 Estadísticas</ChartButton>
                         </ButtonContainer>
                     </Box>
                 </Modal>
