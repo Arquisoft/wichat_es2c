@@ -35,7 +35,7 @@ function Game() {
     const [reset, setReset] = useState(false);
     const [totalTime, setTotalTime] = useState(0); // Nuevo estado para el tiempo total de la partida
     const [gameStartTime, setGameStartTime] = useState(null); // Nuevo estado para registrar cuando inicia la partida
-
+    const [finished,setFinished] = useState(false);
 
     useEffect(() => {
         if (showDifficultyModal) {
@@ -216,26 +216,29 @@ function Game() {
     };
 
     const handleTimeOut = async () => {
-        let gameTime = 0;
-        if (gameStartTime) {
-            const gameEndTime = Date.now();
-            gameTime = Math.floor((gameEndTime - gameStartTime) / 1000);
-            setTotalTime(gameTime);
-        }
+        if(!finished) {
+            setFinished(true);
+            let gameTime = 0;
+            if (gameStartTime) {
+                const gameEndTime = Date.now();
+                gameTime = Math.floor((gameEndTime - gameStartTime) / 1000);
+                setTotalTime(gameTime);
+            }
 
-        try {
-            const response = await axios.post(`${apiEndpointGame}/endMatch`, {
-                username: localStorage.getItem("username"),
-                time: gameTime, // Enviar el tiempo total de la partida
-            });
-            console.log(response);
-        } catch (error) {
-            console.error("Error al enviar la información de fin de partida:", error);
-        }
+            try {
+                const response = await axios.post(`${apiEndpointGame}/endMatch`, {
+                    username: localStorage.getItem("username"),
+                    time: gameTime,
+                });
+                console.log(response);
+            } catch (error) {
+                console.error("Error al enviar la información de fin de partida:", error);
+            }
 
-        setTimeOut(true);
-        setShowTimeOutModal(true); // Mostrar modal de tiempo agotado
-        setShowFailModal(true); // Activar el modal de fallo cuando el tiempo se acaba
+            setTimeOut(true);
+            setShowTimeOutModal(true); // Mostrar modal de tiempo agotado
+            setShowFailModal(true); // Activar el modal de fallo cuando el tiempo se acaba
+        }
     };
 
 
