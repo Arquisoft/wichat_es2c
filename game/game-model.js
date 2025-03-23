@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const answerSchema = new mongoose.Schema({
-    isCorrect: Boolean,
+    correct: Boolean,
     text: String,
     selected: Boolean,
 });

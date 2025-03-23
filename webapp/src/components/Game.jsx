@@ -94,7 +94,8 @@ function Game() {
             const response = await axios.post(`${apiEndpointGame}/addQuestion`, {
                 username: localStorage.getItem("username"),
                 question: questionText,
-                correctAnswer: questionData.correctAnswer,
+                //correctAnswer: questionData.correctAnswer,
+                correctAnswer: questionData.choices.indexOf(questionData.correctAnswer),
                 answers: questionData.choices,
                 selectedAnswer: selectedOption,
             });

@@ -15,7 +15,7 @@ mongoose.connect(mongoUri);
 
 app.post('/addQuestion', async (req, res) => {
   try {
-    const { username, question, selectedAnswer, correctAnswer, answers } = req.body;
+    const { username, question, correctAnswer, answers, selectedAnswer } = req.body;
 
     if (!username || !question || !selectedAnswer || correctAnswer === undefined || !answers) {
       return res.status(400).json({ error: "Error when processing the request" });
@@ -29,14 +29,28 @@ app.post('/addQuestion', async (req, res) => {
 
     const lastMatch = user.matches[user.matches.length - 1];
 
+    /*
     const newQuestion = {
       text: String(question),
-      answers: answers.map((option, index) => ({
+      answers: answers.map((option, index) => ({ //option el texto de la respuesta, el index el indice de la actual
         text: option,
         selected: option === selectedAnswer,
         correct: index === correctAnswer
       }))
     };
+    */
+
+    const newQuestion = {
+      text: String(question),
+      answers: answers.map((option, index) => {
+        return {
+          text: option,
+          selected: option === selectedAnswer,
+          correct: index === correctAnswer,
+        };
+      })
+    };
+
 
     lastMatch.questions.push(newQuestion);
     await user.save();
@@ -58,17 +72,6 @@ app.post('/addMatch', async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
-
-    //ESTO AQUI PORQUE POR LO VISTO SE LLAMA DOS VECES A addMatch AL ABRIR
-    /*
-    const unfinishedMatch = user.matches.find(match => !match.date);
-        if (unfinishedMatch) {
-            return res.json({ 
-                message: 'Ya existe un partido en curso',
-                matchId: unfinishedMatch._id 
-            });
-      }
-    */
 
     const newMatch = new Match({
     difficulty:difficulty
@@ -103,11 +106,17 @@ app.post('/endMatch', async (req, res) => {
       return res.status(404).json({ error: 'No se encontró una partida activa' });
     }
 
-    const correctAnswers = lastMatch.questions.filter(q =>
-        q.answers.some(answer => answer.selected && answer.correct)
-    ).length;
-
+    
+    const questionsWithCorrectAnswers = lastMatch.questions.filter(q => {
+      const hasCorrectSelected = q.answers.some(answer => {
+        return answer.selected && answer.correct;
+      });
+      return hasCorrectSelected;
+    });
+    
+    const correctAnswers = questionsWithCorrectAnswers.length;
     const incorrectAnswers = lastMatch.questions.length - correctAnswers;
+
 
     lastMatch.date = new Date();
     lastMatch.time = req.body.time;
@@ -116,13 +125,13 @@ app.post('/endMatch', async (req, res) => {
     //Actualizo las estadisticas del jugador
     if (!user.statistics) {
       user.statistics = {
-        gamesPlayed: 0,
-        averageScore: 0,
-        bestScore: 0,
-        averageTime: 0,
-        bestTime: 0,
-        rightAnswers: 0,
-        wrongAnswers: 0
+        gamesPlayed: 1,
+        averageScore: lastMatch.score,
+        bestScore: lastMatch.score,
+        averageTime: lastMatch.time,
+        bestTime:  lastMatch.time,
+        rightAnswers: correctAnswers,
+        wrongAnswers: incorrectAnswers
       };
     } else {
       // Asegúrate de que todas las propiedades existan
