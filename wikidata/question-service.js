@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const {generateQuestion}= require('./question-Generator');
+const {json} = require("express");
 const app = express();
 
 const PORT = 3005;

@@ -14,6 +14,7 @@ const llmServiceUrl = process.env.LLM_SERVICE_URL || 'http://localhost:8003';
 const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:8002';
 const userServiceUrl = process.env.USER_SERVICE_URL || 'http://localhost:8001';
 const gameServiceUrl = process.env.GAME_SERVICE_URL || 'http://localhost:8004';
+const wikidataServiceUrl = process.env.WIKIDATA_SERVICE_URL || 'http://localhost:8005';
 
 app.use(cors());
 app.use(express.json());
@@ -70,6 +71,15 @@ app.post('/addMatch', async (req, res) => {
 app.post('/endMatch', async (req, res) => {
   try {
     const userResponse = await axios.post(gameServiceUrl+'/endMatch', req.body);
+    res.json(userResponse.data);
+  } catch (error) {
+    res.status(error.response.status).json({ error: error.response.data.error });
+  }
+});
+
+app.post('/getQuestion', async (req, res) => {
+  try {
+    const userResponse = await axios.post(wikidataServiceUrl+'/getQuestion', req.body);
     res.json(userResponse.data);
   } catch (error) {
     res.status(error.response.status).json({ error: error.response.data.error });

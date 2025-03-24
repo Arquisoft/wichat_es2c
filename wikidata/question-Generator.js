@@ -1,36 +1,50 @@
 // question-Generator.js
-const { fetchCapitalQuestion } = require('./wikidata-client');
+const { Question, Answer } = require('./wikidata-model');
+const cors = require('cors');
+const express = require("express");
+const app = express();
+app.use(cors());
+const mongoose = require('mongoose');
+const {fetchCapitalQuestion} = require("./wikidata-Client");
+app.use(express.json());
 
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/userdb';
+mongoose.connect(mongoUri);
 async function generateQuestion() {
-    const data = await fetchCapitalQuestion();
 
-    if (data.length < 4) {
-        throw new Error('Not enough data to generate question');
+    try {
+        await fetchCapitalQuestion();
+        const question = await Question.aggregate([
+            { $sample: { size: 1 } } //pregunta aleatoria
+        ]);
+
+        if (!question || question.length === 0) {
+            throw new Error('No questions found in the database');
+        }
+
+        const selectedQuestion = question[0];
+
+        const choices = selectedQuestion.answers
+            .map(answer => answer.text)
+            .sort(() => 0.5 - Math.random());
+
+        const correctAnswer = selectedQuestion.answers
+            .find(answer => answer.correct)?.text;
+
+        const flagUrl = selectedQuestion.image || null;
+
+        return {
+            question: selectedQuestion.text,
+            choices: choices,
+            answer: correctAnswer,
+            image: flagUrl
+        };
+    } catch (error) {
+        console.error("Error generating question:", error);
+        throw new Error('Failed to generate question: ' + error.message);
     }
-
-    const ind = Math.floor(Math.random() * data.length);
-    const goodChoice = data[ind];
-
-    const badChoices = data.filter((_, index) => index !== ind)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 3);
-
-    const choices = [
-        ...badChoices.map(choice => choice.capitalLabel.value),
-        goodChoice.capitalLabel.value
-    ].sort(() => 0.5 - Math.random());
-
-    const flagUrl = goodChoice.flag ? goodChoice.flag.value : null;
-
-    return {
-        question: `¿Cuál es la capital de ${goodChoice.countryLabel.value}?`,
-        choices: choices,
-        answer: goodChoice.capitalLabel.value,
-        image: flagUrl
-    };
 }
 
-// Asegúrate de exportar correctamente la función
 module.exports = {
     generateQuestion
 };

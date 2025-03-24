@@ -24,7 +24,6 @@ function Game() {
     const [isCorrect, setIsCorrect] = useState(false); // Estado para saber si la respuesta es correcta
     const [msgs, setMsgs] = useState(["Guayaba"]); // Mensajes del chatbot
     const [open, setOpen] = useState(false);
-    const [showFailModal, setShowFailModal] = useState(false); // Estado para el modal de fallo
     const [buttonsActive, setButtonsActive] = useState(true);
     const [timeOut, setTimeOut] = useState(false); // Estado para controlar el tiempo
     const [showTimeOutModal, setShowTimeOutModal] = useState(false); // Modal para el tiempo agotado
@@ -44,6 +43,15 @@ function Game() {
             }, 100);
         }
     }, []);
+
+    useEffect(() => {
+        if (questionData && questionData.image) {
+            const img = new Image();
+            img.src = questionData.image;
+            img.onload = () => {
+            };
+        }
+    }, [questionData?.image]);
 
     const handleDifficultySelect = (level) => {
         setDifficulty(level);
@@ -176,13 +184,11 @@ function Game() {
     }, [apiEndpointWiki]);
 
     const handleHomeClick = () => navigate('/');
-    const handleHistoryClick = () => navigate('/history');
     const handleReplayClick = () => {
         setTimeOut(false);
         setShowTimeOutModal(false);
-        setShowFailModal(false);
         setButtonsActive(false);
-
+        setFinished(false);
         setTimerReset(true);
         setTimeout(() => {
             setTimerReset(false);
@@ -199,21 +205,6 @@ function Game() {
         }, 50);
     };
 
-
-
-    const handleRestartGame = () => {
-        setShowFailModal(false); // Ocultar el modal de fallo
-        setTimeOut(false); // Reiniciar el estado de tiempo agotado
-        setButtonsActive(true); // Reactivar los botones
-        setTimerReset(true); // Reiniciar el contador
-        fetchNewQuestion(); // Cargar una nueva pregunta
-
-        // Restablecer el tiempo según la dificultad
-        setTimeLeft(difficulty === 1 ? 60 : 45);
-        // Reiniciar el registro del tiempo
-        setGameStartTime(Date.now());
-        setTotalTime(0);
-    };
 
     const handleTimeOut = async () => {
         if(!finished) {
@@ -237,7 +228,6 @@ function Game() {
 
             setTimeOut(true);
             setShowTimeOutModal(true); // Mostrar modal de tiempo agotado
-            setShowFailModal(true); // Activar el modal de fallo cuando el tiempo se acaba
         }
     };
 
@@ -249,6 +239,7 @@ function Game() {
                 disableEnforceFocus={true}
                 open={showDifficultyModal}
                 onClose={null}
+                disableEscapeKeyDown
                 aria-labelledby="difficulty-modal-title"
                 aria-describedby="difficulty-modal-description"
             >
@@ -335,33 +326,6 @@ function Game() {
                           </div>
                       )}
 
-                {/* Modal para cuando el usuario falle */}
-                <Modal
-                    open={showFailModal}
-                    onClose={() => setShowFailModal(false)}
-                >
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: 400,
-                            bgcolor: 'background.paper',
-                            borderRadius: '10px',
-                            boxShadow: 24,
-                            p: 4,
-                            textAlign: 'center',
-                        }}
-                    >
-                        <h2>❌ ¡Respuesta incorrecta!</h2>
-                        <p>La respuesta correcta era: <strong>{questionData?.correctAnswer}</strong></p>
-                        <ButtonContainer>
-                            <ReplayButton onClick={handleRestartGame}>🔄 Reintentar</ReplayButton>
-                            <HomeButton onClick={handleHomeClick}>🏠 Volver a Inicio</HomeButton>
-                        </ButtonContainer>
-                    </Box>
-                </Modal>
 
                 {/* Opciones en Grid */}
                 {questionData && (
@@ -398,7 +362,8 @@ function Game() {
                 {/* Modal para el tiempo agotado */}
                 <Modal
                     open={showTimeOutModal}
-                    onClose={() => setShowTimeOutModal(false)}
+                    onClose={null}
+                    disableEscapeKeyDown
                 >
                     <Box
                         sx={{
