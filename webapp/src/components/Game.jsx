@@ -6,144 +6,37 @@ import styles from './Game.module.css';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { HomeButton, ChartButton, ReplayButton, ButtonContainer } from './ModelButtons';
-
 import PopChat from './ChatBot/Popchat';
-import Timer from './Timer';
+import Timer from './Timer/Timer';
 import axios from "axios";
-
 
 function Game() {
     const navigate = useNavigate();
-    const apiEndpointGame = process.env.GAME_SERVICE_API_ENDPOINT || 'http://localhost:8004';
-    const apiEndpointWiki = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:3005';
-    const [difficulty, setDifficulty] = useState(1);
-    const [showDifficultyModal, setShowDifficultyModal] = useState(true);
-    const [difficultyModalFadeIn, setDifficultyModalFadeIn] = useState(true);
+    const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:3005';
+
     const [questionData, setQuestionData] = useState(null); // Estado para la pregunta actual
     const [selectedAnswer, setSelectedAnswer] = useState(null); // Estado para la respuesta seleccionada
     const [isCorrect, setIsCorrect] = useState(false); // Estado para saber si la respuesta es correcta
     const [msgs, setMsgs] = useState(["Guayaba"]); // Mensajes del chatbot
-    const [open, setOpen] = useState(false);
+
     const [showFailModal, setShowFailModal] = useState(false); // Estado para el modal de fallo
     const [buttonsActive, setButtonsActive] = useState(true);
     const [timeOut, setTimeOut] = useState(false); // Estado para controlar el tiempo
     const [showTimeOutModal, setShowTimeOutModal] = useState(false); // Modal para el tiempo agotado
     const [timerReset, setTimerReset] = useState(false); // Estado para reiniciar el contador
-    const [showChatBot, setShowChatBot] = useState(false);
-    const [fadeIn, setFadeIn] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(60); // Tiempo inicial
-    const [reset, setReset] = useState(false);
-    const [totalTime, setTotalTime] = useState(0); // Nuevo estado para el tiempo total de la partida
-    const [gameStartTime, setGameStartTime] = useState(null); // Nuevo estado para registrar cuando inicia la partida
-    const [finished,setFinished] = useState(false);
 
+    const [timeLeft, setTimeLeft] = useState(60); // Estado para el tiempo restante en el temporizador
+
+
+    // Cargar la primera pregunta cuando el componente se monta
     useEffect(() => {
-        if (showDifficultyModal) {
-            setTimeout(() => {
-                setDifficultyModalFadeIn(true);
-            }, 100);
-        }
-    }, []);
-
-    const handleDifficultySelect = (level) => {
-        setDifficulty(level);
-        setTimeLeft(level === 1 ? 60 : 45); // 60s en Normal, 45s en dificil
-        setDifficultyModalFadeIn(false);
-        setTimeout(() => {
-            setShowDifficultyModal(false);
-            addMatch(level);
-            setGameStartTime(Date.now());
-            setTotalTime(0);
-        }, 300);
-    };
-
-
-    const addMatch = async (diffLevel) => {
-        try {
-            const response = await axios.post(`${apiEndpointGame}/addMatch`, {
-                username: localStorage.getItem("username"),
-                difficulty: diffLevel,
-            });
-            console.log(response)
-        } catch (error) {
-            console.error("Error al añadir el match:", error);
-        }
-    };
-
-
-
-    const getMessage = (msg) => {
-        //msgs.push(msg);
-        setMsgs((prevMsgs) => [...prevMsgs, msg]);
-    };
-
-
-
-    const handleButtonClick = async (index) => {
-        if (!questionData) return;
-
-        // Deshabilitar los botones temporalmente
-        setButtonsActive(false);
-
-        const selectedOption = questionData.choices[index];
-        setSelectedAnswer(selectedOption);
-
-        const questionText = questionData.choices;
-        
-        try {
-            const response = await axios.post(`${apiEndpointGame}/addQuestion`, {
-                username: localStorage.getItem("username"),
-                question: questionText,
-                //correctAnswer: questionData.correctAnswer,
-                correctAnswer: questionData.choices.indexOf(questionData.correctAnswer),
-                answers: questionData.choices,
-                selectedAnswer: selectedOption,
-            });
-            console.log(response);
-        } catch (error) {
-            console.error(error);
-        }
-
-        setTimeout(() => {
-            setOpen(true);
-        }, 0);
-
-        // Verificar si la respuesta es correcta
-        if (selectedOption === questionData.correctAnswer) {
-            setIsCorrect(true);
-            const bonusTime = difficulty === 1 ? 6 : 3;
-            setTimeLeft(prevTime => prevTime + bonusTime);
-
-            setTimerReset(true);
-
-            // Esperar 1 segundo antes de cargar una nueva pregunta
-            setTimeout(() => {
-                fetchNewQuestion(); // Cargar una nueva pregunta
-                setButtonsActive(true); // Reactivar los botones
-                setTimerReset(false); // Desactivar el reinicio del contador
-            }, 200); // Esperar 1 segundo
-        } else {
-            setIsCorrect(false); // Marcar como incorrecta
-            const bonusTime = difficulty === 1 ? -5 : -10;
-            setTimeLeft(prevTime => prevTime + bonusTime);
-            setTimerReset(true);
-            setTimeout(() => {
-                fetchNewQuestion(); // Cargar una nueva pregunta
-                setButtonsActive(true); // Reactivar los botones
-                setTimerReset(false); // Desactivar el reinicio del contador
-            }, 200); // Esperar 1 segundo
-
-        }
-    };
-
-    const handleChatBotToggle = () => {
-        setShowChatBot(!showChatBot);
-    };
+        fetchNewQuestion();
+    }, [apiEndpoint]);
 
     // Función para obtener una nueva pregunta de la API
     const fetchNewQuestion = async () => {
         try {
-            const response = await axios.get(`${apiEndpointWiki}/question`);
+            const response = await axios.get(`${apiEndpoint}/question`);
             const data = response.data;
 
             setQuestionData({
@@ -156,50 +49,53 @@ function Game() {
             // Reiniciar los estados de la respuesta seleccionada y si es correcta
             setSelectedAnswer(null);
             setIsCorrect(false);
-            setTimerReset(true); // Activar el reinicio del contador
+            setTimerReset(false); // Activar el reinicio del contador
         } catch (error) {
             console.error("Error fetching question:", error);
         }
     };
 
-    useEffect(() => {
-        if (open) {
-            setTimeout(() => setFadeIn(true), 250);
-        } else {
-            setFadeIn(false);
-        }
-    }, [open]);
+    // Funcion para modificar el tiempo en funcion de si se acierta o se falla una pregunta :
+    // Si se acierta + 5 segundos; Si se falla - 10 segundos.
+    const adjustTime = (amount) => {
+        setTimerReset(false); // Evitar un reinicio completo del timer
+        setTimeLeft((prevTime) => Math.max(prevTime + amount, 0)); // Asegurar que no sea negativo
+    };
+    
 
-    // Cargar la primera pregunta cuando el componente se monta
-    useEffect(() => {
-        fetchNewQuestion();
-    }, [apiEndpointWiki]);
+    // Función para manejar el clic en las opciones
+    const handleButtonClick = async (index) => {
+        if (!questionData) return;
 
-    const handleHomeClick = () => navigate('/');
-    const handleHistoryClick = () => navigate('/history');
-    const handleReplayClick = () => {
-        setTimeOut(false);
-        setShowTimeOutModal(false);
-        setShowFailModal(false);
+        // Deshabilitar los botones temporalmente
         setButtonsActive(false);
 
-        setTimerReset(true);
-        setTimeout(() => {
-            setTimerReset(false);
-        }, 100);
+        const selectedOption = questionData.choices[index];
+        setSelectedAnswer(selectedOption); // Guardar la respuesta seleccionada
 
-        fetchNewQuestion();
+        // Verificar si la respuesta es correcta
+        if (selectedOption === questionData.correctAnswer) {
+            setIsCorrect(true); // Marcar como correcta
+            adjustTime(5); // 🔹 Sumar 5 segundos al acertar
 
-        setTimeLeft(difficulty === 1 ? 60 : 45);
-
-        setGameStartTime(Date.now());
-        setTotalTime(0);
-        setTimeout(() => {
-            setButtonsActive(true);
-        }, 50);
+            // Esperar 1 segundo antes de cargar una nueva pregunta
+            setTimeout(() => {
+                fetchNewQuestion(); // Cargar una nueva pregunta
+                setButtonsActive(true); // Reactivar los botones
+                //setTimerReset(false); // Desactivar el reinicio del contador
+            }, 200); // Esperar 1 segundo
+        } else {
+            setIsCorrect(false); // Marcar como incorrecta
+            adjustTime(-10); // 🔹 Restar 10 segundos al fallar
+            //setShowFailModal(true); // Mostrar modal de fallo
+            setButtonsActive(true); // Reactivar los botones
+        }
     };
 
-
+    // Función para manejar los mensajes del chatbot
+    const getMessage = (msg) => {
+        setMsgs((prevMsgs) => [...prevMsgs, msg]);
+    };
 
     const handleRestartGame = () => {
         setShowFailModal(false); // Ocultar el modal de fallo
@@ -207,98 +103,38 @@ function Game() {
         setButtonsActive(true); // Reactivar los botones
         setTimerReset(true); // Reiniciar el contador
         fetchNewQuestion(); // Cargar una nueva pregunta
-
-        // Restablecer el tiempo según la dificultad
-        setTimeLeft(difficulty === 1 ? 60 : 45);
-        // Reiniciar el registro del tiempo
-        setGameStartTime(Date.now());
-        setTotalTime(0);
     };
 
+    // Funciones de navegación
+    const handleHomeClick = () => navigate('/');
+    const handleHistoryClick = () => navigate('/history');
+    const handleReplayClick = () => {
+        setTimerReset(true); // Reiniciar el contador
+        setTimeOut(false);
+        setShowTimeOutModal(false);
+        setButtonsActive(false);
+        setTimeout(() => {
+            setButtonsActive(true); // Habilitar los botones después de un corto tiempo
+        }, 50);
+        fetchNewQuestion(); // Cargar una nueva pregunta
+    };
+
+    // Función que se llama cuando el tiempo se ha agotado
     const handleTimeOut = async () => {
-        if(!finished) {
-            setFinished(true);
-            let gameTime = 0;
-            if (gameStartTime) {
-                const gameEndTime = Date.now();
-                gameTime = Math.floor((gameEndTime - gameStartTime) / 1000);
-                setTotalTime(gameTime);
-            }
-
-            try {
-                const response = await axios.post(`${apiEndpointGame}/endMatch`, {
-                    username: localStorage.getItem("username"),
-                    time: gameTime,
-                });
-                console.log(response);
-            } catch (error) {
-                console.error("Error al enviar la información de fin de partida:", error);
-            }
-
-            setTimeOut(true);
-            setShowTimeOutModal(true); // Mostrar modal de tiempo agotado
-            setShowFailModal(true); // Activar el modal de fallo cuando el tiempo se acaba
+        try {
+            await axios.post(`${apiEndpoint}/endMatch`, {
+                username: localStorage.getItem("username"),
+                time: 60, // Tiempo hardcodeado
+            });
+        } catch (error) {
+            console.error("Error al enviar la pregunta:", error);
         }
+        setTimeOut(true);
+        setShowTimeOutModal(true); // Mostrar modal de tiempo agotado
     };
-
 
     return (
-
         <div className={styles.containerLayout}>
-            <Modal
-                disableEnforceFocus={true}
-                open={showDifficultyModal}
-                onClose={null}
-                aria-labelledby="difficulty-modal-title"
-                aria-describedby="difficulty-modal-description"
-            >
-                <Box
-                    className={difficultyModalFadeIn ? styles.fadeIn : styles.fadeOut}
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: '80%',
-                        maxWidth: 600,
-                        minHeight: 300,
-                        bgcolor: 'background.paper',
-                        border: '2px solid #000',
-                        borderRadius: 4,
-                        boxShadow: 24,
-                        p: 4,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                    }}
-                >
-                    <h1 className={styles.winnerTitle}>Select difficulty level</h1>
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        gap: '20px',
-                        margin: '30px 0'
-                    }}>
-                        <AwesomeButton
-                            type="primary"
-                            size="large"
-                            onPress={() => handleDifficultySelect(1)}
-                            style={{minWidth: '150px', fontSize: '1.2rem'}}
-                        >
-                            Normal
-                        </AwesomeButton>
-                        <AwesomeButton
-                            type="secondary"
-                            size="large"
-                            onPress={() => handleDifficultySelect(2)}
-                            style={{minWidth: '150px', fontSize: '1.2rem'}}
-                        >
-                            Hard
-                        </AwesomeButton>
-                    </div>
-                </Box>
-            </Modal>
             {/* Sección de la imagen */}
             {questionData && questionData.image && (
                 <div className={styles.imageContainer}>
@@ -318,22 +154,8 @@ function Game() {
                 {questionData && (
                     <div className={styles.questionContainer}>
                         {questionData.question}
-                        {!showDifficultyModal && (
-                      <Timer
-                        onTimeOut={handleTimeOut}
-                        resetTimer={timerReset}
-                        initialTime={timeLeft}
-                      />
-                      )}
-
-
-                      {timeOut && (
-                          <div className={styles.timeOutMessage}>
-                              <h2>¡El tiempo se ha acabado!</h2>
-                          </div>
-                      )}
-                          </div>
-                      )}
+                    </div>
+                )}
 
                 {/* Modal para cuando el usuario falle */}
                 <Modal
@@ -363,6 +185,9 @@ function Game() {
                     </Box>
                 </Modal>
 
+                {/* Usamos el componente Timer */}
+                <Timer timeLeft={timeLeft} setTimeLeft={setTimeLeft} onTimeOut={handleTimeOut} resetTimer={timerReset} />
+
                 {/* Opciones en Grid */}
                 {questionData && (
                     <div className={styles.optionsGrid}>
@@ -371,14 +196,12 @@ function Game() {
                                 key={index}
                                 type="secondary"
                                 active={buttonsActive && !timeOut} // Desactivar botones si el tiempo se acaba o están deshabilitados
-                                className={`${styles.awsBtn} 
+                                className={`${styles.awsBtn} ${
                                     selectedAnswer === option
                                         ? isCorrect
                                             ? styles.buttonActive// Estilo para respuesta correcta
                                             : styles.buttonInactive // Estilo para respuesta incorrecta
                                         : ""
-                                        
-                                     */
                                 }`}
                                 onPress={() => handleButtonClick(index)}
                             >
@@ -388,11 +211,9 @@ function Game() {
                     </div>
                 )}
 
-                
-
                 {/* Sección para mostrar el chatbot */}
                 <div className={styles.chatContainer}>
-                    <PopChat messages={msgs} getMessage={getMessage}/>
+                    <PopChat messages={msgs} getMessage={getMessage} />
                 </div>
 
                 {/* Modal para el tiempo agotado */}
@@ -419,12 +240,14 @@ function Game() {
                         <ButtonContainer>
                             <ReplayButton onClick={handleReplayClick}>🔄 Reintentar</ReplayButton>
                             <HomeButton onClick={handleHomeClick}>🏠 Volver a Inicio</HomeButton>
+                            <ChartButton onClick={handleHistoryClick}>📈 Estadísticas</ChartButton>
                         </ButtonContainer>
                     </Box>
                 </Modal>
             </div>
         </div>
     );
+
 }
 
 export default Game;
