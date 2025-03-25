@@ -147,26 +147,24 @@ function Game() {
     const handleChatBotToggle = () => {
         setShowChatBot(!showChatBot);
     };
-
-    // Función para obtener una nueva pregunta de la API
     const fetchNewQuestion = async () => {
         try {
-            const response = await axios.get(`${apiEndpointWiki}/question`);
-            const data = response.data;
-
+            const response = await axios.get(`${apiEndpointWiki}/getQuestion`);
+            if (!response.data) {
+                console.error('No data received from getQuestion endpoint');
+                return;
+            }
             setQuestionData({
-                question: data.question,
-                image: data.image, // Asegúrate de que la API devuelva esta propiedad
-                choices: data.choices,
-                correctAnswer: data.answer, // Respuesta correcta
+                question: response.data.question,
+                image: response.data.image || null,
+                choices: response.data.choices || [],
+                correctAnswer: response.data.answer,
             });
-
-            // Reiniciar los estados de la respuesta seleccionada y si es correcta
             setSelectedAnswer(null);
             setIsCorrect(false);
-            setTimerReset(true); // Activar el reinicio del contador
+            setTimerReset(true);
         } catch (error) {
-            console.error("Error fetching question:", error);
+            console.error("Error fetching question:", error.response ? error.response.data : error.message);
         }
     };
 
