@@ -12,28 +12,31 @@ const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/userdb';
 mongoose.connect(mongoUri);
 const PORT = 3005;
 const query = `
-    SELECT ?countryLabel ?capitalLabel ?flag
+    SELECT ?countryLabel ?capitalLabel (SAMPLE(?flagURL) as ?flag)
     WHERE {
-        ?country wdt:P31 wd:Q6256;  # Filter only countries
-                 wdt:P36 ?capital.   # Get the capital
-        OPTIONAL { ?country wdt:P41 ?flag }
+        ?country wdt:P31 wd:Q6256;  # Countries
+                 wdt:P36 ?capital;   # Capitals
+                 wdt:P41 ?flagURL.   # Flags
         
-        SERVICE wikibase:label { bd:serviceParam wikibase:language "es".}
-        }
-        LIMIT 151
-    `;
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+    }
+    GROUP BY ?countryLabel ?capitalLabel
+    LIMIT 50
+`;
 
 const url = `https://query.wikidata.org/sparql?query=${encodeURIComponent(query)}&format=json`;
-
+let cachedQuestions = null;
+let lastCacheTime = null;
 
 async function addQuestions() {
-    app.post('/addQuestions', async (req, res) => {
-        if (!added) {
-            try {
-                const response = await axios.get(url);
-                const countries = response.data.results.bindings;
+    const CACHE_DURATION = 1000 * 60 * 60;
 
-                const questions = countries.map(country => {
+    if (!cachedQuestions || (Date.now() - lastCacheTime > CACHE_DURATION)) {
+        try {
+            const response = await axios.get(url);
+            const countries = response.data.results.bindings;
+
+            cachedQuestions = countries.map(country => {
                     const incorrectCountries = countries
                         .filter(c => c.countryLabel.value !== country.countryLabel.value)
                         .sort(() => 0.5 - Math.random())
@@ -58,22 +61,22 @@ async function addQuestions() {
 
                     const flagUrl = country.flag ? country.flag.value : null;
                     return new Question({
-                        text: `¿Cuál es la capital de ${country.countryLabel.value}?`,
+                        text: `Whats the capital city of ${country.countryLabel.value}?`,
                         answers: shuffledAnswers,
                         image: flagUrl,
                     });
                 });
 
-                await Question.deleteMany({});
-                const savedQuestions = await Question.insertMany(questions);
-                added = true;
-                return savedQuestions;
-            } catch (error) {
-                console.error("Error fetching or saving capital questions:", error);
-                throw new Error('Error in capital question generation: ' + error.message);
-            }
+            lastCacheTime = Date.now();
+            await Question.deleteMany({});
+            await Question.insertMany(cachedQuestions);
+        } catch (error) {
+            console.error("Error fetching or saving capital questions:", error);
         }
-    });
+    }
+
+    return cachedQuestions;
+
 }
 app.get('/getQuestion', async (req, res) => {
     try {

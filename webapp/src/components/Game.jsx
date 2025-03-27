@@ -35,6 +35,7 @@ function Game() {
     const [totalTime, setTotalTime] = useState(0); // Nuevo estado para el tiempo total de la partida
     const [gameStartTime, setGameStartTime] = useState(null); // Nuevo estado para registrar cuando inicia la partida
     const [finished,setFinished] = useState(false);
+    const [questionQueue, setQuestionQueue] = useState([]);
 
     useEffect(() => {
         if (showDifficultyModal) {
@@ -42,6 +43,31 @@ function Game() {
                 setDifficultyModalFadeIn(true);
             }, 100);
         }
+    }, []);
+
+    const preloadQuestions = async (count = 5) => {
+        try {
+            const questions = await Promise.all(
+                Array(count).fill().map(() =>
+                    axios.get(`${apiEndpointWiki}/getQuestion`)
+                )
+            );
+
+            const processedQuestions = questions.map(response => ({
+                question: response.data.question,
+                image: response.data.image || null,
+                choices: response.data.choices || [],
+                correctAnswer: response.data.answer,
+            }));
+
+            setQuestionQueue(processedQuestions);
+        } catch (error) {
+            console.error("Error preloading questions:", error);
+        }
+    };
+
+    useEffect(() => {
+        preloadQuestions();
     }, []);
 
     useEffect(() => {
@@ -90,64 +116,57 @@ function Game() {
     const handleButtonClick = async (index) => {
         if (!questionData) return;
 
-        // Deshabilitar los botones temporalmente
         setButtonsActive(false);
 
         const selectedOption = questionData.choices[index];
         setSelectedAnswer(selectedOption);
 
-        const questionText = questionData.choices;
-        
+
         try {
-            const response = await axios.post(`${apiEndpointGame}/addQuestion`, {
+            await axios.post(`${apiEndpointGame}/addQuestion`, {
                 username: localStorage.getItem("username"),
-                question: questionText,
-                //correctAnswer: questionData.correctAnswer,
+                question: questionData.choices,
                 correctAnswer: questionData.choices.indexOf(questionData.correctAnswer),
                 answers: questionData.choices,
                 selectedAnswer: selectedOption,
             });
-            console.log(response);
         } catch (error) {
             console.error(error);
         }
 
-        setTimeout(() => {
-            setOpen(true);
-        }, 0);
-
-        // Verificar si la respuesta es correcta
         if (selectedOption === questionData.correctAnswer) {
             setIsCorrect(true);
             const bonusTime = difficulty === 1 ? 6 : 3;
-            setTimeLeft(prevTime => prevTime + bonusTime);
-
-            setTimerReset(true);
-
-            // Esperar 1 segundo antes de cargar una nueva pregunta
-            setTimeout(() => {
-                fetchNewQuestion(); // Cargar una nueva pregunta
-                setButtonsActive(true); // Reactivar los botones
-                setTimerReset(false); // Desactivar el reinicio del contador
-            }, 200); // Esperar 1 segundo
+            setTimeLeft(prevTime => Math.min(prevTime + bonusTime, difficulty === 1 ? 60 : 45));
         } else {
-            setIsCorrect(false); // Marcar como incorrecta
+            setIsCorrect(false);
             const bonusTime = difficulty === 1 ? -5 : -10;
-            setTimeLeft(prevTime => prevTime + bonusTime);
-            setTimerReset(true);
-            setTimeout(() => {
-                fetchNewQuestion(); // Cargar una nueva pregunta
-                setButtonsActive(true); // Reactivar los botones
-                setTimerReset(false); // Desactivar el reinicio del contador
-            }, 200); // Esperar 1 segundo
-
+            setTimeLeft(prevTime => Math.max(prevTime + bonusTime, 0));
         }
+
+        await fetchNewQuestion();
+        setButtonsActive(true);
+        setTimerReset(prev => !prev);
     };
 
     const handleChatBotToggle = () => {
         setShowChatBot(!showChatBot);
     };
-    const fetchNewQuestion = async () => {
+
+    const fetchNewQuestion = () => {
+        if (questionQueue.length > 0) {
+            const [nextQuestion, ...remainingQuestions] = questionQueue;
+            setQuestionData(nextQuestion);
+            setQuestionQueue(remainingQuestions);
+
+            if (remainingQuestions.length < 2) {
+                preloadQuestions();
+            }
+        } else {
+            fetchNewQuestionOG();
+        }
+    };
+    const fetchNewQuestionOG = async () => {
         try {
             const response = await axios.get(`${apiEndpointWiki}/getQuestion`);
             if (!response.data) {
@@ -176,7 +195,7 @@ function Game() {
         }
     }, [open]);
 
-    // Cargar la primera pregunta cuando el componente se monta
+
     useEffect(() => {
         fetchNewQuestion();
     }, [apiEndpointWiki]);
@@ -185,22 +204,14 @@ function Game() {
     const handleReplayClick = () => {
         setTimeOut(false);
         setShowTimeOutModal(false);
-        setButtonsActive(false);
+        setButtonsActive(true);
         setFinished(false);
-        setTimerReset(true);
-        setTimeout(() => {
-            setTimerReset(false);
-        }, 100);
-
+        const newInitialTime = difficulty === 1 ? 60 : 45;
+        setTimeLeft(newInitialTime);
         fetchNewQuestion();
-
-        setTimeLeft(difficulty === 1 ? 60 : 45);
-
         setGameStartTime(Date.now());
         setTotalTime(0);
-        setTimeout(() => {
-            setButtonsActive(true);
-        }, 50);
+        setTimerReset(prev => !prev);
     };
 
 
@@ -213,7 +224,6 @@ function Game() {
                 gameTime = Math.floor((gameEndTime - gameStartTime) / 1000);
                 setTotalTime(gameTime);
             }
-
             try {
                 const response = await axios.post(`${apiEndpointGame}/endMatch`, {
                     username: localStorage.getItem("username"),
@@ -223,9 +233,8 @@ function Game() {
             } catch (error) {
                 console.error("Error al enviar la información de fin de partida:", error);
             }
-
             setTimeOut(true);
-            setShowTimeOutModal(true); // Mostrar modal de tiempo agotado
+            setShowTimeOutModal(true);
         }
     };
 
@@ -301,26 +310,19 @@ function Game() {
                 </div>
             )}
 
-            {/* Sección de contenido */}
             <div className={styles.contentContainer}>
-                {/* Pregunta */}
                 {questionData && (
                     <div className={styles.questionContainer}>
                         {questionData.question}
                         {!showDifficultyModal && (
-                      <Timer
-                        onTimeOut={handleTimeOut}
-                        resetTimer={timerReset}
-                        initialTime={timeLeft}
-                      />
-                      )}
-
-
-                      {timeOut && (
-                          <div className={styles.timeOutMessage}>
-                              <h2>¡El tiempo se ha acabado!</h2>
-                          </div>
-                      )}
+                            <Timer
+                                key={`timer-${timerReset}`}
+                                onTimeOut={handleTimeOut}
+                                resetTimer={timerReset}
+                                initialTime={timeLeft}
+                                difficulty={difficulty}
+                            />
+                        )}
                           </div>
                       )}
 
