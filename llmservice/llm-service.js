@@ -1,6 +1,9 @@
 const axios = require('axios');
 const express = require('express');
 
+//para acceeder a los env
+require("dotenv").config();
+
 const app = express();
 const port = 8003;
 
@@ -11,17 +14,24 @@ app.use(express.json());
 const llmConfigs = {
   gemini: {
     url: (apiKey) => `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-    transformRequest: (question) => ({
+    
+    /*transformRequest: (question) => ({
       contents: [{ parts: [{ text: question }] }]
+    }),*/  //Le paso tabien el contexto sobre el que tiene que trabajar la IA previamente a la propia pregunta del usuario (role system)
+    transformRequest: (contextPromt, question) => ({  //ESTE contextPromt LO ESTABLEZCO EN SU PROPIO METODO
+      contents: [{ parts: [{ text: contextPromt + "\n Pregunta Usuario:" + question }] }]
     }),
+
     transformResponse: (response) => response.data.candidates[0]?.content?.parts[0]?.text
   },
   empathy: {
-    url: () => 'https://empathyai.staging.empathy.co/v1/chat/completions',
-    transformRequest: (question) => ({
+    //url: () => 'https://empathyai.staging.empathy.co/v1/chat/completions',
+    url: () => 'https://empathyai.prod.empathy.co/v1/chat/completions',
+    //transformRequest: (question) => ({
+    transformRequest: (contextPromt, question) => ({
       model: "qwen/Qwen2.5-Coder-7B-Instruct",
       messages: [
-        { role: "system", content: "You are a helpful assistant." },
+        { role: "system", content: contextPromt }, //asi sabe como debe comportarse
         { role: "user", content: question }
       ]
     }),
@@ -35,6 +45,7 @@ const llmConfigs = {
 
 // Function to validate required fields in the request body
 function validateRequiredFields(req, requiredFields) {
+
   for (const field of requiredFields) {
     if (!(field in req.body)) {
       throw new Error(`Missing required field: ${field}`);
@@ -43,7 +54,7 @@ function validateRequiredFields(req, requiredFields) {
 }
 
 // Generic function to send questions to LLM
-async function sendQuestionToLLM(question, apiKey, model = 'gemini') {
+async function sendQuestionToLLM(contextPromt, question, apiKey, model = 'gemini') {
   try {
     const config = llmConfigs[model];
     if (!config) {
@@ -51,7 +62,7 @@ async function sendQuestionToLLM(question, apiKey, model = 'gemini') {
     }
 
     const url = config.url(apiKey);
-    const requestData = config.transformRequest(question);
+    const requestData = config.transformRequest(contextPromt, question);
 
     const headers = {
       'Content-Type': 'application/json',
@@ -60,13 +71,30 @@ async function sendQuestionToLLM(question, apiKey, model = 'gemini') {
 
     const response = await axios.post(url, requestData, { headers });
 
+    console.log(`Response: `, response.status);
+
     return config.transformResponse(response);
 
   } catch (error) {
     console.error(`Error sending question to ${model}:`, error.message || error);
+
+    //Comprobacion para ver si hubo respuesta, y si informacion
+    if (error.response) {
+      console.error(`Response data: ${JSON.stringify(error.response.data)}`);
+      console.error(`Response status: ${error.response.status}`);
+    }
+
     return null;
   }
 }
+
+//Antes del post ask, configuro el como quiro que realice las pistas a dar al usuario
+configureContextPromt = (question) => {
+  const contextAI = "Eres un asistente virtual cuya funcion es ayudar a jugadores de un juego de preguntas de estilo Quiz";
+  
+}
+
+
 
 app.post('/ask', async (req, res) => {
   try {
