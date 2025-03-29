@@ -24,6 +24,7 @@ describe('LLM Service', () => {
     }
   });
 
+  /*
   // Test /ask endpoint
   it('the llm should reply', async () => {
     const response = await request(app)
@@ -33,5 +34,21 @@ describe('LLM Service', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body.answer).toBe('llmanswer');
   });
+  */
+  // Test /ask endpoint (nuevo)
+it('should reply with a hint', async () => {
+  const response = await request(app)
+    .post('/ask')
+    .send({ 
+      model: 'empathy',
+      userQuestion: '¿Me puedes dar una pista?',
+      gameQuestion: '¿Cuál es la capital de Francia?',
+      answers: ['Madrid', 'Londres', 'París', 'Berlín'],
+      correctAnswer: 'París'
+    });
+
+  expect(response.statusCode).toBe(200);
+  expect(response.body.answer).toBe('llmanswer');
+});
 
 });

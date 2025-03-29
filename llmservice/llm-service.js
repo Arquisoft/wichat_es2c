@@ -44,13 +44,15 @@ const llmConfigs = {
 };
 
 // Function to validate required fields in the request body
-function validateRequiredFields(req, requiredFields) {
+function validateRequiredFields(req) {
+  const requiredFields = ['userQuestion', 'gameQuestion', 'answers', 'correctAnswer'];
 
   for (const field of requiredFields) {
     if (!(field in req.body)) {
       throw new Error(`Missing required field: ${field}`);
     }
   }
+
 }
 
 // Generic function to send questions to LLM
@@ -73,6 +75,12 @@ async function sendQuestionToLLM(contextPromt, question, apiKey, model = 'gemini
 
     console.log(`Response: `, response.status);
 
+    console.log('PRUEBA');
+    console.log("Enviando solicitud al LLM con estos datos:");
+    console.log("- Modelo:", model);
+    console.log("- Contexto (primeros 100 caracteres):", contextPromt);
+    console.log("- Pregunta usuario:", question);
+
     return config.transformResponse(response);
 
   } catch (error) {
@@ -89,20 +97,66 @@ async function sendQuestionToLLM(contextPromt, question, apiKey, model = 'gemini
 }
 
 //Antes del post ask, configuro el como quiro que realice las pistas a dar al usuario
-configureContextPromt = (question) => {
-  const contextAI = "Eres un asistente virtual cuya funcion es ayudar a jugadores de un juego de preguntas de estilo Quiz";
+const contextAndFormatPromptAI = `Eres un asistente virtual cuya funcion es ayudar a jugadores de un juego de preguntas de estilo Quiz dándoles pistas sobre la respuesta correcta a la pregunta del juego.\
+  Así, debes asegurarte de dar una pista que le ayude a responder correctamente a la pregunta, siguiendo las siguientes normas:\
+
+  ##Formato de pistas dadas:\
+  -No puedes dar la respuesta de la pregunta directamente al usuario.\
+  -No puedes responder al usuario ni con un una afirmación ni con una negación.\
+  -No puedes responder al usuario con otra pregunta.\
+  -No puedes contestar referenciando alguna de las opciones de respuesta.\
+
+
+  ##Ejemplos de interraciones Incorrectas:\
+  -Usuario: "¿Es París?"\
+  -IA: "No, la respuesta correcta es Roma."\
+  -Usuario: "¿Cuál es la respuesta?"\
+  -IA: "La respuesta correcta es Mickey Mouse."\
   
-}
+
+  ##Ejemplos de interraciones Correctas:\
+  -Usuario: "¿Cuál es este personaje?"\
+  -IA: "Salió en una serie muy famosa de los 90s."\
+
+
+  ##Tu misión es dar las mejores pistas posibles de forma sútil y que no desvelen la respuesta correcta a la pregunta del juego.\
+  ##Datos sobre el que basar la pista a generar:\
+  {questionAndAnswersData}
+  `
+  ;
+
+  configureContextPromt = (gameQuestion, answers, correctAnswer) => {
+    //string con la pregunta y todas las opciones (para que la ia pueda manejarlas)
+    const questionAndAnswersData = `
+      Pregunta del juego: ${gameQuestion}
+      Opciones de respuesta:
+      ${answers.map((answer, index) => `- ${answer}${answer === correctAnswer ? ' (Esta es la respuesta correcta)' : ''}`).join('\n    ')}
+    `;
+    
+    return contextAndFormatPromptAI.replace('{questionAndAnswersData}', questionAndAnswersData);
+  }
 
 
 
 app.post('/ask', async (req, res) => {
   try {
     // Check if required fields are present in the request body
-    validateRequiredFields(req, ['question', 'model', 'apiKey']);
+    validateRequiredFields(req);
 
-    const { question, model, apiKey } = req.body;
-    const answer = await sendQuestionToLLM(question, apiKey, model);
+    //const { question, model, apiKey } = req.body;
+    const { model = 'empathy', userQuestion, gameQuestion, answers, correctAnswer } = req.body;
+
+    let apiKey = process.env.LLM_API_KEY;
+    if (!apiKey) {
+      return res.status(400).json({ error: 'LLM_API_KEY IS NOT FOUND.' });
+    }
+
+    // Configura el contexto con toda la información disponible
+    const contextPromt = configureContextPromt(gameQuestion, answers, correctAnswer);
+
+    //const answer = await sendQuestionToLLM(question, apiKey, model);
+    const answer = await sendQuestionToLLM(contextPromt, userQuestion, apiKey, model);
+
     res.json({ answer });
 
   } catch (error) {

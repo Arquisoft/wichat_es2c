@@ -71,13 +71,45 @@ function Game() {
     };
 
 
-
+    /*
     const getMessage = (msg) => {
         //msgs.push(msg);
         setMsgs((prevMsgs) => [...prevMsgs, msg]);
     };
+    */
+    const getMessage = async (userMsg) => {
+        try {
+          // Verificar que tenemos datos de la pregunta actual
+          if (!questionData) {
+            return "No hay una pregunta activa en este momento.";
+          }
+        
+           //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+           //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+           
+          //const response = await axios.post(`${apiEndpoint}/askllm`, {
+          const response = await axios.post(`http://localhost:8000/askllm`, {
+            model: 'empathy', // O el modelo que prefieras
+            userQuestion: userMsg, // La pregunta que hace el usuario al chatbot
+            gameQuestion: questionData.question, // La pregunta actual del juego
+            answers: questionData.choices, // Las opciones disponibles
+            correctAnswer: questionData.correctAnswer // La respuesta correcta
+          });
+          
+          return response.data.answer;
+        } catch (error) {
+          console.error("Error al obtener respuesta del LLM:", error);
+          return "Lo siento, no puedo proporcionarte una pista en este momento.";
+        }
+      };
 
-
+      const handleNewMessage = (message) => {
+        setMsgs(prevMsgs => [...prevMsgs, message]);
+      };
+      
+      const handleBotResponse = (response) => {
+        setMsgs(prevMsgs => [...prevMsgs, response]);
+      };
 
     const handleButtonClick = async (index) => {
         if (!questionData) return;
@@ -392,7 +424,13 @@ function Game() {
 
                 {/* Sección para mostrar el chatbot */}
                 <div className={styles.chatContainer}>
-                    <PopChat messages={msgs} getMessage={getMessage}/>
+                <PopChat 
+                    messages={msgs} 
+                    getMessage={getMessage} 
+                    questionData={questionData}
+                    onNewMessage={handleNewMessage}
+                    onBotResponse={handleBotResponse}
+                />
                 </div>
 
                 {/* Modal para el tiempo agotado */}
