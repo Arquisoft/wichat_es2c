@@ -98,7 +98,7 @@ function Game() {
                 username: localStorage.getItem("username"),
                 difficulty: diffLevel,
             });
-            console.log(response)
+            //console.log(response)
         } catch (error) {
             console.error("Error al añadir el match:", error);
         }
@@ -122,19 +122,21 @@ function Game() {
         setSelectedAnswer(selectedOption);
 
 
-        try {
-            await axios.post(`${apiEndpointGame}/addQuestion`, {
-                username: localStorage.getItem("username"),
-                question: questionData.choices,
-                correctAnswer: questionData.choices.indexOf(questionData.correctAnswer),
-                answers: questionData.choices,
-                selectedAnswer: selectedOption,
-            });
-        } catch (error) {
-            console.error(error);
-        }
+        const isAnswerCorrect = selectedOption === questionData.correctAnswer;
 
-        if (selectedOption === questionData.correctAnswer) {
+
+        const apiRequest = axios.post(`${apiEndpointGame}/addQuestion`, {
+            username: localStorage.getItem("username"),
+            question: questionData.choices,
+            correctAnswer: questionData.choices.indexOf(questionData.correctAnswer),
+            answers: questionData.choices,
+            selectedAnswer: selectedOption,
+        }).catch(error => {
+            console.error("Error submitting answer:", error);
+        });
+
+
+        if (isAnswerCorrect) {
             setIsCorrect(true);
             const bonusTime = difficulty === 1 ? 6 : 3;
             setTimeLeft(prevTime => Math.min(prevTime + bonusTime, difficulty === 1 ? 60 : 45));
@@ -215,7 +217,8 @@ function Game() {
     };
 
 
-    const handleTimeOut = async () => {
+
+    const handleTimeOut = () => {
         if(!finished) {
             setFinished(true);
             let gameTime = 0;
@@ -224,19 +227,21 @@ function Game() {
                 gameTime = Math.floor((gameEndTime - gameStartTime) / 1000);
                 setTotalTime(gameTime);
             }
-            try {
-                const response = await axios.post(`${apiEndpointGame}/endMatch`, {
-                    username: localStorage.getItem("username"),
-                    time: gameTime,
-                });
-                console.log(response);
-            } catch (error) {
-                console.error("Error al enviar la información de fin de partida:", error);
-            }
             setTimeOut(true);
             setShowTimeOutModal(true);
+            axios.post(`${apiEndpointGame}/endMatch`, {
+                username: localStorage.getItem("username"),
+                time: gameTime,
+            })
+                .then(response => {
+                    //console.log("Game ended successfully:", response.data);
+                })
+                .catch(error => {
+                    console.error("Error ending the game:", error);
+                });
         }
     };
+
 
 
     return (
