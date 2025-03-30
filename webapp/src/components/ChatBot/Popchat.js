@@ -45,7 +45,7 @@ export const PopChat = (props) => {
       props.onBotResponse(response);
     } catch (error) {
       console.error("Error al obtener respuesta del chatbot:", error);
-      props.onBotResponse("Lo siento, no puedo ayudarte en este momento.");
+      props.onBotResponse("I'm sorry, I can't help you at the moment.");
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +87,7 @@ export const PopChat = (props) => {
           ref={textRef} 
           onKeyPress={handleKeyPress}
           disabled={isLoading}
-          placeholder="Escribe tu pregunta..."
+          placeholder="Type your question..."
         />
           <button 
             onClick={handleSend} 

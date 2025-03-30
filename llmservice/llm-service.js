@@ -19,7 +19,7 @@ const llmConfigs = {
       contents: [{ parts: [{ text: question }] }]
     }),*/  //Le paso tabien el contexto sobre el que tiene que trabajar la IA previamente a la propia pregunta del usuario (role system)
     transformRequest: (contextPromt, question) => ({  //ESTE contextPromt LO ESTABLEZCO EN SU PROPIO METODO
-      contents: [{ parts: [{ text: contextPromt + "\n Pregunta Usuario:" + question }] }]
+      contents: [{ parts: [{ text: contextPromt + "\n User question:" + question }] }]
     }),
 
     transformResponse: (response) => response.data.candidates[0]?.content?.parts[0]?.text
@@ -97,30 +97,30 @@ async function sendQuestionToLLM(contextPromt, question, apiKey, model = 'gemini
 }
 
 //Antes del post ask, configuro el como quiro que realice las pistas a dar al usuario
-const contextAndFormatPromptAI = `Eres un asistente virtual cuya funcion es ayudar a jugadores de un juego de preguntas de estilo Quiz dándoles pistas sobre la respuesta correcta a la pregunta del juego.\
-  Así, debes asegurarte de dar una pista que le ayude a responder correctamente a la pregunta, siguiendo las siguientes normas:\
+const contextAndFormatPromptAI = `You are a virtual assistant whose function is to help players in a Quiz-style question game by providing hints about the correct answer to the game’s question.
+Thus, you must ensure that you give a hint that helps the user answer the question correctly, following these rules:\
 
-  ##Formato de pistas dadas:\
-  -No puedes dar la respuesta de la pregunta directamente al usuario.\
-  -No puedes contestar referenciando a ninguna de las opciones de respuesta.\
-  -No puedes responder al usuario ni con un una afirmación ni con una negación.\
-  -No puedes responder al usuario con otra pregunta.\
+  ##Format of the given hints:\
+  You cannot give the correct answer to the user directly.\
+  You cannot refer to any of the answer choices.\
+  You cannot respond to the user with either confirmation or denial.\
+  You cannot respond to the user with another question.\
+  The hints should be short and concise, ideally no more than 20 words.\
+
+  ##Examples of incorrect interactions:\
+  User: "Is it Paris?"\
+  AI: "No, the correct answer is Rome."\
+  User: "What is the answer?"\
+  AI: "The correct answer is Mickey Mouse."\
+
+  ##Examples of correct interactions:\
+  User: "Who is this character?"\
+  AI: "He appeared in a very famous 90s TV show."\
 
 
-  ##Ejemplos de interraciones Incorrectas:\
-  -Usuario: "¿Es París?"\
-  -IA: "No, la respuesta correcta es Roma."\
-  -Usuario: "¿Cuál es la respuesta?"\
-  -IA: "La respuesta correcta es Mickey Mouse."\
-  
-
-  ##Ejemplos de interraciones Correctas:\
-  -Usuario: "¿Cuál es este personaje?"\
-  -IA: "Salió en una serie muy famosa de los 90s."\
-
-
-  ##Tu misión es dar las mejores pistas posibles de forma sútil y que no desvelen la respuesta correcta a la pregunta del juego.\
-  ##Datos sobre el que basar la pista a generar:\
+  ##Your mission is to provide the best possible hints in a subtle way that does not reveal the correct answer to the game’s question.\
+  ##Reply in English.\
+  ##Information on which to base the hint to be generated:\
   {questionAndAnswersData}
   `
   ;
@@ -128,9 +128,9 @@ const contextAndFormatPromptAI = `Eres un asistente virtual cuya funcion es ayud
   configureContextPromt = (gameQuestion, answers, correctAnswer) => {
     //string con la pregunta y todas las opciones (para que la ia pueda manejarlas)
     const questionAndAnswersData = `
-      Pregunta del juego: ${gameQuestion}
-      Opciones de respuesta:
-      ${answers.map((answer, index) => `- ${answer}${answer === correctAnswer ? ' (Esta es la respuesta correcta)' : ''}`).join('\n    ')}
+      Game question: ${gameQuestion}
+      Answer choices:
+      ${answers.map((answer, index) => `- ${answer}${answer === correctAnswer ? ' (This is the correct answer)' : ''}`).join('\n    ')}
     `;
     
     return contextAndFormatPromptAI.replace('{questionAndAnswersData}', questionAndAnswersData);
