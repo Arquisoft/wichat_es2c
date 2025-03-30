@@ -14,21 +14,26 @@ import axios from "axios";
 
 function Game() {
     const navigate = useNavigate();
+    
+    //Revisar si es correcto tener esto aqui (creo que de esta forma de saltan el gateway service)
     const apiEndpointGame = process.env.GAME_SERVICE_API_ENDPOINT || 'http://localhost:8004';
     const apiEndpointWiki = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:3005';
+
+    const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+
     const [difficulty, setDifficulty] = useState(1);
     const [showDifficultyModal, setShowDifficultyModal] = useState(true);
     const [difficultyModalFadeIn, setDifficultyModalFadeIn] = useState(true);
     const [questionData, setQuestionData] = useState(null); // Estado para la pregunta actual
     const [selectedAnswer, setSelectedAnswer] = useState(null); // Estado para la respuesta seleccionada
     const [isCorrect, setIsCorrect] = useState(false); // Estado para saber si la respuesta es correcta
-    const [msgs, setMsgs] = useState(["Guayaba"]); // Mensajes del chatbot
+    const [msgs, setMsgs] = useState(["Ask me anything"]); // Mensajes del chatbot
+    const [showChatBot, setShowChatBot] = useState(false);
     const [open, setOpen] = useState(false);
     const [buttonsActive, setButtonsActive] = useState(true);
     const [timeOut, setTimeOut] = useState(false); // Estado para controlar el tiempo
     const [showTimeOutModal, setShowTimeOutModal] = useState(false); // Modal para el tiempo agotado
     const [timerReset, setTimerReset] = useState(false); // Estado para reiniciar el contador
-    const [showChatBot, setShowChatBot] = useState(false);
     const [fadeIn, setFadeIn] = useState(false);
     const [timeLeft, setTimeLeft] = useState(60); // Tiempo inicial
     const [reset, setReset] = useState(false);
@@ -105,16 +110,50 @@ function Game() {
     };
 
 
+    const getMessage = async (userMsg) => {
+        try {
+          // Verificar que tenemos datos de la pregunta actual
+          if (!questionData) {
+            return "No hay una pregunta activa en este momento.";
+          }
+        
+            //const response = await axios.post(`${apiEndpoint}/askllm`, {
+          const response = await axios.post(`${apiEndpoint}/askllm`, {
+            model: 'empathy', // O el modelo que prefieras
+            userQuestion: userMsg, // La pregunta que hace el usuario al chatbot
+            gameQuestion: questionData.question, // La pregunta actual del juego
+            answers: questionData.choices, // Las opciones disponibles
+            correctAnswer: questionData.correctAnswer // La respuesta correcta
+          });
+          
+          return response.data.answer;
+        } catch (error) {
+          console.error("Error al obtener respuesta del LLM:", error);
+          return "Lo siento, no puedo proporcionarte una pista en este momento.";
+        }
+      };
 
-    const getMessage = (msg) => {
-        //msgs.push(msg);
-        setMsgs((prevMsgs) => [...prevMsgs, msg]);
-    };
+      const handleNewMessage = (message) => {
+        setMsgs(prevMsgs => [...prevMsgs, message]);
+      };
+      
+      const handleBotResponse = (response) => {
+        setMsgs(prevMsgs => [...prevMsgs, response]);
+      };
 
+      //Al responder pregunta o acabarse el juego, se limpia el chat para que no se acumule info entre preguntas diferentes
+      const clearChat = () => {
+        setMsgs(["Ask me anything"]);
 
+        };
+
+        
 
     const handleButtonClick = async (index) => {
         if (!questionData) return;
+
+        //Limpio el chatbot
+        clearChat();
 
         setButtonsActive(false);
 
@@ -151,10 +190,6 @@ function Game() {
         setTimerReset(prev => !prev);
     };
 
-    const handleChatBotToggle = () => {
-        setShowChatBot(!showChatBot);
-    };
-
     const fetchNewQuestion = () => {
         if (questionQueue.length > 0) {
             const [nextQuestion, ...remainingQuestions] = questionQueue;
@@ -168,6 +203,7 @@ function Game() {
             fetchNewQuestionOG();
         }
     };
+    
     const fetchNewQuestionOG = async () => {
         try {
             const response = await axios.get(`${apiEndpointWiki}/getQuestion`);
@@ -361,7 +397,13 @@ function Game() {
 
                 {/* Sección para mostrar el chatbot */}
                 <div className={styles.chatContainer}>
-                    <PopChat messages={msgs} getMessage={getMessage}/>
+                <PopChat 
+                    messages={msgs} 
+                    getMessage={getMessage} 
+                    questionData={questionData}
+                    onNewMessage={handleNewMessage}
+                    onBotResponse={handleBotResponse}
+                />
                 </div>
 
                 {/* Modal para el tiempo agotado */}
