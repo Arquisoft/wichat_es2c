@@ -129,3 +129,30 @@
       transform: translateY(-4px);
     }
   }
+
+
+
+  
+  /* Aumentar el espacio entre los mensajes */
+#chatCon .chat-box .msg-area p {
+  margin-bottom: 15px; /* Espacio entre mensajes */
+  margin-top: 0;      /* Sin espacio superior para mantener la densidad */
+  position: relative;  /* Para posicionamiento relativo de elementos internos */
+}
+
+/* Último mensaje sin margen inferior */
+#chatCon .chat-box .msg-area p:last-of-type {
+  margin-bottom: 5px;
+}
+
+/* Asegurar que los mensajes y burbujas tengan espacio adecuado */
+#chatCon .chat-box .msg-area .left span,
+#chatCon .chat-box .msg-area .right span {
+  display: inline-block;
+  font-size: 17.5px;
+  border-radius: 15px;
+  padding: 12px 15px;
+  max-width: 85%;      /* Evitar que las burbujas sean demasiado anchas */
+  word-wrap: break-word; /* Permitir que el texto se envuelva */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Sombra sutil para profundidad */
+}

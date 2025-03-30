@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 import './Popchat.css';
 
 export const PopChat = (props) => {

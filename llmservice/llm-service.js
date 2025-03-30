@@ -102,9 +102,9 @@ const contextAndFormatPromptAI = `Eres un asistente virtual cuya funcion es ayud
 
   ##Formato de pistas dadas:\
   -No puedes dar la respuesta de la pregunta directamente al usuario.\
+  -No puedes contestar referenciando a ninguna de las opciones de respuesta.\
   -No puedes responder al usuario ni con un una afirmación ni con una negación.\
   -No puedes responder al usuario con otra pregunta.\
-  -No puedes contestar referenciando alguna de las opciones de respuesta.\
 
 
   ##Ejemplos de interraciones Incorrectas:\

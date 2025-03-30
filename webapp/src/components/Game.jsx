@@ -14,8 +14,13 @@ import axios from "axios";
 
 function Game() {
     const navigate = useNavigate();
+    
+    //Revisar si es correcto tener esto aqui (creo que de esta forma de saltan el gateway service)
     const apiEndpointGame = process.env.GAME_SERVICE_API_ENDPOINT || 'http://localhost:8004';
     const apiEndpointWiki = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:3005';
+
+    const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+
     const [difficulty, setDifficulty] = useState(1);
     const [showDifficultyModal, setShowDifficultyModal] = useState(true);
     const [difficultyModalFadeIn, setDifficultyModalFadeIn] = useState(true);
@@ -84,11 +89,8 @@ function Game() {
             return "No hay una pregunta activa en este momento.";
           }
         
-           //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-           //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-           
-          //const response = await axios.post(`${apiEndpoint}/askllm`, {
-          const response = await axios.post(`http://localhost:8000/askllm`, {
+            //const response = await axios.post(`${apiEndpoint}/askllm`, {
+          const response = await axios.post(`${apiEndpoint}/askllm`, {
             model: 'empathy', // O el modelo que prefieras
             userQuestion: userMsg, // La pregunta que hace el usuario al chatbot
             gameQuestion: questionData.question, // La pregunta actual del juego
