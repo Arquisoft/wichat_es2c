@@ -27,14 +27,14 @@ function Game() {
     const [questionData, setQuestionData] = useState(null); // Estado para la pregunta actual
     const [selectedAnswer, setSelectedAnswer] = useState(null); // Estado para la respuesta seleccionada
     const [isCorrect, setIsCorrect] = useState(false); // Estado para saber si la respuesta es correcta
-    const [msgs, setMsgs] = useState(["Guayaba"]); // Mensajes del chatbot
+    const [msgs, setMsgs] = useState(["Ask me anything"]); // Mensajes del chatbot
+    const [showChatBot, setShowChatBot] = useState(false);
     const [open, setOpen] = useState(false);
     const [showFailModal, setShowFailModal] = useState(false); // Estado para el modal de fallo
     const [buttonsActive, setButtonsActive] = useState(true);
     const [timeOut, setTimeOut] = useState(false); // Estado para controlar el tiempo
     const [showTimeOutModal, setShowTimeOutModal] = useState(false); // Modal para el tiempo agotado
     const [timerReset, setTimerReset] = useState(false); // Estado para reiniciar el contador
-    const [showChatBot, setShowChatBot] = useState(false);
     const [fadeIn, setFadeIn] = useState(false);
     const [timeLeft, setTimeLeft] = useState(60); // Tiempo inicial
     const [reset, setReset] = useState(false);
@@ -76,12 +76,6 @@ function Game() {
     };
 
 
-    /*
-    const getMessage = (msg) => {
-        //msgs.push(msg);
-        setMsgs((prevMsgs) => [...prevMsgs, msg]);
-    };
-    */
     const getMessage = async (userMsg) => {
         try {
           // Verificar que tenemos datos de la pregunta actual
@@ -113,8 +107,20 @@ function Game() {
         setMsgs(prevMsgs => [...prevMsgs, response]);
       };
 
+      //Al responder pregunta o acabarse el juego, se limpia el chat para que no se acumule info entre preguntas diferentes
+      const clearChat = () => {
+        setMsgs(["Ask me anything"]);
+
+        };
+
+        
+
     const handleButtonClick = async (index) => {
         if (!questionData) return;
+
+        //Limpio el chatbot
+        ////
+        clearChat();
 
         // Deshabilitar los botones temporalmente
         setButtonsActive(false);
@@ -170,9 +176,7 @@ function Game() {
         }
     };
 
-    const handleChatBotToggle = () => {
-        setShowChatBot(!showChatBot);
-    };
+    
 
     // Función para obtener una nueva pregunta de la API
     const fetchNewQuestion = async () => {
