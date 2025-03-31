@@ -14,6 +14,7 @@ const llmServiceUrl = process.env.LLM_SERVICE_URL || 'http://localhost:8003';
 const authServiceUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:8002';
 const userServiceUrl = process.env.USER_SERVICE_URL || 'http://localhost:8001';
 const gameServiceUrl = process.env.GAME_SERVICE_URL || 'http://localhost:8004';
+const wikidataServiceUrl = process.env.WIKIDATA_SERVICE_URL || 'http://localhost:3005';
 
 app.use(cors());
 app.use(express.json());
@@ -76,6 +77,27 @@ app.post('/endMatch', async (req, res) => {
   }
 });
 
+
+app.post('/addQuestions', async (req, res) => {
+  try {
+    const userResponse = await axios.post(wikidataServiceUrl+'/addQuestions', req.body);
+    res.json(userResponse.data);
+  } catch (error) {
+    res.status(error.response.status).json({ error: error.response.data.error });
+  }
+});
+
+app.post('/getQuestion', async (req, res) => {
+  try {
+    const userResponse = await axios.post(wikidataServiceUrl+'/getQuestion', req.body);
+    res.json(userResponse.data);
+  } catch (error) {
+    res.status(error.response.status).json({ error: error.response.data.error });
+  }
+});
+
+
+/*
 app.post('/askllm', async (req, res) => {
   try {
     // Forward the add user request to the user service
@@ -83,6 +105,51 @@ app.post('/askllm', async (req, res) => {
     res.json(llmResponse.data);
   } catch (error) {
     res.status(error.response.status).json({ error: error.response.data.error });
+  }
+});
+*/
+app.post('/askllm', async (req, res) => {
+  try {
+    // Verificamos que estén presentes todos los campos necesarios
+    const requiredFields = ['model', 'userQuestion', 'gameQuestion', 'answers', 'correctAnswer'];
+    for (const field of requiredFields) {
+      if (!(field in req.body)) {
+        return res.status(400).json({ error: `Missing required field: ${field}` });
+      }
+    }
+
+
+    ////////////// Log para depuración
+    console.log("Gateway recibió solicitud a /askllm:", {
+      model: req.body.model,
+      userQuestion: req.body.userQuestion.substring(0, 30) + "...",
+      gameQuestion: req.body.gameQuestion.substring(0, 30) + "..."
+    });
+    ///////////////
+
+    // Forward the request to the llm service
+    const llmResponse = await axios.post(llmServiceUrl+'/ask', {
+      model: req.body.model,
+      userQuestion: req.body.userQuestion,
+      gameQuestion: req.body.gameQuestion,
+      answers: req.body.answers,
+      correctAnswer: req.body.correctAnswer
+    });
+    
+    /////////////////
+    console.log("LLM Service respondió con éxito");
+    ///////////////
+
+    res.json(llmResponse.data);
+  } catch (error) {
+    console.error("Error en /askllm:", error.message);
+    
+    // Manejo adecuado de errores de la API
+    if (error.response) {
+      res.status(error.response.status).json({ error: error.response.data.error });
+    } else {
+      res.status(500).json({ error: 'Error interno al procesar la solicitud' });
+    }
   }
 });
 
