@@ -60,62 +60,68 @@ function AddUser() {
     };
 
     return (
-        <Box sx={{ maxWidth: 400, mx: 'auto', p: 2 }}>
-            <Typography variant="h5" component="h1" gutterBottom>
-                Register
-            </Typography>
-            {success && (
-                <Alert severity="success" sx={{ mb: 2 }}>
-                    Successfully registered! Redirecting to login page...
-                </Alert>
-            )}
-            <form onSubmit={handleSubmit}>
-                <TextField
-                    name="username"
-                    label="Username"
-                    fullWidth
-                    margin="normal"
-                    disabled={loading || success}
-                    required
-                    onChange={(e) => setUsername(e.target.value)}
-                    helperText="Username must be at least 3 characters long"
-                />
-                <TextField
-                    name="password"
-                    label="Password"
-                    type="password"
-                    fullWidth
-                    margin="normal"
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={loading || success}
-                    required
-                    helperText="Password must be at least 3 characters long"
-                />
-                {error && (
-                    <Typography color="error" sx={{ mt: 2 }}>
-                        {error}
-                    </Typography>
+        <Box className="boxContainer" sx={{ maxWidth: 400, mx: 'auto', p: 2 }}>
+            <a href="/home">
+                <img src="/logo512.png" alt="Logo" className="logoAplicacion"/>
+            </a>
+
+            <div className="mainContent">
+                <Typography variant="h5" component="h1" gutterBottom>
+                    Register
+                </Typography>
+                {success && (
+                    <Alert severity="success" sx={{ mb: 2 }}>
+                        Successfully registered! Redirecting to login page...
+                    </Alert>
                 )}
-                <Button
-                    type="submit"
-                    variant="contained"
-                    fullWidth
-                    sx={{ mt: 3 }}
-                    disabled={loading || success}
-                >
-                    {loading ? <CircularProgress size={24} /> : 'Register'}
-                </Button>
-                <Box sx={{ mt: 2, textAlign: 'center' }}>
-                    <Typography variant="body2">
-                        Already have an account?{' '}
-                        <a href="/login" style={{ textDecoration: 'none' }}>
-                            Login here
-                        </a>
-                    </Typography>
-                </Box>
-            </form>
+                <div className="divider"></div>
+                <form onSubmit={handleSubmit}>
+                    <TextField
+                        name="username"
+                        label="Username"
+                        fullWidth
+                        margin="normal"
+                        disabled={loading || success}
+                        required
+                        onChange={(e) => setUsername(e.target.value)}
+                        helperText="Username must be at least 3 characters long"
+                    />
+                    <TextField
+                        name="password"
+                        label="Password"
+                        type="password"
+                        fullWidth
+                        margin="normal"
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={loading || success}
+                        required
+                        helperText="Password must be at least 3 characters long"
+                    />
+                    {error && (
+                        <Typography color="error" sx={{ mt: 2 }}>
+                            {error}
+                        </Typography>
+                    )}
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        fullWidth
+                        sx={{ mt: 3 }}
+                        disabled={loading || success}
+                    >
+                        {loading ? <CircularProgress size={24} /> : 'Register'}
+                    </Button>
+                    <Box sx={{ mt: 2, textAlign: 'center' }}>
+                        <Typography variant="body2">
+                            Already have an account?{' '}
+                            <a href="/login">
+                                Login here
+                            </a>
+                        </Typography>
+                    </Box>
+                </form>
+            </div>
         </Box>
     );
 }
-
 export default AddUser;
