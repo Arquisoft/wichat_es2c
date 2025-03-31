@@ -1,0 +1,32 @@
+{
+    "name": "userinfoapi",
+    "version": "1.0.0",
+    "description": "Userinfo service, in charge of handling user information in an api",
+    "main": "userinfo-service.js",
+    "scripts": {
+        "start": "node userinfo-service.js",
+        "test": "jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/arquisoft/wichat_es2c.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/arquisoft/wichat_es2c/issues"
+    },
+    "homepage": "https://github.com/arquisoft/wichat_es2c#readme",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "express": "^4.21.2",
+        "js-yaml": "^4.1.0",
+        "mongoose": "^8.9.3",
+        "swagger-ui-express": "^5.0.1"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0",
+        "mongodb-memory-server": "^10.1.3",
+        "supertest": "^7.0.0"
+    }
+}
