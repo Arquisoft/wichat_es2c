@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
+import "./LoginRegister.css";
 
 function Login() {
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
@@ -9,6 +10,9 @@ function Login() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+   // const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
+   // const message = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey })
+   // setMessage(message.data.answer); left this as a reference for future use
 
     useEffect(() => {
         if (isLoggedIn) {

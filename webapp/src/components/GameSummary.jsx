@@ -4,7 +4,9 @@ import styles from "./GameSummary.module.css";
 
 export const GameSummary = ({ date, hour, correctAnswers, wrongAnswers, time }) => {
 
-    const timePerQuestion = (correctAnswers + wrongAnswers) / time;
+    const timePerQuestion = (correctAnswers + wrongAnswers) > 0 
+        ? (time / (correctAnswers + wrongAnswers)).toFixed(2) 
+        : "0.00";
 
     return (
         <div className={styles.gameSummaryContainer}>

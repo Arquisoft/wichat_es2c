@@ -87,3 +87,17 @@
   justify-self: center;
 
 }
+
+.noGamesMessage{
+  text-align: center;
+}
+
+.noChartMessage{
+  width: 200;
+  height: 200;
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  text-align: center;
+  font-weight: bold;
+}

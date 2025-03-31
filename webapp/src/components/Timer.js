@@ -1,33 +1,89 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import "./Timer.css";
 
-function Timer({ onTimeOut, resetTimer }) {
-    const [timeLeft, setTimeLeft] = useState(5); // Tiempo inicial de 15 segundos
-    const [timerActive, setTimerActive] = useState(true); // Nuevo estado para controlar si el timer está activo
-
-    // Reinicia el tiempo cuando el usuario pulsa Replay
-    useEffect(() => {
-        if (resetTimer) {
-            setTimeLeft(5);
-            setTimerActive(true);  // 🔹 Reactiva el temporizador
-        }
-    }, [resetTimer]);
+function Timer({ onTimeOut, resetTimer, initialTime, difficulty }) {
+    const [timeLeft, setTimeLeft] = useState(initialTime);
+    const [initialTimeCopy, setInitialTimeCopy] = useState(difficulty === 2 ? 45 : 60);
+    const [timerActive, setTimerActive] = useState(true);
+    const startTimeRef = useRef(Date.now());
+    const animationFrameRef = useRef(null);
+    const radius = 35;
+    const circumference = 2 * Math.PI * radius;
 
     useEffect(() => {
-        if (timeLeft > 0 && timerActive) {
-            const timer = setInterval(() => {
-                setTimeLeft((prevTime) => prevTime - 1);
-            }, 1000);
+        setInitialTimeCopy(difficulty === 2 ? 45 : 60);
+    }, [difficulty]);
 
-            return () => clearInterval(timer); // Limpiar el intervalo cuando el componente se desmonte
-        } else if (timeLeft === 0 && timerActive) {
-            setTimerActive(false);  // 🔹 Desactiva el temporizador para evitar múltiples llamadas
-            onTimeOut(); // Llamar a la función cuando el tiempo se haya agotado
+    useEffect(() => {
+        startTimeRef.current = Date.now();
+        setTimeLeft(initialTime);
+        setTimerActive(true);
+
+        if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
         }
-    }, [timeLeft, onTimeOut]);
+
+        const updateTimer = () => {
+            const currentTime = Date.now();
+            const elapsedTime = Math.floor((currentTime - startTimeRef.current) / 1000);
+            const remainingTime = Math.max(initialTime - elapsedTime, 0);
+
+            setTimeLeft(remainingTime);
+
+            if (remainingTime > 0) {
+                animationFrameRef.current = requestAnimationFrame(updateTimer);
+            } else if (timerActive) {
+                setTimerActive(false);
+                onTimeOut();
+            }
+        };
+
+        animationFrameRef.current = requestAnimationFrame(updateTimer);
+
+        return () => {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
+        };
+    }, [initialTime, resetTimer]);
+
+    let timeLeftCopy = timeLeft;
+    if (timeLeft > initialTimeCopy) {
+        timeLeftCopy = initialTimeCopy;
+    }
+    const progress = (timeLeftCopy / initialTimeCopy) * circumference;
 
     return (
-        <div style={{ textAlign: 'center', fontSize: '1.2rem', fontWeight: 'bold' }}>
-            {timeLeft > 0 ? `Time left: ${timeLeft}s` : "Time's up!"}
+        <div className="timer-container">
+            <svg className="timer-svg" width="100" height="100" viewBox="0 0 100 100">
+                <circle className="timer-background" cx="50" cy="50" r={radius} />
+                <circle
+                    className="timer-circle"
+                    cx="50" cy="50"
+                    r={radius}
+                    strokeWidth="6"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={circumference - progress}
+                />
+                {[...Array(12)].map((_, i) => {
+                    const angle = (i * 30) * (Math.PI / 180);
+                    const x1 = 50 + Math.cos(angle) * 35;
+                    const y1 = 50 + Math.sin(angle) * 35;
+                    const x2 = 50 + Math.cos(angle) * 30;
+                    const y2 = 50 + Math.sin(angle) * 30;
+                    const isQuarter = i % 3 === 0;
+                    return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} className={`timer-mark ${isQuarter ? 'timer-mark-quarter' : ''}`} />;
+                })}
+                {timeLeft > 0 ? (
+                    <text x="50" y="55" textAnchor="middle" className="timer-text" transform="rotate(90, 50, 50)">
+                        {timeLeft}s
+                    </text>
+                ) : (
+                    <text x="50" y="55" textAnchor="middle" className="timer-text" transform="rotate(90, 50, 50)">
+                        0s
+                    </text>
+                )}
+            </svg>
         </div>
     );
 }

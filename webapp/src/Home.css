@@ -28,7 +28,7 @@ body, html {
 .play-button {
   font-size: 2rem;
   padding: 20px 40px;
-  background-color: blue;
+  background-color: #0056b3;
   border-radius: 12px;
   border: none;
   cursor: pointer;
@@ -39,7 +39,7 @@ body, html {
 }
 
 .play-button:hover {
-  background-color: #0056b3;
+  background-color: #144880;
 }
 
 .play-button a {

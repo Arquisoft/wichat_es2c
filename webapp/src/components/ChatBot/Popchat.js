@@ -1,47 +1,110 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Scrollbars } from 'react-custom-scrollbars-2';
 import './Popchat.css';
 
 export const PopChat = (props) => {
-  let hide = {
-    display: 'none',
-  };
-  let show = {
-    display: 'block',
-  };
-  let textRef = React.createRef();
-  const { messages = [] } = props; // Asegúrate de que messages tenga un valor por defecto
-
-  const [chatopen, setChatopen] = useState(false);
+ 
+  const hide = { display: 'none' };
+  const show = { display: 'block' };
   
-  const toggle = (e) => {
+  const textRef = useRef(null);
+  const { messages = [], getMessage, questionData, onNewMessage, onBotResponse } = props;
+  const scrollRef = useRef(null);
+  
+  const [chatopen, setChatopen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  
+  //para que cuando salgan nuevos mensajes se desplace el scroll hacia abajo
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollToBottom();
+    }
+  }, [messages]);
+
+  
+  
+  const toggle = () => {
     setChatopen(!chatopen);
   };
 
-  const handleSend = (e) => {
-    const get = props.getMessage;
-    get(textRef.current.value);
+  const handleSend = async () => {
+    const userMessage = textRef.current.value.trim();
+    
+    if (!userMessage) return;
+    
+    try {
+      // Actualizar el estado para mostrar el mensaje del usuario
+      props.onNewMessage(userMessage);
+      
+      textRef.current.value = '';
+
+      setIsLoading(true);
+      
+      const response = await getMessage(userMessage);
+      
+      props.onBotResponse(response);
+    } catch (error) {
+      console.error("Error al obtener respuesta del chatbot:", error);
+      props.onBotResponse("I'm sorry, I can't help you at the moment.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  //para ue se le pueda dar por teclado con Enter
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSend();
+    }
   };
 
   return (
     <div id="chatCon">
       <div className="chat-box" style={chatopen ? show : hide}>
         <div className="header">Hint Chatbot</div>
-        <div className="msg-area">
-          {messages.map((msg, i) => (
-            i % 2 ? (
-              <p key={i} className="right"><span>{msg}</span></p>
-            ) : (
-              <p key={i} className="left"><span>{msg}</span></p>
-            )
-          ))}
-        </div>
+        <Scrollbars autoHide ref={scrollRef} className="msg-area" style={{ height: '350px' }}>
+          <div className="msg-content">
+            {messages.map((msg, i) => (
+              <p key={i} className={i % 2 ? "right" : "left"}>
+                <span>{msg}</span>
+              </p>
+            ))}
+            {isLoading && (
+              <p className="left">
+                <span className="typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </span>
+              </p>
+            )}
+          </div>
+        </Scrollbars>
         <div className="footer">
-          <input type="text" ref={textRef} />
-          <button onClick={handleSend}>{'>'}</button>
+        <input 
+          type="text" 
+          ref={textRef} 
+          onKeyPress={handleKeyPress}
+          disabled={isLoading}
+          placeholder="Type your question..."
+        />
+          <button 
+            onClick={handleSend} 
+            disabled={isLoading}
+          >
+            {isLoading ? '...' : '-Send-'}
+          </button>
         </div>
       </div>
       <div className="pop">
-        <p><img onClick={toggle} src={`${process.env.PUBLIC_URL}/iconoChatBot.png`}  alt="" /></p>
+        <p>
+          <img 
+            onClick={toggle} 
+            src={`${process.env.PUBLIC_URL}/iconoChatBot.png`} 
+            alt="Chat Icon" 
+          />
+        </p>
       </div>
     </div>
   );

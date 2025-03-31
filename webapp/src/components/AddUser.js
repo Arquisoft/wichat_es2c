@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { TextField, Button, Typography, Box, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
-
+import "./LoginRegister.css";
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
 function AddUser() {
@@ -38,7 +38,7 @@ function AddUser() {
 
         setLoading(true);
         try {
-            await axios.post(`${apiEndpoint}/adduser`, { username, password });
+            const response = await axios.post(`${apiEndpoint}/adduser`, { username, password });
             setError('');
             setSuccess(true);
             setTimeout(() => {
