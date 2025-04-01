@@ -41,10 +41,17 @@ describe('Gateway Service', () => {
   });
 
   // Test /askllm endpoint
+  process.env.LLM_API_KEY = 'fake-api-key';
   it('should forward askllm request to the llm service', async () => {
     const response = await request(app)
-      .post('/askllm')
-      .send({ question: 'question', apiKey: 'apiKey', model: 'gemini' });
+        .post('/askllm')
+        .send({
+          userQuestion: 'Can you give me a hint?',
+          gameQuestion: 'What is the capital of France?',
+          answers: ['Madrid', 'London', 'Paris', 'Berlin'],
+          correctAnswer: 'Paris',
+          model: 'empathy'
+        });
 
     expect(response.statusCode).toBe(200);
     expect(response.body.answer).toBe('llmanswer');
