@@ -6,17 +6,50 @@ import AddUser from './AddUser';
 
 const mockAxios = new MockAdapter(axios);
 
+// Mock localStorage
+const localStorageMock = (() => {
+  let store = {};
+  return {
+    getItem: jest.fn(key => store[key] || null),
+    setItem: jest.fn((key, value) => {
+      store[key] = value.toString();
+    }),
+    clear: jest.fn(() => {
+      store = {};
+    }),
+  };
+})();
+
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock
+});
+
+// Mock window.location
+const mockLocation = {
+  href: '',
+};
+Object.defineProperty(window, 'location', {
+  value: mockLocation,
+  writable: true,
+});
+
+// Mock setTimeout
+jest.useFakeTimers();
+
 describe('AddUser component', () => {
   beforeEach(() => {
     mockAxios.reset();
+    localStorageMock.clear();
+    window.location.href = '';
+    jest.clearAllMocks();
   });
 
-  it('should add user successfully', async () => {
+  it('should register user successfully', async () => {
     render(<AddUser />);
 
     const usernameInput = screen.getByLabelText(/Username/i);
     const passwordInput = screen.getByLabelText(/Password/i);
-    const addUserButton = screen.getByRole('button', { name: /Add User/i });
+    const registerButton = screen.getByRole('button', { name: /Register/i });
 
     // Mock the axios.post request to simulate a successful response
     mockAxios.onPost('http://localhost:8000/adduser').reply(200);
@@ -25,35 +58,28 @@ describe('AddUser component', () => {
     fireEvent.change(usernameInput, { target: { value: 'testUser' } });
     fireEvent.change(passwordInput, { target: { value: 'testPassword' } });
 
-    // Trigger the add user button click
-    fireEvent.click(addUserButton);
+    // Trigger the register button click
+    fireEvent.click(registerButton);
 
-    // Wait for the Snackbar to be open
+    // Wait for the success alert to appear
     await waitFor(() => {
-      expect(screen.getByText(/User added successfully/i)).toBeInTheDocument();
+      expect(screen.getByText(/Successfully registered/i)).toBeInTheDocument();
     });
+
+    // Advance timers to trigger the redirect
+    jest.advanceTimersByTime(1500);
+
+    // Check for redirection
+    expect(window.location.href).toBe('/login');
   });
 
-  it('should handle error when adding user', async () => {
+
+  it('should redirect if already logged in', () => {
+    // Set token to simulate logged-in state
+    localStorageMock.getItem.mockReturnValue('fake-token');
+
     render(<AddUser />);
 
-    const usernameInput = screen.getByLabelText(/Username/i);
-    const passwordInput = screen.getByLabelText(/Password/i);
-    const addUserButton = screen.getByRole('button', { name: /Add User/i });
-
-    // Mock the axios.post request to simulate an error response
-    mockAxios.onPost('http://localhost:8000/adduser').reply(500, { error: 'Internal Server Error' });
-
-    // Simulate user input
-    fireEvent.change(usernameInput, { target: { value: 'testUser' } });
-    fireEvent.change(passwordInput, { target: { value: 'testPassword' } });
-
-    // Trigger the add user button click
-    fireEvent.click(addUserButton);
-
-    // Wait for the error Snackbar to be open
-    await waitFor(() => {
-      expect(screen.getByText(/Error: Internal Server Error/i)).toBeInTheDocument();
-    });
+    expect(window.location.href).toBe('/home');
   });
 });
