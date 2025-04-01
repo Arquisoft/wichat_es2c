@@ -163,7 +163,7 @@ function Game() {
 
         const isAnswerCorrect = selectedOption === questionData.correctAnswer;
 
-
+        console.log(questionData.choices)
         const apiRequest = axios.post(`${apiEndpointGame}/addQuestion`, {
             username: localStorage.getItem("username"),
             question: questionData.choices,
@@ -188,6 +188,7 @@ function Game() {
         await fetchNewQuestion();
         setButtonsActive(true);
         setTimerReset(prev => !prev);
+        console.log(apiRequest)
     };
 
     const fetchNewQuestion = () => {
