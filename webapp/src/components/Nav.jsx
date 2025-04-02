@@ -38,7 +38,7 @@ export default function Nav() {
     return (
         <nav className={styles.navContainer}>
             <Link to="/home">
-                <img src="/logo512.png" alt="Logo" className={styles.logo} />
+                <img src="/wiChatLogos/LogoWichat2_512.png" alt="Logo" className={styles.logo} />
             </Link>
             <div>
                 {isLoggedIn ? (
