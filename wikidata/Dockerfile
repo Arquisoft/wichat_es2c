@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3004
 
 # Define the command to run your app
-CMD ["node", "wikidata-Client.js"]
+CMD ["node", "question-service.js"]
