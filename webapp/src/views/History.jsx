@@ -49,7 +49,7 @@ const History = () => {
           averageTime: response.data.statistics.averageTime,
           bestTime: response.data.statistics.bestTime,
           rightAnswers: response.data.statistics.rightAnswers,
-          wrongAnswers: response.data.statistics.wrongAnswers,
+          wrongAnswers: response.data.statistics.wrongAnswers
         });
       }
     } catch (err) {
@@ -203,7 +203,7 @@ const History = () => {
 
         <div className={styles.gamesHistoryContainer}>
           {games.map((game, index) => {
-            console.log("juego",game); // Aquí verás el objeto `game` en la consola
+            console.log("Matches:", game.questions);
             return (
                 <GameSummary
                     key={game.id || index}

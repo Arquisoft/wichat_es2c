@@ -221,14 +221,15 @@ app.get('/userMatches', async (req, res) => {
           }
         });
       }
-      
+
       return {
         id: match._id,
         date: match.date,
         time: match.time,
         score: match.score,
         correctAnswers,
-        wrongAnswers
+        wrongAnswers,
+        questions: match.questions || []
       };
     });
     
