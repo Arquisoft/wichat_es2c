@@ -81,13 +81,13 @@ function Home() {
 
                 
                 {/*Box principal del home, que tenga la presentacion y ver que mas*/}
-                <Box sx={{ textAlign: "center", mt: 2 }}>
+                <Box className="boxMainPresentation" sx={{ textAlign: "center", mt: 2 }}>
                     <img src="/wiChatLogos/LogoWichat2_512.png" alt="Logo" className="logoAplicacion"  />
                     <Typography variant="h4" sx={{ color: "white", fontWeight: "bold" }}>
-                        Welcome to WiChat
+                        Welcome to <span style={{ color: "#9dd7d3" }}>Wi</span><span style={{ color: "#4dc3ba" }}>Chat</span>
                     </Typography>
                     <Typography variant="body1" sx={{ color: "white", mt: 1 }}>
-                        A fun way to connect with your friends and play games together.
+                        Test your top-level skills with the most top-level technology.
                     </Typography>
                 </Box>
                 

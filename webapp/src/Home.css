@@ -33,8 +33,10 @@ body, html {
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  
   position: absolute;
   bottom: 5%;
+
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -46,4 +48,31 @@ body, html {
   color: white;
   text-decoration: none;
   display: block;
+}
+
+
+
+.boxMainPresentation{
+  text-align: center;
+    margin-top: 20px;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 500px;
+    background: linear-gradient(135deg, #001F3F 0%, #0056b3 100%);
+    box-shadow: 0px 0px 20px rgba(0, 174, 255, 0.5);
+    border: 2px solid rgba(0, 174, 255, 0.7);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+}
+
+.boxMainPresentation:hover {
+  transform: scale(1.02);
+  box-shadow: 0px 0px 30px rgba(0, 174, 255, 0.8);
+}
+
+.boxMainPresentation:hover .logoAplicacion{
+  filter: drop-shadow(0px 0px 10px #00eaff);
+  transform: scale(1.05);
+  transition: transform 0.3s ease-in-out, filter 0.9s ease-in-out;
+
 }
