@@ -9,7 +9,7 @@ import PopChat from './ChatBot/Popchat';
 import Timer from './Timer';
 import axios from "axios";
 
-function Game({ onNavigate }) {
+function Game({}) { //onNavigate
     // Replace react-router-dom's useNavigate with a prop-based navigation
 
     //Revisar si es correcto tener esto aqui (creo que de esta forma de saltan el gateway service)
