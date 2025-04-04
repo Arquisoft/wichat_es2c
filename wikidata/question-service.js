@@ -63,11 +63,12 @@ async function addQuestionsCapital() {
                         text: `Whats the capital city of ${country.countryLabel.value}?`,
                         answers: shuffledAnswers,
                         image: flagUrl,
+                        category: 'capitals',
                     });
                 });
 
             lastCacheTime = Date.now();
-            await Question.deleteMany({});
+            await Question.deleteMany({category: 'capitals'});
             await Question.insertMany(cachedQuestions);
         } catch (error) {
             console.error("Error fetching or saving capital questions:", error);
@@ -79,32 +80,29 @@ async function addQuestionsCapital() {
 async function addQuestionsSports() {
     const CACHE_DURATION = 1000 * 60 * 60;
 
+    // Si no hay caché o ha pasado más de una hora desde la última actualización, se generan preguntas
     if (!cachedQuestions || (Date.now() - lastCacheTime > CACHE_DURATION)) {
         try {
             let query = `
                 SELECT DISTINCT ?teamLabel ?crest ?countryLabel
                 WHERE {
-                # Filtra por equipos de fútbol
-                ?team wdt:P31/wdt:P279* wd:Q476028;  # Equipo de fútbol
-                 wdt:P17 ?country;              # País del equipo
-                wdt:P41 ?crest.                # Imagen relacionada con el equipo (no solo escudos)
+                    ?team wdt:P31/wdt:P279* wd:Q476028;  # Equipo de fútbol
+                    wdt:P17 ?country;              # País del equipo
+                    wdt:P41 ?crest.                # Imagen relacionada con el equipo
 
-                # Filtra por equipos en Europa
-                ?country wdt:P30 wd:Q46.             # País debe estar en Europa
-                 # Etiquetas en español
-                 SERVICE wikibase:label { bd:serviceParam wikibase:language "es". }
-               }
+                    # Filtra por equipos en Europa
+                    ?country wdt:P30 wd:Q46.             # País debe estar en Europa
+                    SERVICE wikibase:label { bd:serviceParam wikibase:language "es". }
+                }
                 LIMIT 50
             `;
 
-            // Usamos la query para hacer la solicitud SPARQL
+            // Realizamos la solicitud SPARQL
             const url = `https://query.wikidata.org/sparql?query=${encodeURIComponent(query)}&format=json`;
             const response = await axios.get(url);
 
-            // Asegurarnos de que la respuesta tenga los datos necesarios
             const results = response.data.results.bindings;
 
-            // Mapeamos los resultados de la consulta
             cachedQuestions = results.map(result => {
                 // Filtrar equipos incorrectos para generar opciones
                 const incorrectTeams = results
@@ -136,18 +134,20 @@ async function addQuestionsSports() {
 
                 // Crear la pregunta sobre el equipo de fútbol
                 return new Question({
-                    text: `¿De qué país es el equipo ${result.teamLabel.value}?`,
+                    text: `¿A qué equipo pertenece esta bandera?`,
                     answers: shuffledAnswers,
-                    image: crestUrl,  // Imagen del escudo del equipo
+                    image: crestUrl,
+                    category: 'sports',
                 });
             });
 
             // Actualizamos la hora del último caché
             lastCacheTime = Date.now();
 
-            // Eliminar las preguntas anteriores de la base de datos y agregar las nuevas
-            await Question.deleteMany({});
+            // Eliminar solo las preguntas de la categoría "sports" y agregar las nuevas preguntas
+            await Question.deleteMany({ category: 'sports' });
             await Question.insertMany(cachedQuestions);
+
         } catch (error) {
             console.error("Error fetching or saving team questions:", error);
         }
@@ -224,6 +224,7 @@ async function addQuestionsCartoons() {
                     text: `¿Cómo se llama este personaje de dibujos animados?`,
                     answers: shuffledAnswers,
                     image: imageUrl,  // Imagen del personaje
+                    category: 'cartoons',
                 });
             });
 
@@ -231,7 +232,7 @@ async function addQuestionsCartoons() {
             lastCacheTime = Date.now();
 
             // Eliminar las preguntas anteriores de la base de datos y agregar las nuevas
-            await Question.deleteMany({});
+            await Question.deleteMany({category: 'cartoons'});
             await Question.insertMany(cachedQuestions);
         } catch (error) {
             console.error("Error fetching or saving cartoon character questions:", error);
@@ -309,6 +310,7 @@ async function addQuestionsBirds() {
                     text: `¿Qué especie de ave es esta?`,
                     answers: shuffledAnswers,
                     image: imageUrl,  // Imagen del ave
+                    category: 'birds',
                 });
             });
 
@@ -316,7 +318,7 @@ async function addQuestionsBirds() {
             lastCacheTime = Date.now();
 
             // Eliminar las preguntas anteriores de la base de datos y agregar las nuevas
-            await Question.deleteMany({});
+            await Question.deleteMany({category: 'birds'});
             await Question.insertMany(cachedQuestions);
         } catch (error) {
             console.error("Error fetching or saving bird questions:", error);
@@ -329,24 +331,34 @@ async function addQuestionsBirds() {
 app.get('/getQuestion', async (req, res) => {
     try {
         const category = req.query.category; // Obtiene el parámetro de la URL
-        if (category === 'birds') {
-            await addQuestionsBirds();
-        } else if (category === 'sports') {
-            await addQuestionsSports();
-        } else if (category === 'cartoons') {
-            await addQuestionsCartoons();
-        } else {
-            await addQuestionsCapital();
-        }
-        const question = await Question.aggregate([
-            { $sample: { size: 1 } }
-        ]);
 
-        if (!question || question.length === 0) {
-            return res.status(404).json({ error: 'No questions found in the database' });
+        // Verifica si hay preguntas en la base de datos para la categoría solicitada
+        let questions = await Question.find({ category: category });
+
+        if (questions.length === 0) {
+
+            // Si no hay preguntas, generamos las preguntas correspondientes a la categoría
+            if (category === 'birds') {
+                await addQuestionsBirds();
+            } else if (category === 'sports') {
+                await addQuestionsSports();
+            } else if (category === 'cartoons') {
+                await addQuestionsCartoons();
+            } else {
+                await addQuestionsCapital();
+            }
+
+
+            // Hacer la consulta a la base de datos nuevamente para obtener las preguntas recién generadas
+            questions = await Question.find({ category: category });
+
+            if (questions.length === 0) {
+                return res.status(404).json({ error: `No questions found for category: ${category}` });
+            }
         }
 
-        const selectedQuestion = question[0];
+        // Seleccionamos una pregunta aleatoria
+        const selectedQuestion = questions[Math.floor(Math.random() * questions.length)];
 
         const choices = selectedQuestion.answers
             .map(answer => answer.text)
@@ -368,6 +380,7 @@ app.get('/getQuestion', async (req, res) => {
         res.status(500).json({ error: 'Failed to generate question', details: error.message });
     }
 });
+
 
 
 const server = app.listen(PORT, () => {

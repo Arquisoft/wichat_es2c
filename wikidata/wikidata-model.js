@@ -10,6 +10,7 @@ const questionSchema = new mongoose.Schema({
     text: String,
     answers: [answerSchema],
     image: String,
+    category: String,
 });
 
 const Answer = mongoose.model('Answer', answerSchema);
