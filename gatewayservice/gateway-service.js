@@ -87,9 +87,9 @@ app.post('/addQuestions', async (req, res) => {
   }
 });
 
-app.post('/getQuestion', async (req, res) => {
+app.get('/getQuestion', async (req, res) => {
   try {
-    const userResponse = await axios.post(wikidataServiceUrl+'/getQuestion', req.body);
+    const userResponse = await axios.get(wikidataServiceUrl+'/getQuestion', req.body);
     res.json(userResponse.data);
   } catch (error) {
     res.status(error.response.status).json({ error: error.response.data.error });
