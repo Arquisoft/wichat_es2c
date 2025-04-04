@@ -15,10 +15,11 @@ function AddUser() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isLoggedIn) {
-            window.location.href = '/home';
+            navigate('/home');
         }
     }, [isLoggedIn, navigate]);
 
@@ -51,7 +52,7 @@ function AddUser() {
             setError('');
             setSuccess(true);
             setTimeout(() => {
-                window.location.href = '/login';
+                navigate('/login');
             }, 1500);
         } catch (err) {
             console.error('Registration error:', err);
@@ -186,9 +187,9 @@ function AddUser() {
                     <Box sx={{ mt: 2, textAlign: 'center' }}>
                         <Typography variant="body2">
                             Already have an account?{' '}
-                            <a href="/login">
+                            <Link to="/login" style={{ textDecoration: 'none' }}>
                                 Login here
-                            </a>
+                            </Link>
                         </Typography>
                     </Box>
                 </form>
@@ -198,4 +199,5 @@ function AddUser() {
         </>
     );
 }
+
 export default AddUser;
