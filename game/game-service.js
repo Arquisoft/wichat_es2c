@@ -116,7 +116,7 @@ app.post('/endMatch', async (req, res) => {
       user.statistics.averageScore = ((user.statistics.averageScore * (user.statistics.gamesPlayed - 1) + lastMatch.score) / user.statistics.gamesPlayed).toFixed(2);
       user.statistics.bestScore = Math.max(user.statistics.bestScore, lastMatch.score).toFixed(2);
       user.statistics.averageTime = ((user.statistics.averageTime * (user.statistics.gamesPlayed - 1) + lastMatch.time) / user.statistics.gamesPlayed).toFixed(2);
-      user.statistics.bestTime = Math.min(user.statistics.bestTime || Number.MAX_SAFE_INTEGER, lastMatch.time);
+      user.statistics.bestTime = Math.max(user.statistics.bestTime || 0, lastMatch.time);
       user.statistics.rightAnswers += correctAnswers;
       user.statistics.wrongAnswers += incorrectAnswers;
     }
@@ -167,10 +167,12 @@ app.get('/userMatches', async (req, res) => {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    const totalMatches = await Match.countDocuments({ username });
+    const matchQuery = { username, date: { $ne: null } };
+
+    const totalMatches = await Match.countDocuments(matchQuery);
     const totalPages = Math.ceil(totalMatches / limit);
 
-    const matches = await Match.find({ username })
+    const matches = await Match.find(matchQuery)
         .sort({ date: -1 })
         .skip((page - 1) * limit)
         .limit(limit);
@@ -219,6 +221,7 @@ app.get('/userMatches', async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
 
 const server = app.listen(port, () => {
   console.log(`Game Service listening at http://localhost:${port}`);
