@@ -8,7 +8,7 @@ WORKDIR /usr/src/userservice
 COPY package*.json ./
 
 # Install app dependencies
-RUN npm install --ignore-scripts
+RUN npm rebuild bcrypt --build-from-source && npm install
 
 # Copy the app source code to the working directory
 COPY . .
