@@ -227,9 +227,12 @@ function Game({ onNavigate }) {
 
     // Changed to use the navigation prop instead of useNavigate hook
     const handleHomeClick = () => {
+        /*
         if (onNavigate) {
             onNavigate('/');
         }
+        */
+        window.location.href = '/home';
     };
 
     const handleReplayClick = () => {
