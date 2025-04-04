@@ -28,22 +28,101 @@ body, html {
 .play-button {
   font-size: 2rem;
   padding: 20px 40px;
-  background-color: #0056b3;
+  background: linear-gradient(135deg, #0048a0, #0073e6); /* Degradado azul */
   border-radius: 12px;
-  border: none;
+  border: 2px solid rgba(255, 255, 255, 0.6); /* Borde blanco semitransparente */
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  position: absolute;
-  bottom: 5%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: white;
+  transition: all 0.3s ease-in-out;
+  
+  /* Sombras para dar profundidad */
+  box-shadow: 
+    inset 0 0 8px rgba(255, 255, 255, 0.2), /* Brillo interno */
+    0 4px 10px rgba(0, 0, 0, 0.3), /* Sombra exterior */
+    0 0 12px rgba(0, 174, 255, 0.4); /* Resplandor leve */
+
+  margin-top: 1rem;
 }
 
 .play-button:hover {
-  background-color: #144880;
+  background: linear-gradient(135deg, #003580, #0056b3);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 
+    inset 0 0 12px rgba(255, 255, 255, 0.3), 
+    0 6px 15px rgba(0, 0, 0, 0.4), 
+    0 0 15px rgba(0, 174, 255, 0.7);
+  transform: scale(1.05); /* Pequeña expansión */
+}
+
+/* 🔘 Efecto cuando se presiona */
+.play-button:active {
+  transform: scale(0.98); /* Pequeña contracción */
+  box-shadow: 
+    inset 0 0 15px rgba(255, 255, 255, 0.4), 
+    0 3px 8px rgba(0, 0, 0, 0.5), 
+    0 0 18px rgba(0, 174, 255, 0.9);
 }
 
 .play-button a {
   color: white;
   text-decoration: none;
   display: block;
+}
+
+
+
+.boxMainPresentation{
+  text-align: center;
+    margin-top: 20px;
+    padding: 25px;
+    border-radius: 12px;
+    max-width: 500px;
+    background: linear-gradient(135deg, #001F3F 0%, #0056b3 100%);
+    box-shadow: 0px 0px 20px rgba(0, 174, 255, 0.5);
+    border: 2px solid rgba(0, 174, 255, 0.7);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+}
+
+.boxMainPresentation:hover {
+  transform: scale(1.02);
+  box-shadow: 0px 0px 30px rgba(0, 174, 255, 0.8);
+}
+
+.boxMainPresentation:hover .logoAplicacion{
+  filter: drop-shadow(0px 0px 10px #00eaff);
+  transform: scale(1.05);
+  transition: transform 0.3s ease-in-out, filter 0.9s ease-in-out;
+
+}
+
+
+
+
+.separator {
+  width: 80%;
+  height: 3px;
+  background: #00eaff;
+  margin: 15px auto;
+  border-radius: 4px;
+  box-shadow: 0px 0px 8px rgba(0, 234, 255, 0.8);
+  position: relative;
+  overflow: hidden;
+}
+
+.separator::before {
+  content: "";
+  position: absolute;
+  width: 30%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  top: 0;
+  left: -30%;
+  animation: slide-glow 2s infinite linear;
+}
+
+@keyframes slide-glow {
+  0% { left: -30%; opacity: 0.3; }
+  50% { left: 50%; opacity: 0.8; }
+  100% { left: 120%; opacity: 0.3; }
 }
