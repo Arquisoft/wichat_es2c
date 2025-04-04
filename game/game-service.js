@@ -10,7 +10,11 @@ app.use(express.json());
 
 // Connect to MongoDB
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/userdb';
-mongoose.connect(mongoUri);
+if (mongoose.connection.readyState === 0) {
+  mongoose.connect(mongoUri);
+}
+
+
 
 
 app.post('/addQuestion', async (req, res) => {

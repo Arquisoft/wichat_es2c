@@ -1,7 +1,7 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-const app = require('./game-service');
+let app;
 const { User, Match } = require('./game-model');
 
 let mongoServer;
@@ -9,12 +9,11 @@ let mongoServer;
 beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
     const mongoUri = mongoServer.getUri();
-
     if (mongoose.connection.readyState !== 0) {
         await mongoose.disconnect();
     }
-
     await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
+    app = require('./game-service');
 });
 
 afterAll(async () => {
