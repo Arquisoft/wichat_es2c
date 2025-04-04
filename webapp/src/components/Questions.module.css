@@ -1,49 +1,46 @@
-/* Estilos del modal */
+
 .modalOverlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 99.5%;
+    width: 100%;
     height: 100%;
-    background-color: rgba(169, 169, 169, 0.3); /* Fondo más discreto con gris suave */
+    background-color: rgba(169, 169, 169, 0.3);
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .modalContent {
-    background-color: #e3f1fd; /* Gris suave para el fondo del modal */
+    background-color: #e3f1fd;
     padding: 20px;
-    width: 60%; /* Un poco más estrecho */
+    width: 60%;
     min-width: 350px;
     max-width: 800px;
     border-radius: 10px;
-    border: 6px solid #000000; /* Borde negro */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
     height: auto;
     max-height: 80vh;
     overflow-y: auto;
-    overflow-x: hidden; /* Para ocultar cualquier desbordamiento horizontal */
-
-    /* Estilos personalizados para el scrollbar */
-    scrollbar-width: thin; /* Para Firefox */
-    scrollbar-color: #4f93d7 #e3f1fd; /* Color del scrollbar */
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #4f93d7 #e3f1fd;
+    margin-left: -14px;
 }
 
-/* Para navegadores basados en WebKit (Chrome, Safari, Edge) */
 .modalContent::-webkit-scrollbar {
-    width: 8px; /* Ancho del scrollbar */
+    width: 8px;
 }
 
 .questionList {
     list-style-type: none;
     padding: 0;
-    color: #000000; /* Letra negra */
+    color: #000000;
 }
 
 .questionItem {
     margin-bottom: 20px;
-    color: #000000; /* Letra negra */
+    color: #000000;
 }
 
 .answerList {
@@ -56,19 +53,28 @@
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
-    background-color: #f4ebcb; /* Fondo de respuesta actualizado */
+    background-color: #f4ebcb;
     border: 2px solid transparent;
     transition: background-color 0.3s ease, border-color 0.3s ease;
-    color: #000000; /* Letra negra */
+    color: #000000;
 }
 
 .answerItem:hover {
-    background-color: #D88D3C; /* Caramelo suave al pasar el cursor */
-    border-color: #9B6A3B; /* Borde canela */
+    background-color: #D88D3C;
+}
+
+.answerItem.correct {
+    background-color: #1fff71;
+    border-color: #4f93d7;
+}
+
+.answerItem.incorrect {
+    background-color: #db3535;
+    border-color: #4f93d7;
 }
 
 .closeButton {
-    background-color: #B0B0B0; /* Gris para el botón */
+    background-color: #B0B0B0;
     color: #FFFFFF;
     border: none;
     padding: 10px 20px;
@@ -79,5 +85,5 @@
 }
 
 .closeButton:hover {
-    background-color: #A0A0A0; /* Gris más oscuro al pasar el cursor */
+    background-color: #A0A0A0;
 }

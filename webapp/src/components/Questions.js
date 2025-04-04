@@ -7,13 +7,13 @@ const QuestionModal = ({ isOpen, closeModal, questions }) => {
     return (
         <div className={styles.modalOverlay} onClick={closeModal}>
             <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                <h2>Preguntas</h2>
+                <h2>Questions</h2>
 
                 {questions && questions.length > 0 ? (
                     <ul className={styles.questionList}>
                         {questions.map((question, index) => (
                             <li key={index} className={styles.questionItem}>
-                                <strong>Pregunta {index + 1}:</strong>
+                                <strong>Question {index + 1}:</strong>
 
                                 {/* Mostrar respuestas con estilo condicional */}
                                 <ul className={styles.answerList}>
@@ -40,7 +40,7 @@ const QuestionModal = ({ isOpen, closeModal, questions }) => {
                     <p>No hay preguntas disponibles.</p>
                 )}
 
-                <button className={styles.closeButton} onClick={closeModal}>Cerrar</button>
+                <button className={styles.closeButton} onClick={closeModal}>Close</button>
             </div>
         </div>
     );

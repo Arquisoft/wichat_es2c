@@ -203,7 +203,6 @@ const History = () => {
 
         <div className={styles.gamesHistoryContainer}>
           {games.map((game, index) => {
-            console.log("Matches:", game.questions);
             return (
                 <GameSummary
                     key={game.id || index}
