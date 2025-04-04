@@ -2,13 +2,10 @@ const puppeteer = require('puppeteer');
 const { defineFeature, loadFeature } = require('jest-cucumber');
 const setDefaultOptions = require('expect-puppeteer').setDefaultOptions;
 const feature = loadFeature('./features/register-login-form.feature');
+const { testUser } = require('../user-config');
 
 let page;
 let browser;
-let testUser = {
-  username: `pablo${Date.now()}`, //para que siempre sea un nuevo usuario
-  password: 'password123'
-};
 
 defineFeature(feature, test => {
 
@@ -34,6 +31,8 @@ defineFeature(feature, test => {
     then('A confirmation message should be shown in the screen', async () => {
       await page.waitForXPath('//*[contains(text(), "Successfully registered!")]')
       await page.waitForNavigation({ waitUntil: 'networkidle0' });
+      // Mark the user as registered
+      testUser.isRegistered = true;
     });
   });
 
@@ -57,6 +56,4 @@ defineFeature(feature, test => {
   afterAll(async () => {
     await browser.close();
   });
-
-
 });
