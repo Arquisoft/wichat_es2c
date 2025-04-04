@@ -24,7 +24,7 @@ function Login() {
 
     useEffect(() => {
         if (isLoggedIn) {
-            navigate('/home');
+            window.location.href = '/home';
         }
     }, [isLoggedIn, navigate]);
 

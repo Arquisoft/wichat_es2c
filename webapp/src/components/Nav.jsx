@@ -9,7 +9,6 @@ import { MdLeaderboard } from 'react-icons/md';
 import { CgNotes } from 'react-icons/cg';
 
 export default function Nav() {
-    const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
@@ -19,14 +18,12 @@ export default function Nav() {
         localStorage.removeItem('username');
         setIsLoggedIn(false);
         setDropdownOpen(false);
-        navigate('/login');
+        window.location.href = '/login';
     };
 
     const toggleDropdown = () => {
         setDropdownOpen(!dropdownOpen);
     };
-
-
 
     useEffect(() => {
         function handleClickOutside(event) {
@@ -72,13 +69,25 @@ export default function Nav() {
             <div className={styles.profileNavSection}>
                 {isLoggedIn ? (
                     <div className={styles.userDropdown} ref={dropdownRef}>
-                        <div className={styles.dropdownTrigger} onClick={toggleDropdown}>
+                        <div
+                            className={styles.dropdownTrigger}
+                            onClick={toggleDropdown}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    toggleDropdown();
+                                }
+                            }}
+                            tabIndex={0}
+                            role="button"
+                            aria-haspopup="true"
+                            aria-expanded={dropdownOpen}
+                        >
                             <img
                                 src="/pfp.png"
                                 alt="User"
                                 className={styles.userAvatar}
                             />
-                        </div>  
+                        </div>
 
                     {dropdownOpen && (
                         <div className={styles.dropdownMenu}>
