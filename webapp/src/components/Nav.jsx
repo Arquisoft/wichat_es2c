@@ -4,9 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 
 // Iconos
 import { IoGameController } from 'react-icons/io5';
-import { FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
-import { MdHistory, MdLeaderboard } from 'react-icons/md';
-import { GiTrophy } from 'react-icons/gi';
+import { FaSignInAlt, FaUserPlus } from 'react-icons/fa';
+import { MdLeaderboard } from 'react-icons/md';
+import { CgNotes } from 'react-icons/cg';
 
 export default function Nav() {
     const navigate = useNavigate();
@@ -46,7 +46,30 @@ export default function Nav() {
             <Link to="/home">
                 <img src="/wiChatLogos/LogoWichat2_512.png" alt="Logo" className={styles.logo} />
             </Link>
-            <div>
+
+            
+
+            <div className={styles.navGeneralLinks}>
+                <Link to={isLoggedIn ? "/game" : "/login"} className={styles.navLink}>
+                    <IoGameController style={{ marginRight: '5px' }} /> Play
+                </Link>
+                <Link to="/leaderboard" className={styles.navLink}>
+                    <MdLeaderboard style={{ marginRight: '5px' }} /> Leaderboard
+                </Link>
+            </div>
+
+            {isLoggedIn && (
+                <div className={styles.navSeparator}></div>
+            )}
+            {isLoggedIn && (
+                <div className={styles.navPersonalLinks}>
+                    <Link to="/history" className={styles.navLink}>
+                        <CgNotes style={{ marginRight: '5px' }} /> History
+                    </Link>
+                </div>
+            )}
+
+            <div className={styles.profileNavSection}>
                 {isLoggedIn ? (
                     <div className={styles.userDropdown} ref={dropdownRef}>
                         <div className={styles.dropdownTrigger} onClick={toggleDropdown}>
@@ -60,13 +83,6 @@ export default function Nav() {
                     {dropdownOpen && (
                         <div className={styles.dropdownMenu}>
                             <div className={styles.dropdownContent}>
-                                <Link
-                                    to="/history"
-                                    className={styles.dropdownItem}
-                                    onClick={() => setDropdownOpen(false)}
-                                >
-                                    View History
-                                </Link>
                                 <Link
                                     to="/login"
                                     className={`${styles.dropdownItem} ${styles.logoutButton}`}
@@ -84,7 +100,7 @@ export default function Nav() {
             ) : (
                     <div className={styles.authLinks}>
                         <Link to="/login" className={styles.authLink}>
-                            <IoGameController style={{ marginRight: '8px' }} /> Log in
+                            <FaSignInAlt style={{ marginRight: '8px' }} /> Log in
                         </Link>
                         <Link to="/signup" className={styles.authLink}>
                             <FaUserPlus style={{ marginRight: '8px' }} /> Register
