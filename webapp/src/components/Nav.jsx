@@ -2,6 +2,12 @@ import React, { useState, useRef, useEffect } from "react";
 import styles from "./Nav.module.css";
 import { Link, useNavigate } from "react-router-dom";
 
+// Iconos
+import { IoGameController } from 'react-icons/io5';
+import { FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
+import { MdHistory, MdLeaderboard } from 'react-icons/md';
+import { GiTrophy } from 'react-icons/gi';
+
 export default function Nav() {
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
@@ -61,12 +67,16 @@ export default function Nav() {
                                 >
                                     View History
                                 </Link>
-                                <button
-                                    onClick={handleLogout}
+                                <Link
+                                    to="/login"
                                     className={`${styles.dropdownItem} ${styles.logoutButton}`}
+                                    onClick={(e) => {
+                                        e.preventDefault(); // Prevenir la navegación inmediata
+                                        handleLogout();     // Ejecutar la lógica de cierre de sesión
+                                    }}
                                 >
                                     Log out
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     )}
@@ -74,10 +84,10 @@ export default function Nav() {
             ) : (
                     <div className={styles.authLinks}>
                         <Link to="/login" className={styles.authLink}>
-                            Log in
+                            <IoGameController style={{ marginRight: '8px' }} /> Log in
                         </Link>
                         <Link to="/signup" className={styles.authLink}>
-                            Register
+                            <FaUserPlus style={{ marginRight: '8px' }} /> Register
                         </Link>
                     </div>
                 )}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Nav from "./components/Nav";
-import { Button, Typography, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import { motion, AnimatePresence } from "framer-motion";
 
 import "./Home.css";
@@ -64,7 +64,23 @@ function Home() {
                 alignItems: "center",
                 backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo oscuro para mejorar la legibilidad
             }}>
+
                 
+                {/*Box principal del home, que tenga la presentacion y ver que mas*/}
+                <Box className="boxMainPresentation" sx={{ textAlign: "center", mt: 2 }}>
+                    <img src="/wiChatLogos/LogoWichat2_512.png" alt="Logo" className="logoAplicacion"  />
+                    <Typography variant="h4" sx={{ color: "white", fontWeight: "bold" }}>
+                        Welcome to <span style={{ color: "#9dd7d3" }}>Wi</span><span style={{ color: "#4dc3ba" }}>Chat</span>
+                    </Typography>
+                    
+                    <div className="separator"></div>
+                    
+                    <Typography variant="body1" sx={{ color: "white", mt: 1 }}>
+                        Test your top-level skills with the most top-level technology.
+                    </Typography>
+
+                    
+
                     {!isLoggedIn ? (
                         <button className="play-button">
                             <Link to="/login" style={{ color: "white" }}>
@@ -78,17 +94,6 @@ function Home() {
                             </Link>
                         </button>
                     )}
-
-                
-                {/*Box principal del home, que tenga la presentacion y ver que mas*/}
-                <Box className="boxMainPresentation" sx={{ textAlign: "center", mt: 2 }}>
-                    <img src="/wiChatLogos/LogoWichat2_512.png" alt="Logo" className="logoAplicacion"  />
-                    <Typography variant="h4" sx={{ color: "white", fontWeight: "bold" }}>
-                        Welcome to <span style={{ color: "#9dd7d3" }}>Wi</span><span style={{ color: "#4dc3ba" }}>Chat</span>
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: "white", mt: 1 }}>
-                        Test your top-level skills with the most top-level technology.
-                    </Typography>
                 </Box>
                 
             </div>
