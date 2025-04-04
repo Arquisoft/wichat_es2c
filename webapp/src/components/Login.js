@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { Link } from "react-router-dom";
 import "./LoginRegister.css";
 
 function Login() {
-    const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -17,9 +14,9 @@ function Login() {
 
     useEffect(() => {
         if (isLoggedIn) {
-            navigate('/home');
+            window.location.href = '/home';
         }
-    }, [isLoggedIn, navigate]);
+    }, [isLoggedIn]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

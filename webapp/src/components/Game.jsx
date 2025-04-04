@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AwesomeButton } from 'react-awesome-button';
 import 'react-awesome-button/dist/styles.css';
 import styles from './Game.module.css';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { HomeButton, ChartButton, ReplayButton, ButtonContainer } from './ModelButtons';
-
 import PopChat from './ChatBot/Popchat';
 import Timer from './Timer';
 import axios from "axios";
 
+function Game({ onNavigate }) {
+    // Replace react-router-dom's useNavigate with a prop-based navigation
 
-function Game() {
-    const navigate = useNavigate();
-    
     //Revisar si es correcto tener esto aqui (creo que de esta forma de saltan el gateway service)
     const apiEndpointGame = process.env.GAME_SERVICE_API_ENDPOINT || 'http://localhost:8004';
     const apiEndpointWiki = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:3005';
-
     const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
     const [difficulty, setDifficulty] = useState(1);
@@ -39,7 +35,7 @@ function Game() {
     const [reset, setReset] = useState(false);
     const [totalTime, setTotalTime] = useState(0); // Nuevo estado para el tiempo total de la partida
     const [gameStartTime, setGameStartTime] = useState(null); // Nuevo estado para registrar cuando inicia la partida
-    const [finished,setFinished] = useState(false);
+    const [finished, setFinished] = useState(false);
     const [questionQueue, setQuestionQueue] = useState([]);
 
     useEffect(() => {
@@ -96,7 +92,6 @@ function Game() {
         }, 300);
     };
 
-
     const addMatch = async (diffLevel) => {
         try {
             const response = await axios.post(`${apiEndpointGame}/addMatch`, {
@@ -109,45 +104,41 @@ function Game() {
         }
     };
 
-
     const getMessage = async (userMsg) => {
         try {
-          // Verificar que tenemos datos de la pregunta actual
-          if (!questionData) {
-            return "No hay una pregunta activa en este momento.";
-          }
-        
+            // Verificar que tenemos datos de la pregunta actual
+            if (!questionData) {
+                return "No hay una pregunta activa en este momento.";
+            }
+
             //const response = await axios.post(`${apiEndpoint}/askllm`, {
-          const response = await axios.post(`${apiEndpoint}/askllm`, {
-            model: 'empathy', // O el modelo que prefieras
-            userQuestion: userMsg, // La pregunta que hace el usuario al chatbot
-            gameQuestion: questionData.question, // La pregunta actual del juego
-            answers: questionData.choices, // Las opciones disponibles
-            correctAnswer: questionData.correctAnswer // La respuesta correcta
-          });
-          
-          return response.data.answer;
+            const response = await axios.post(`${apiEndpoint}/askllm`, {
+                model: 'empathy', // O el modelo que prefieras
+                userQuestion: userMsg, // La pregunta que hace el usuario al chatbot
+                gameQuestion: questionData.question, // La pregunta actual del juego
+                answers: questionData.choices, // Las opciones disponibles
+                correctAnswer: questionData.correctAnswer // La respuesta correcta
+            });
+
+            return response.data.answer;
         } catch (error) {
-          console.error("Error al obtener respuesta del LLM:", error);
-          return "Lo siento, no puedo proporcionarte una pista en este momento.";
+            console.error("Error al obtener respuesta del LLM:", error);
+            return "Lo siento, no puedo proporcionarte una pista en este momento.";
         }
-      };
+    };
 
-      const handleNewMessage = (message) => {
+    const handleNewMessage = (message) => {
         setMsgs(prevMsgs => [...prevMsgs, message]);
-      };
-      
-      const handleBotResponse = (response) => {
+    };
+
+    const handleBotResponse = (response) => {
         setMsgs(prevMsgs => [...prevMsgs, response]);
-      };
+    };
 
-      //Al responder pregunta o acabarse el juego, se limpia el chat para que no se acumule info entre preguntas diferentes
-      const clearChat = () => {
+    //Al responder pregunta o acabarse el juego, se limpia el chat para que no se acumule info entre preguntas diferentes
+    const clearChat = () => {
         setMsgs(["Ask me anything"]);
-
-        };
-
-        
+    };
 
     const handleButtonClick = async (index) => {
         if (!questionData) return;
@@ -160,10 +151,8 @@ function Game() {
         const selectedOption = questionData.choices[index];
         setSelectedAnswer(selectedOption);
 
-
         const isAnswerCorrect = selectedOption === questionData.correctAnswer;
 
-        console.log(questionData.choices)
         const apiRequest = axios.post(`${apiEndpointGame}/addQuestion`, {
             username: localStorage.getItem("username"),
             question: questionData.choices,
@@ -173,7 +162,6 @@ function Game() {
         }).catch(error => {
             console.error("Error submitting answer:", error);
         });
-
 
         if (isAnswerCorrect) {
             setIsCorrect(true);
@@ -188,7 +176,6 @@ function Game() {
         await fetchNewQuestion();
         setButtonsActive(true);
         setTimerReset(prev => !prev);
-        console.log(apiRequest)
     };
 
     const fetchNewQuestion = () => {
@@ -204,7 +191,7 @@ function Game() {
             fetchNewQuestionOG();
         }
     };
-    
+
     const fetchNewQuestionOG = async () => {
         try {
             const response = await axios.get(`${apiEndpointWiki}/getQuestion`);
@@ -234,12 +221,17 @@ function Game() {
         }
     }, [open]);
 
-
     useEffect(() => {
         fetchNewQuestion();
     }, [apiEndpointWiki]);
 
-    const handleHomeClick = () => navigate('/');
+    // Changed to use the navigation prop instead of useNavigate hook
+    const handleHomeClick = () => {
+        if (onNavigate) {
+            onNavigate('/');
+        }
+    };
+
     const handleReplayClick = () => {
         setTimeOut(false);
         setShowTimeOutModal(false);
@@ -252,8 +244,6 @@ function Game() {
         setTotalTime(0);
         setTimerReset(prev => !prev);
     };
-
-
 
     const handleTimeOut = () => {
         if(!finished) {
@@ -279,10 +269,7 @@ function Game() {
         }
     };
 
-
-
     return (
-
         <div className={styles.containerLayout}>
             <Modal
                 disableEnforceFocus={true}
@@ -365,9 +352,8 @@ function Game() {
                                 difficulty={difficulty}
                             />
                         )}
-                          </div>
-                      )}
-
+                    </div>
+                )}
 
                 {/* Opciones en Grid */}
                 {questionData && (
@@ -394,17 +380,15 @@ function Game() {
                     </div>
                 )}
 
-                
-
                 {/* Sección para mostrar el chatbot */}
                 <div className={styles.chatContainer}>
-                <PopChat 
-                    messages={msgs} 
-                    getMessage={getMessage} 
-                    questionData={questionData}
-                    onNewMessage={handleNewMessage}
-                    onBotResponse={handleBotResponse}
-                />
+                    <PopChat
+                        messages={msgs}
+                        getMessage={getMessage}
+                        questionData={questionData}
+                        onNewMessage={handleNewMessage}
+                        onBotResponse={handleBotResponse}
+                    />
                 </div>
 
                 {/* Modal para el tiempo agotado */}

@@ -99,11 +99,22 @@ export const PopChat = (props) => {
       </div>
       <div className="pop">
         <p>
-          <img 
-            onClick={toggle} 
-            src={`${process.env.PUBLIC_URL}/iconoChatBot.png`} 
-            alt="Chat Icon" 
-          />
+        <img 
+          onClick={toggle}
+          onKeyDown={(e) => {
+            //Enter o Espacio
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggle();
+            }
+          }}
+          tabIndex="0"
+          src={`${process.env.PUBLIC_URL}/iconoChatBot.png`} 
+          alt="Chat Icon - Click to toggle chat"
+          style={{ cursor: 'pointer' }}
+          role="button"
+          aria-label="Toggle chat window"
+        />
         </p>
       </div>
     </div>
