@@ -18,6 +18,7 @@ const matchSchema = new mongoose.Schema({
     questions: [questionSchema],
     time: Number ,
     score : Number,
+    username : String,
 });
 
 const statisticsSchema = new mongoose.Schema({
@@ -35,7 +36,7 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
     },
-    matches: [matchSchema],
+    //matches: [matchSchema],
 
     //poner aqui los records y que se actualice al guardar juegos
     statistics: {
