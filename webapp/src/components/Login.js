@@ -114,9 +114,20 @@ function Login() {
                 options={particlesOptions}
             />
 
-            <Box className="boxContainer" sx={{ maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1  }}>
+            <Box className="boxContainer" sx={{maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1}}>
 
-                <img src="/wiChatLogos/LogoWichat2_512.png" alt="Logo" className="logoAplicacion" />
+                <img
+                    src="/wiChatLogos/LogoWichat2_512.png"
+                    alt="Logo"
+                    className="logoAplicacion"
+                    onClick={() => window.location.href = '/home'}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            window.location.href = '/home';
+                        }
+                    }}
+                />
 
                 <div className="mainContent">
                     <Typography variant="h5" component="h1" gutterBottom>
@@ -148,7 +159,7 @@ function Login() {
                         />
 
                         {error && (
-                            <Typography color="error" sx={{ mt: 2 }}>
+                            <Typography color="error" sx={{mt: 2}}>
                                 {error}
                             </Typography>
                         )}
@@ -157,16 +168,16 @@ function Login() {
                             type="submit"
                             variant="contained"
                             fullWidth
-                            sx={{ mt: 3 }}
+                            sx={{mt: 3}}
                             disabled={loading}
                         >
-                            {loading ? <CircularProgress size={24} /> : 'Login'}
+                            {loading ? <CircularProgress size={24}/> : 'Login'}
                         </Button>
 
-                        <Box sx={{ mt: 2, textAlign: 'center' }}>
+                        <Box sx={{mt: 2, textAlign: 'center'}}>
                             <Typography variant="body2">
                                 Don't have an account?{' '}
-                                <a href="/signup" style={{ textDecoration: 'none' }}>
+                                <a href="/signup" style={{textDecoration: 'none'}}>
                                     Register here
                                 </a>
                             </Typography>
