@@ -79,7 +79,23 @@ const Leaderboard = () => {
       <div className={styles.leaderboardContainer}>
 
         <div className={styles.rankingsContainer}>
-          <h1 className={styles.sectionTitle}>Leaderboard</h1>
+            <div className={styles.scoreRankingSection}>
+                <h2 className={styles.rankingTitle}>Score Ranking</h2>
+                <div className={styles.rankingItem}>
+                    <span className={styles.rankingPosition}>1</span>
+                    <span className={styles.rankingUserName}>Usuario 1</span>
+                    <span className={styles.rankingScore}>100</span>
+                </div>
+            </div>
+
+            <div className={styles.numberMatchesRankingSection}>
+                <h2 className={styles.rankingTitle}>Most hardworking players</h2>
+                <div className={styles.rankingItem}>
+                    <span className={styles.rankingPosition}>1</span>
+                    <span className={styles.rankingUserName}>Usuario 1</span>
+                    <span className={styles.rankingScore}>100</span>
+                </div>
+            </div>
 
         </div>
 
