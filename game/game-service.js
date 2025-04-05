@@ -203,7 +203,8 @@ app.get('/userMatches', async (req, res) => {
         time: match.time,
         score: match.score,
         correctAnswers,
-        wrongAnswers
+        wrongAnswers,
+        questions: match.questions || []
       };
     });
 
