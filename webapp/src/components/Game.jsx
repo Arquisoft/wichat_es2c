@@ -155,7 +155,7 @@ function Game({}) { //onNavigate
 
         const apiRequest = axios.post(`${apiEndpointGame}/addQuestion`, {
             username: localStorage.getItem("username"),
-            question: questionData.choices,
+            question: questionData.question,
             correctAnswer: questionData.choices.indexOf(questionData.correctAnswer),
             answers: questionData.choices,
             selectedAnswer: selectedOption,
@@ -240,6 +240,7 @@ function Game({}) { //onNavigate
         setShowTimeOutModal(false);
         setButtonsActive(true);
         setFinished(false);
+        addMatch(difficulty);
         const newInitialTime = difficulty === 1 ? 60 : 45;
         setTimeLeft(newInitialTime);
         fetchNewQuestion();
