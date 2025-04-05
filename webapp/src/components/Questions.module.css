@@ -13,11 +13,10 @@
 
 .modalContent {
     background-color: #e3f1fd;
-    padding: 20px;
+    padding: 16px;
     width: 60%;
     min-width: 350px;
     max-width: 800px;
-    border-radius: 10px;
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
     height: auto;
     max-height: 80vh;
@@ -26,16 +25,18 @@
     scrollbar-width: thin;
     scrollbar-color: #4f93d7 #e3f1fd;
     margin-left: -14px;
+    box-sizing: border-box;
+    padding-right: 10px;
 }
 
-.modalContent::-webkit-scrollbar {
-    width: 8px;
-}
+
 
 .questionList {
     list-style-type: none;
     padding: 0;
+    margin-top: 20px;
     color: #000000;
+    text-align: center;
 }
 
 .questionItem {
@@ -52,15 +53,12 @@
     margin: 5px 0;
     padding: 10px;
     border-radius: 5px;
-    cursor: pointer;
     background-color: #f4ebcb;
-    border: 2px solid transparent;
+    border: 2px solid #ccc;
     transition: background-color 0.3s ease, border-color 0.3s ease;
     color: #000000;
-}
-
-.answerItem:hover {
-    background-color: #D88D3C;
+    /* Removed: cursor: pointer; */
+    /* Removed: hover effect */
 }
 
 .answerItem.correct {
@@ -86,4 +84,8 @@
 
 .closeButton:hover {
     background-color: #A0A0A0;
+}
+
+.modalOverlay {
+    z-index: 9999;
 }
