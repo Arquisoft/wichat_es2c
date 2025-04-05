@@ -37,7 +37,7 @@ const QuestionModal = ({ isOpen, closeModal, questions }) => {
                         ))}
                     </ul>
                 ) : (
-                    <p>No hay preguntas disponibles.</p>
+                    <p>There are no questions</p>
                 )}
 
                 <button className={styles.closeButton} onClick={closeModal}>Close</button>
