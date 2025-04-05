@@ -5,6 +5,7 @@ import Nav from "../components/Nav";
 import { Autocomplete, Button, TextField } from '@mui/material';
 import {GameSummary} from "../components/GameSummary";
 import { Scrollbars } from 'react-custom-scrollbars-2';
+import RankingEntry from '../components/RankingEntry';
 import axios from "axios";
 
 const Leaderboard = () => {
@@ -24,11 +25,40 @@ const Leaderboard = () => {
   //TODO
   //Get los cinco usuarios con mejores Score
 
+  const fetchScoreRanking = useCallback(async () => {
+    try {
+      const response = await axios.get(`${apiEndpoint}/scoreRanking`);
+      if (response.data) {
+        setScoreRanking(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching score ranking:", error);
+    }
+  }, [apiEndpoint]);
+
+  //Se carguen al iniciar la pagina
+  useEffect(() => {
+    fetchScoreRanking();
+  }, [fetchScoreRanking]);
+
+  //Get los cinco usuarios con más partidas jugadas
+  const fetchNMatchesRanking = useCallback(async () => {
+    try {
+      const response = await axios.get(`${apiEndpoint}/nMatchesRanking`);
+      if (response.data) {
+        setNMatchesRanking(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching number of matches ranking:", error);
+    }
+  }, [apiEndpoint]);
+
+  //Se carguen al iniciar la pagina
+  useEffect(() => {
+    fetchNMatchesRanking();
+  }, [fetchNMatchesRanking]);
+
   //
-
-  //Get lista usuarios -> Para poner en el Autocomplete
-  //Get lista de matches por usuario (para mostrarlos segun el usuario seleccionado en el Autocomplete)
-
 
   //Caargar los usuarios en el input de busqueda
   const fetchUsers = useCallback(async () => {
@@ -95,20 +125,48 @@ const Leaderboard = () => {
         <div className={styles.rankingsContainer}>
             <div className={styles.scoreRankingSection}>
                 <h2 className={styles.rankingTitle}>Score Ranking</h2>
-                <div className={styles.rankingItem}>
-                    <span className={styles.rankingPosition}>1</span>
-                    <span className={styles.rankingUserName}>Usuario 1</span>
-                    <span className={styles.rankingScore}>100</span>
-                </div>
+                
+                {scoreRanking.length > 0 ? (
+                scoreRanking.map((user, index) => {
+                // Extraer score de forma segura
+                const score = user.statistics && user.statistics.bestScore ? 
+                    user.statistics.bestScore : 0;
+                
+                  return (
+                    <RankingEntry
+                        key={user._id || index}
+                        rank={user.rank}
+                        username={user.username}
+                        statistics={user.statistics}
+                    />
+                );
+            })
+              ) : (
+            <div className={styles.noRankingData}>
+                <p>No ranking data available</p>
+            </div>
+              )}
+
             </div>
 
             <div className={styles.numberMatchesRankingSection}>
                 <h2 className={styles.rankingTitle}>Most hardworking players</h2>
-                <div className={styles.rankingItem}>
-                    <span className={styles.rankingPosition}>1</span>
-                    <span className={styles.rankingUserName}>Usuario 1</span>
-                    <span className={styles.rankingScore}>100</span>
-                </div>
+                {nMatchesRanking.length > 0 ? (
+                    nMatchesRanking.map((user, index) => {
+                        return (
+                            <RankingEntry
+                                key={user._id || index}
+                                rank={user.rank}
+                                username={user.username}
+                                statistics={user.statistics}
+                            />
+                        );
+                    })
+                    ) : (
+                    <div className={styles.noRankingData}>
+                        <p>No ranking data available</p>
+                    </div>
+                    )}
             </div>
 
         </div>

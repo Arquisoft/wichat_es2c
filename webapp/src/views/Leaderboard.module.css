@@ -1,83 +1,114 @@
 .pageContainer {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  
-  .leaderboardContainer {
-    background-color: #8590AA;
-  
-    display: grid;
-    grid-template-columns: 40% 60%;
-    gap: 20px;
-    /* Mantener la expansión vertical */
-    flex: 1;
-    /* Añadir padding para separar del borde */
-    padding: 20px;
-    /* Asegurar que el contenido no se salga */
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f0f4f8;
+}
 
-    height: 100%;
-  }
-  
-  
-  .rankingsContainer {
-    background-color: #C4DBF6;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.leaderboardContainer {
+  background-color: #8590AA;
+  display: grid;
+  grid-template-columns: 40% 60%;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  height: 100%;
+}
 
-    display: grid;
-    grid-template-rows: 1fr 1fr; /* Dos filas de igual tamaño */
+.rankingsContainer {
+  background-color: #C4DBF6;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 100%;
+  overflow: hidden;
+}
 
-    gap: 10px;
-  }
+.scoreRankingSection,
+.numberMatchesRankingSection {
+  background-color: #fefae0;
+  border: 2px solid #b8b8b8;
+  border-radius: 12px;
+  padding: 15px;
+  overflow: auto;
+  flex: 1;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+}
 
-  .scoreRankingSection{
+.rankingTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
 
-    background-color: #f4ebcb;
-    border: 1.5px solid black;
-    border-radius: 10px;
-  }
-  
-  .numberMatchesRankingSection{
+.globalMatchesContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: #C4DBF6;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  height: 100%;
+}
 
-    background-color: #f4ebcb;
-    border: 1.5px solid black;
-    border-radius: 10px;
-  }
-  
-  .globalMatchesContainer {
-    display: flex;
-    flex-direction: column;
-    background-color: #C4DBF6;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    height: 100%;
-  }
-  
-  .userMatchesSearchArea {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
+.sectionTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #2a2a2a;
+}
 
-  .userMatchesSearchArea .searchInput {
-    flex: 3; /* Este elemento tomará 3 veces más espacio que los otros */
-    background-color: white;
-  }
-  
-  .userMatchesSearchArea .searchButton {  /**************Sobra a priori*******************/
-    flex: 1; /* Este elemento tomará la proporción estándar */
-  }
+.userMatchesSearchArea {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-bottom: 15px;
+}
 
+.searchInput {
+  flex: 3;
+  background-color: white;
+  border-radius: 8px;
+}
 
-  .userFoundMatchesList {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-  }
+.searchButton {
+  flex: 1;
+  background-color: #4e88ff;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.2s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
 
+.searchButton:hover {
+  background-color: #3366cc;
+  transform: scale(1.03);
+}
+
+.userFoundMatchesList {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.matchesScrollbar {
+  height: 100%;
+}
+
+.noGamesMessage,
+.noRankingData {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 1.2rem;
+  color: #444;
+  font-style: italic;
+}

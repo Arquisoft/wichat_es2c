@@ -222,6 +222,40 @@ app.get('/userinfo/matches/:username', async (req, res) => {
     }
   }
 });
+//obtener el ranking por score desde el userinfo-service
+app.get('/scoreRanking', async (req, res) => {
+  try {
+    const userInfoServiceUrl = process.env.USERINFO_SERVICE_URL || 'http://localhost:8005';
+    const rankingResponse = await axios.get(`${userInfoServiceUrl}/userinfo/ranking/bestScore`);
+    
+    res.json(rankingResponse.data);
+  } catch (error) {
+    console.error("Error fetching score ranking:", error);
+    
+    if (error.response) {
+      res.status(error.response.status).json({ error: error.response.data.error });
+    } else {
+      res.status(500).json({ error: 'Error interno al obtener el ranking por score' });
+    }
+  }
+});
+//obtener el ranking por cantidad de partidas desde el userinfo-service
+app.get('/nMatchesRanking', async (req, res) => {
+  try {
+    const userInfoServiceUrl = process.env.USERINFO_SERVICE_URL || 'http://localhost:8005';
+    const rankingResponse = await axios.get(`${userInfoServiceUrl}/userinfo/ranking/morePlayed`);
+    
+    res.json(rankingResponse.data);
+  } catch (error) {
+    console.error("Error fetching number of matches ranking:", error);
+    
+    if (error.response) {
+      res.status(error.response.status).json({ error: error.response.data.error });
+    } else {
+      res.status(500).json({ error: 'Error interno al obtener el ranking por cantidad de partidas' });
+    }
+  }
+});
 
 
 
