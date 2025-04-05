@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import Nav from "./components/Nav";
 import { Typography, Box } from '@mui/material';
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,14 +9,12 @@ function Home() {
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const [index, setIndex] = useState(0);
 
-    //imagenes de fondo
     const imagesList = [
         "/backgroundImages/cyber.jpg",
         "/backgroundImages/ponte.jpg",
         "/backgroundImages/montania.jpg"
     ];
 
-    //cambio de imágenes, cada 5 segundos
     useEffect(() => {
         const interval = setInterval(() => {
             setIndex((prevIndex) => (prevIndex + 1) % imagesList.length);
@@ -26,11 +23,15 @@ function Home() {
         return () => clearInterval(interval);
     }, [imagesList.length]);
 
+    const handleRedirect = () => {
+        window.location.href = isLoggedIn ? "/game" : "/login";
+    };
+
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column", position: "relative" }}>
             <Nav />
 
-            {/* Fondo Animado con framer-motion */}
+            {/* Fondo animado */}
             <div className="background-container" style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}>
                 <AnimatePresence>
                     <motion.div
@@ -45,7 +46,7 @@ function Home() {
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            zIndex: -5, 
+                            zIndex: -5,
                         }}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -58,44 +59,29 @@ function Home() {
             <div className="container" style={{
                 flex: 1,
                 position: "relative",
-                zIndex: 1,  // Asegura que el contenido esté por encima del fondo
+                zIndex: 1,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.5)", // Fondo oscuro para mejorar la legibilidad
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
             }}>
 
-                
-                {/*Box principal del home, que tenga la presentacion y ver que mas*/}
                 <Box className="boxMainPresentation" sx={{ textAlign: "center", mt: 2 }}>
-                    <img src="/wiChatLogos/LogoWichat2_512.png" alt="Logo" className="logoAplicacion"  />
+                    <img src="/wiChatLogos/LogoWichat2_512.png" alt="Logo" className="logoAplicacion" />
                     <Typography variant="h4" sx={{ color: "white", fontWeight: "bold" }}>
                         Welcome to <span style={{ color: "#9dd7d3" }}>Wi</span><span style={{ color: "#4dc3ba" }}>Chat</span>
                     </Typography>
-                    
+
                     <div className="separator"></div>
-                    
+
                     <Typography variant="body1" sx={{ color: "white", mt: 1 }}>
                         Test your top-level skills with the most top-level technology.
                     </Typography>
 
-                    
-
-                    {!isLoggedIn ? (
-                        <button className="play-button">
-                            <Link to="/login" style={{ color: "white" }}>
-                                Log in to play
-                            </Link>
-                        </button>
-                    ) : (
-                        <button className="play-button">
-                            <Link to="/game" style={{ color: "white" }}>
-                                Play the game
-                            </Link>
-                        </button>
-                    )}
+                    <button className="play-button" onClick={handleRedirect}>
+                        {isLoggedIn ? "Play the game" : "Log in to play"}
+                    </button>
                 </Box>
-                
             </div>
         </div>
     );
