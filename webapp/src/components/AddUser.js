@@ -128,12 +128,18 @@ function AddUser() {
                 options={particlesOptions}
             />
 
-            <Box className="boxContainer" sx={{ maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1 }}>
+            <Box className="boxContainer" sx={{maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1}}>
                 <img
                     src="/wiChatLogos/LogoWichat2_512.png"
                     alt="Logo"
                     className="logoAplicacion"
                     onClick={() => window.location.href = '/home'}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            window.location.href = '/home';
+                        }
+                    }}
                 />
 
                 <div className="mainContent">
@@ -141,7 +147,7 @@ function AddUser() {
                         Register
                     </Typography>
                     {success && (
-                        <Alert severity="success" sx={{ mb: 2 }}>
+                        <Alert severity="success" sx={{mb: 2}}>
                             Successfully registered! Redirecting to login page...
                         </Alert>
                     )}
@@ -169,7 +175,7 @@ function AddUser() {
                             helperText="Password must be at least 3 characters long"
                         />
                         {error && (
-                            <Typography color="error" sx={{ mt: 2 }}>
+                            <Typography color="error" sx={{mt: 2}}>
                                 {error}
                             </Typography>
                         )}
@@ -177,19 +183,24 @@ function AddUser() {
                             type="submit"
                             variant="contained"
                             fullWidth
-                            sx={{ mt: 3 }}
+                            sx={{mt: 3}}
                             disabled={loading || success}
                         >
-                            {loading ? <CircularProgress size={24} /> : 'Register'}
+                            {loading ? <CircularProgress size={24}/> : 'Register'}
                         </Button>
-                        <Box sx={{ mt: 2, textAlign: 'center' }}>
+                        <Box sx={{mt: 2, textAlign: 'center'}}>
                             <Typography variant="body2">
                                 Already have an account?{' '}
                                 <span
                                     style={{ textDecoration: 'underline', cursor: 'pointer' }}
-                                    onClick={() => window.location.href = '/login'} // Navigate to login page
-                                >
-                                    Login here
+                                    onClick={() => window.location.href = '/login'}
+                                    tabIndex={0}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            window.location.href = '/login';
+                                        }
+                                    }}
+                                >Login
                                 </span>
                             </Typography>
                         </Box>

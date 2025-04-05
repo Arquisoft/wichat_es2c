@@ -73,15 +73,6 @@ async function sendQuestionToLLM(contextPromt, question, apiKey, model = 'gemini
 
     const response = await axios.post(url, requestData, { headers });
 
-    /*
-    console.log(`Response: `, response.status);
-    console.log('PRUEBA');
-    console.log("Enviando solicitud al LLM con estos datos:");
-    console.log("- Modelo:", model);
-    console.log("- Contexto (primeros 100 caracteres):", contextPromt);
-    console.log("- Pregunta usuario:", question);
-    */
-
     return config.transformResponse(response);
 
   } catch (error) {
