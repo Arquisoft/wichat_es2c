@@ -9,6 +9,7 @@ services:
       - "27017:27017"
     networks:
       - mynetwork
+    restart: always
 
   authservice:
     container_name: authservice-wichat_es2c
@@ -38,6 +39,20 @@ services:
     environment:
       MONGODB_URI: mongodb://mongodb:27017/userdb
 
+  userinfoapi:
+    container_name: userinfoapi-wichat_es2c
+    image: ghcr.io/arquisoft/wichat_es2c/userinfoapi:latest
+    profiles: ["dev", "prod"]
+    build: ./users/userinfoapi
+    depends_on:
+      - mongodb
+    ports:
+      - "8005:8005"
+    networks:
+      - mynetwork
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/userdb
+
   llmservice:
     container_name: llmservice-wichat_es2c
     image: ghcr.io/arquisoft/wichat_es2c/llmservice:latest
@@ -58,6 +73,8 @@ services:
       - userservice
       - authservice
       - llmservice
+      - game
+      - wikidata
     ports:
       - "8000:8000"
     networks:
@@ -66,6 +83,8 @@ services:
       AUTH_SERVICE_URL: http://authservice:8002
       USER_SERVICE_URL: http://userservice:8001
       LLM_SERVICE_URL: http://llmservice:8003
+      GAME_SERVICE_URL: http://game:8004
+      WIKIDATA_SERVICE_URL: http://wikidata:3005
 
   webapp:
     container_name: webapp-wichat_es2c
@@ -112,6 +131,34 @@ services:
       - "9091:9091"
     depends_on: 
       - prometheus
+
+  game:
+    container_name: game-wichat_es2c
+    image: ghcr.io/arquisoft/wichat_es2c/game:latest
+    profiles: ["dev", "prod"]
+    build: ./game
+    depends_on:
+      - mongodb
+    ports:
+      - "8004:8004"
+    networks:
+      - mynetwork
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/userdb
+
+  wikidata:
+    container_name: wikidata-wichat_es2c
+    image: ghcr.io/arquisoft/wichat_es2c/wikidata:latest
+    profiles: [ "dev", "prod" ]
+    build: ./wikidata
+    depends_on:
+      - mongodb
+    ports:
+      - "3005:3005"
+    networks:
+      - mynetwork
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/userdb
 
 
 volumes:

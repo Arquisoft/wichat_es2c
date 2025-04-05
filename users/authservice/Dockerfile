@@ -8,7 +8,7 @@ WORKDIR /usr/src/authservice
 COPY package*.json ./
 
 # Install app dependencies
-RUN npm install
+RUN npm rebuild bcrypt --build-from-source && npm install
 
 # Copy the app source code to the working directory
 COPY . .
