@@ -1,6 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Nav.module.css";
 
+// Iconos
+import { IoGameController } from 'react-icons/io5';
+import { FaSignInAlt, FaUserPlus } from 'react-icons/fa';
+import { MdLeaderboard } from 'react-icons/md';
+import { CgNotes } from 'react-icons/cg';
+
 export default function Nav() {
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -34,9 +40,30 @@ export default function Nav() {
     return (
         <nav className={styles.navContainer}>
             <a href="/home">
-                <img src="/logo512.png" alt="Logo" className={styles.logo} />
+                <img src="/wiChatLogos/LogoWichat2_512.png" alt="Logo" className={styles.logo} />
             </a>
-            <div>
+
+            <div className={styles.navGeneralLinks}>
+                <a href={isLoggedIn ? "/game" : "/login"} className={styles.navLink}>
+                    <IoGameController style={{ marginRight: '5px' }} /> Play
+                </a>
+                <a href="/leaderboard" className={styles.navLink}>
+                    <MdLeaderboard style={{ marginRight: '5px' }} /> Leaderboard
+                </a>
+            </div>
+
+            {isLoggedIn && (
+                <div className={styles.navSeparator}></div>
+            )}
+            {isLoggedIn && (
+                <div className={styles.navPersonalLinks}>
+                    <a href="/history" className={styles.navLink}>
+                        <CgNotes style={{ marginRight: '5px' }} /> History
+                    </a>
+                </div>
+            )}
+
+            <div className={styles.profileNavSection}>
                 {isLoggedIn ? (
                     <div className={styles.userDropdown} ref={dropdownRef}>
                         <div
@@ -63,18 +90,15 @@ export default function Nav() {
                             <div className={styles.dropdownMenu}>
                                 <div className={styles.dropdownContent}>
                                     <a
-                                        href="/history"
-                                        className={styles.dropdownItem}
-                                        onClick={() => setDropdownOpen(false)}
-                                    >
-                                        View History
-                                    </a>
-                                    <button
-                                        onClick={handleLogout}
+                                        href="/login"
                                         className={`${styles.dropdownItem} ${styles.logoutButton}`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleLogout();
+                                        }}
                                     >
                                         Log out
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         )}
@@ -82,10 +106,10 @@ export default function Nav() {
                 ) : (
                     <div className={styles.authLinks}>
                         <a href="/login" className={styles.authLink}>
-                            Log in
+                            <FaSignInAlt style={{ marginRight: '8px' }} /> Log in
                         </a>
                         <a href="/signup" className={styles.authLink}>
-                            Register
+                            <FaUserPlus style={{ marginRight: '8px' }} /> Register
                         </a>
                     </div>
                 )}

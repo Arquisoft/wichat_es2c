@@ -93,7 +93,7 @@ export const PopChat = (props) => {
             onClick={handleSend} 
             disabled={isLoading}
           >
-            {isLoading ? '...' : '-Send-'}
+            {isLoading ? '...' : '🚀'}
           </button>
         </div>
       </div>

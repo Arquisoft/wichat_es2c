@@ -1,40 +1,37 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-const app = require('./game-service');
-const { User, Match } = require('./game-model');
+let app;
+const { User, Match, Statistics } = require('./game-model');
 
 let mongoServer;
 
 beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
     const mongoUri = mongoServer.getUri();
-
     if (mongoose.connection.readyState !== 0) {
         await mongoose.disconnect();
     }
-
     await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
+    app = require('./game-service');
 });
 
 afterAll(async () => {
+    await new Promise(resolve => app.close(resolve));
     await mongoose.connection.dropDatabase();
     await mongoose.disconnect();
     await mongoServer.stop();
 });
 
-
 beforeEach(async () => {
-
     await User.deleteMany({});
+    await Match.deleteMany({});
 });
-
 
 async function createTestUser() {
     const user = new User({
         username: 'testuser',
         password: 'password123',
-        matches: [],
         statistics: {
             gamesPlayed: 0,
             averageScore: 0,
@@ -51,7 +48,7 @@ async function createTestUser() {
 
 describe('Game Service', () => {
     describe('POST /addMatch', () => {
-        it('should add a new match to a user', async () => {
+        it('should add a new match for a user', async () => {
             const user = await createTestUser();
 
             const response = await request(app)
@@ -65,11 +62,11 @@ describe('Game Service', () => {
             expect(response.body.message).toBe('Match agregado correctamente');
             expect(response.body.match).toBeDefined();
             expect(response.body.match.difficulty).toBe(1);
+            expect(response.body.match.username).toBe('testuser');
 
-
-            const updatedUser = await User.findOne({ username: 'testuser' });
-            expect(updatedUser.matches.length).toBe(1);
-            expect(updatedUser.matches[0].difficulty).toBe(1);
+            const matches = await Match.find({ username: 'testuser' });
+            expect(matches.length).toBe(1);
+            expect(matches[0].difficulty).toBe(1);
         });
 
         it('should return 404 if user not found', async () => {
@@ -86,11 +83,15 @@ describe('Game Service', () => {
     });
 
     describe('POST /addQuestion', () => {
-        it('should add a question to the last match', async () => {
+        it('should add a question to the most recent match', async () => {
+            await createTestUser();
 
-            const user = await createTestUser();
-            user.matches.push(new Match({ difficulty: 1 }));
-            await user.save();
+            // Create a match directly
+            const match = new Match({
+                username: 'testuser',
+                difficulty: 1
+            });
+            await match.save();
 
             const response = await request(app)
                 .post('/addQuestion')
@@ -105,11 +106,11 @@ describe('Game Service', () => {
             expect(response.statusCode).toBe(201);
             expect(response.body.message).toBe('Pregunta añadida al último match');
 
-            const updatedUser = await User.findOne({ username: 'testuser' });
-            expect(updatedUser.matches[0].questions.length).toBe(1);
-            expect(updatedUser.matches[0].questions[0].text).toBe('¿Cuál es la capital de Francia?');
+            const updatedMatch = await Match.findOne({ username: 'testuser' });
+            expect(updatedMatch.questions.length).toBe(1);
+            expect(updatedMatch.questions[0].text).toBe('¿Cuál es la capital de Francia?');
 
-            const question = updatedUser.matches[0].questions[0];
+            const question = updatedMatch.questions[0];
             const correctAnswerObj = question.answers.find(a => a.correct);
             expect(correctAnswerObj.text).toBe('París');
 
@@ -124,7 +125,6 @@ describe('Game Service', () => {
                 .post('/addQuestion')
                 .send({
                     username: 'testuser',
-
                 });
 
             expect(response.statusCode).toBe(400);
@@ -143,14 +143,17 @@ describe('Game Service', () => {
                 });
 
             expect(response.statusCode).toBe(404);
-            expect(response.body.error).toBe('User or match not found');
+            expect(response.body.error).toBe('Match not found');
         });
     });
 
     describe('POST /endMatch', () => {
         it('should end a match and update user statistics', async () => {
             const user = await createTestUser();
-            const match = new Match({ difficulty: 1 });
+            const match = new Match({
+                username: 'testuser',
+                difficulty: 1
+            });
 
             match.questions.push({
                 text: 'Question 1',
@@ -174,8 +177,7 @@ describe('Game Service', () => {
                 ]
             });
 
-            user.matches.push(match);
-            await user.save();
+            await match.save();
 
             const response = await request(app)
                 .post('/endMatch')
@@ -188,14 +190,12 @@ describe('Game Service', () => {
             expect(response.body.message).toBe('Match actualizado');
             expect(response.body.score).toBeDefined();
 
-
-            const updatedUser = await User.findOne({ username: 'testuser' });
-            const updatedMatch = updatedUser.matches[0];
+            const updatedMatch = await Match.findById(match._id);
             expect(updatedMatch.time).toBe(120);
             expect(updatedMatch.score).toBeDefined();
             expect(updatedMatch.date).toBeDefined();
 
-
+            const updatedUser = await User.findOne({ username: 'testuser' });
             expect(updatedUser.statistics.gamesPlayed).toBe(1);
             expect(updatedUser.statistics.rightAnswers).toBe(2);
             expect(updatedUser.statistics.wrongAnswers).toBe(1);
@@ -252,10 +252,11 @@ describe('Game Service', () => {
 
     describe('GET /userMatches', () => {
         it('should return paginated user matches', async () => {
-            const user = await createTestUser();
+            await createTestUser();
 
             for (let i = 0; i < 5; i++) {
                 const match = new Match({
+                    username: 'testuser',
                     difficulty: 1,
                     date: new Date(),
                     time: 100 + i,
@@ -270,10 +271,8 @@ describe('Game Service', () => {
                     ]
                 });
 
-                user.matches.push(match);
+                await match.save();
             }
-
-            await user.save();
 
             const response = await request(app)
                 .get('/userMatches')

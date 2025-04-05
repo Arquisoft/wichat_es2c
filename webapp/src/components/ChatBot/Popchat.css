@@ -67,7 +67,7 @@
   #chatCon .chat-box .footer input {
     border: 1px solid #fff;
     padding: 10px;
-    width: 80%;
+    width: 85%;
     border-radius: 15px;
 
     font-size: 15px;
@@ -87,6 +87,8 @@
     border-radius: 10px;
     
     cursor: pointer;
+
+    width: 10%;
   }
   
   #chatCon .pop {
