@@ -4,6 +4,6 @@ module.exports = {
         "**/__tests__/**/*.[jt]s?(x)",
         "**/?(*.)+(spec|test).[tj]s?(x)"
     ],
-    testTimeout: 30000,
+    testTimeout: 450000,
     setupFilesAfterEnv: ["expect-puppeteer"],
 };

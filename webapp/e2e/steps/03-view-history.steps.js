@@ -14,27 +14,18 @@ defineFeature(feature, test => {
         setDefaultOptions({ timeout: 10000 });
         await page.goto("http://localhost:3000", { waitUntil: "networkidle0" });
 
-
-        if (testUser.isRegistered) {
-            await page.goto("http://localhost:3000/login", { waitUntil: "networkidle0" });
-            await page.type('input[name="username"]', testUser.username);
-            await page.type('input[name="password"]', testUser.password);
-            await page.click('button[type="submit"]');
-            await page.waitForNavigation({ waitUntil: 'networkidle0' });
-        } else {
-
-            await page.goto("http://localhost:3000/signup", { waitUntil: "networkidle0" });
-            await page.type('input[name="username"]', testUser.username);
-            await page.type('input[name="password"]', testUser.password);
-            await page.click('button[type="submit"]');
-            await page.waitForNavigation({ waitUntil: 'networkidle0' });
+        await page.goto("http://localhost:3000/signup", { waitUntil: "networkidle0" });
+        await page.type('input[name="username"]', testUser.username);
+        await page.type('input[name="password"]', testUser.password);
+        await page.click('button[type="submit"]');
+        await page.waitForNavigation({ waitUntil: 'networkidle0' });
 
 
-            await page.type('input[name="username"]', testUser.username);
-            await page.type('input[name="password"]', testUser.password);
-            await page.click('button[type="submit"]');
-            await page.waitForNavigation({ waitUntil: 'networkidle0' });
-        }
+        await page.type('input[name="username"]', testUser.username);
+        await page.type('input[name="password"]', testUser.password);
+        await page.click('button[type="submit"]');
+        await page.waitForNavigation({ waitUntil: 'networkidle0' });
+
     });
 
     test('The user already logged in', ({ given, when, then }) => {

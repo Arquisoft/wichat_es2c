@@ -231,9 +231,10 @@ const server = app.listen(port, () => {
   console.log(`Game Service listening at http://localhost:${port}`);
 });
 
-server.on('close', () => {
-  // Close the Mongoose connection
-  mongoose.connection.close();
+process.on('SIGTERM', () => {
+  server.close(() => {
+    mongoose.connection.close();
+  });
 });
 
 module.exports = server;
