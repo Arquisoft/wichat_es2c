@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./GameSummary.module.css";
+import QuestionModal from "./Questions"; // Importa el modal
 
+export const GameSummary = ({ date, hour, correctAnswers, wrongAnswers, time, questions }) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-export const GameSummary = ({ date, hour, correctAnswers, wrongAnswers, time }) => {
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
 
-    const timePerQuestion = (correctAnswers + wrongAnswers) > 0 
-        ? (time / (correctAnswers + wrongAnswers)).toFixed(2) 
+    const timePerQuestion = (correctAnswers + wrongAnswers) > 0
+        ? (time / (correctAnswers + wrongAnswers)).toFixed(2)
         : "0.00";
 
     return (
@@ -27,12 +31,15 @@ export const GameSummary = ({ date, hour, correctAnswers, wrongAnswers, time }) 
             </div>
 
             <div className={styles.QuestionButtonElement}>
-                <button className={styles.questionButton}>Check questions</button>
+                <button className={styles.questionButton} onClick={openModal}>
+                    Check questions
+                </button>
             </div>
 
+            {/* Aquí pasas las preguntas de manera correcta */}
+            <QuestionModal isOpen={isModalOpen} closeModal={closeModal} questions={questions} />
         </div>
     );
 
 };
-
 export default GameSummary;
