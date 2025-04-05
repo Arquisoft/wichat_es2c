@@ -67,7 +67,7 @@ function Home() {
             }}>
 
                 <Box className="boxMainPresentation" sx={{ textAlign: "center", mt: 2 }}>
-                    <img src="/wiChatLogos/LogoWichat2_512.png" alt="Logo" className="logoAplicacion" />
+                    <img src="/wiChatLogos/LogoWichat2_512.png" alt="Logo" className="logoAplicacionHome" />
                     <Typography variant="h4" sx={{ color: "white", fontWeight: "bold" }}>
                         Welcome to <span style={{ color: "#9dd7d3" }}>Wi</span><span style={{ color: "#4dc3ba" }}>Chat</span>
                     </Typography>

@@ -20,6 +20,12 @@
   cursor: pointer;
 }
 
+.logoAplicacionHome{
+  /*height: 60px;*/
+  height: 80px;
+  margin-bottom: 0.35rem;
+}
+
 .mainContent{
   background-color: #ebedf0;
   padding: 2rem;
