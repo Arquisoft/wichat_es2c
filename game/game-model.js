@@ -11,15 +11,14 @@ const questionSchema = new mongoose.Schema({
     answers: [answerSchema],
 })
 
-
 const matchSchema = new mongoose.Schema({
+    username : String,
     date: Date,
     difficulty: Number, //1 normal 2 dificil
-    questions: [questionSchema],
-    time: Number ,
     score : Number,
-    username : String,
-});
+    time: Number ,
+    questions: [questionSchema]
+}, { versionKey: false });
 
 const statisticsSchema = new mongoose.Schema({
     gamesPlayed: { type: Number},
@@ -35,21 +34,16 @@ const statisticsSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
+        unique: true,
+        required: true
     },
-    //matches: [matchSchema],
-
-    //poner aqui los records y que se actualice al guardar juegos
     statistics: {
         type: statisticsSchema
     }
-});
+}, { versionKey: false });
 
-const User = mongoose.model('User', userSchema);
-const Statistics = mongoose.model('Statistics', statisticsSchema);
-const Answer = mongoose.model('Answer', answerSchema);
-const Match = mongoose.model('Match', matchSchema);
-const Question = mongoose.model('Question',questionSchema);
+const User = mongoose.model('User', userSchema, 'users');
+const Match = mongoose.model('Match', matchSchema, 'matches');
 
-
-module.exports = { Match, Answer, Statistics, User, Question };
+module.exports = { Match, User };
 

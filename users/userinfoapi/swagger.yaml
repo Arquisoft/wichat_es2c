@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: UserInfo API
-  description: API to manage user information
+  description: API to manage user information and game statistics
   version: 1.0.0
   contact:
     email: uo294381@uniovi.es
@@ -60,6 +60,79 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /userinfo/matches/{username}:
+    get:
+      summary: Get match history for a specific user
+      description: Returns an array of all matches played by the specified user
+      operationId: getUserMatches
+      parameters:
+        - name: username
+          in: path
+          required: true
+          description: Username to search for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of matches retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Match'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /userinfo/ranking/bestScore:
+    get:
+      summary: Get user ranking by best score
+      description: Returns the top 5 users with the highest scores
+      operationId: getBestScoreRanking
+      responses:
+        '200':
+          description: Ranking by best score retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RankedUser'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /userinfo/ranking/morePlayed:
+    get:
+      summary: Get user ranking by most games played
+      description: Returns the top 5 users with the most games played
+      operationId: getMostPlayedRanking
+      responses:
+        '200':
+          description: Ranking by most games played retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RankedUser'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   schemas:
     User:
@@ -75,10 +148,116 @@ components:
           type: string
           format: date-time
           description: Date when the user was created
+        statistics:
+          $ref: '#/components/schemas/Statistics'
+          nullable: true
+      description: Game statistics (may not be present if the user has not played any games)
       required:
         - _id
         - username
         - createdAt
+    Statistics:
+      type: object
+      properties:
+        gamesPlayed:
+          type: integer
+          description: Number of games played by the user
+        averageScore:
+          type: number
+          description: Average score across all games
+        bestScore:
+          type: number
+          description: Highest score achieved
+        averageTime:
+          type: number
+          description: Average time in seconds to complete a game
+        bestTime:
+          type: number
+          description: Best time in seconds to complete a game
+        rightAnswers:
+          type: integer
+          description: Total number of correct answers
+        wrongAnswers:
+          type: integer
+          description: Total number of incorrect answers
+    Match:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique match ID in MongoDB
+        username:
+          type: string
+          description: Username of the player
+        date:
+          type: string
+          format: date-time
+          description: Date when the match was played
+        time:
+          type: integer
+          description: Time in seconds taken to complete the match
+        score:
+          type: number
+          description: Score achieved in the match
+        difficulty:
+          type: integer
+          description: Difficulty level (1=normal, 2=difficult)
+        correctAnswers:
+          type: integer
+          description: Number of correct answers in this match
+        wrongAnswers:
+          type: integer
+          description: Number of wrong answers in this match
+        questions:
+          type: array
+          description: List of questions in this match
+          items:
+            $ref: '#/components/schemas/Question'
+    Question:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The question text
+        answers:
+          type: array
+          description: Possible answers for this question
+          items:
+            $ref: '#/components/schemas/Answer'
+    Answer:
+      type: object
+      properties:
+        text:
+          type: string
+          description: The answer text
+        correct:
+          type: boolean
+          description: Whether this is the correct answer
+        selected:
+          type: boolean
+          description: Whether this answer was selected by the user
+    RankedUser:
+      type: object
+      properties:
+        rank:
+          type: integer
+          description: Position in the ranking
+        _id:
+          type: string
+          description: Unique user ID in MongoDB
+        username:
+          type: string
+          description: Unique username
+        createdAt:
+          type: string
+          format: date-time
+          description: Date when the user was created
+        statistics:
+          $ref: '#/components/schemas/Statistics'
+      required:
+        - rank
+        - _id
+        - username
     Error:
       type: object
       properties:
