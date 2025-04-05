@@ -120,11 +120,13 @@ app.post('/askllm', async (req, res) => {
 
 
     ////////////// Log para depuración
+    /*
     console.log("Gateway recibió solicitud a /askllm:", {
       model: req.body.model,
       userQuestion: req.body.userQuestion.substring(0, 30) + "...",
       gameQuestion: req.body.gameQuestion.substring(0, 30) + "..."
     });
+    */
     ///////////////
 
     // Forward the request to the llm service
@@ -137,7 +139,7 @@ app.post('/askllm', async (req, res) => {
     });
     
     /////////////////
-    console.log("LLM Service respondió con éxito");
+    //console.log("LLM Service respondió con éxito");
     ///////////////
 
     res.json(llmResponse.data);
@@ -177,6 +179,51 @@ app.get('/userStatistics', async (req, res) => {
     res.status(error.response?.status || 500).json({ error: error.response?.data?.error || 'Error desconocido' });
   }
 });
+
+
+//Obtiene los usuarios de la API de usuarios (userinfo-service)
+app.get('/users', async (req, res) => {
+  try {
+    const userInfoServiceUrl = process.env.USERINFO_SERVICE_URL || 'http://localhost:8005';
+    const userResponse = await axios.get(`${userInfoServiceUrl}/userinfo`);
+    
+    //Solo los usernames
+    const usernames = userResponse.data.map(user => ({
+      username: user.username
+    }));
+    
+    res.json(usernames);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    
+    if (error.response) {
+      res.status(error.response.status).json({ error: error.response.data.error });
+    } else {
+      res.status(500).json({ error: 'Error interno al obtener la lista de usuarios' });
+    }
+  }
+});
+// get los matches de un usuario específico desde userinfo-service
+app.get('/userinfo/matches/:username', async (req, res) => {
+  try {
+    const userInfoServiceUrl = process.env.USERINFO_SERVICE_URL || 'http://localhost:8005';
+    const username = req.params.username;
+    
+    const matchesResponse = await axios.get(`${userInfoServiceUrl}/userinfo/matches/${username}`);
+    
+    res.json(matchesResponse.data);
+  } catch (error) {
+    console.error(`Error fetching matches for user ${req.params.username}:`, error);
+    
+    if (error.response) {
+      res.status(error.response.status).json({ error: error.response.data.error });
+    } else {
+      res.status(500).json({ error: 'Error interno al obtener las partidas del usuario' });
+    }
+  }
+});
+
+
 
 
 // Read the OpenAPI YAML file synchronously
