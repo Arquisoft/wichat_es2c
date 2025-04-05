@@ -16,6 +16,8 @@
     padding: 20px;
     /* Asegurar que el contenido no se salga */
     box-sizing: border-box;
+
+    height: 100%;
   }
   
   
@@ -28,33 +30,36 @@
   
   
   .globalMatchesContainer {
+    display: flex;
+    flex-direction: column;
     background-color: #C4DBF6;
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    height: 100%;
   }
   
-  .userMatchesSearchArea{
+  .userMatchesSearchArea {
     display: flex;
     flex-direction: row;
-
     width: 100%;
     gap: 10px;
-
+    margin-bottom: 10px;
   }
+
   .userMatchesSearchArea .searchInput {
     flex: 3; /* Este elemento tomará 3 veces más espacio que los otros */
+    background-color: white;
   }
   
   .userMatchesSearchArea .searchButton {  /**************Sobra a priori*******************/
     flex: 1; /* Este elemento tomará la proporción estándar */
   }
 
-  .userFoundMatchesList{
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
-    
 
+  .userFoundMatchesList {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
   }
+

@@ -101,7 +101,7 @@ const Leaderboard = () => {
            </div> 
 
           <div className={styles.userFoundMatchesList}>
-            <Scrollbars autoHide ref={scrollRef} className="msg-area" style={{ height: '350px' }}>
+            <Scrollbars autoHide ref={scrollRef} className={styles.matchesScrollbar} style={{ height: '100%' }}>
               <GameSummary
                 gameId={1}
                 userName="Usuario 1"
