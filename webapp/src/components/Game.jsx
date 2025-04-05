@@ -155,7 +155,7 @@ function Game({ onNavigate }) {
 
         const apiRequest = axios.post(`${apiEndpointGame}/addQuestion`, {
             username: localStorage.getItem("username"),
-            question: questionData.choices,
+            question: questionData.question,
             correctAnswer: questionData.choices.indexOf(questionData.correctAnswer),
             answers: questionData.choices,
             selectedAnswer: selectedOption,
