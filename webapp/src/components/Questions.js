@@ -7,7 +7,7 @@ const QuestionModal = ({ isOpen, closeModal, questions }) => {
     return (
         <div className={styles.modalOverlay} onClick={closeModal}>
             <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                <h2>Questions</h2>
+                <h2>Questions:</h2>
 
                 {questions && questions.length > 0 ? (
                     <ul className={styles.questionList}>
