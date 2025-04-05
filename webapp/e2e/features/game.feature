@@ -6,8 +6,6 @@ Feature: Game Playing
   Scenario: User plays a complete game
     Given A registered user
     When I click on Play button
-    Then The difficulty selection modal appears
-    And I select the Normal difficulty
+    And I select the Hard difficulty
     And I answer 5 questions by clicking on the first option each time
-    And I simulate the timer running out
-    Then The game over modal appears or I verify game state
+    Then The game over modal appears
