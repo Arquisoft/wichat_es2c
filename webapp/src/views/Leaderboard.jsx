@@ -6,6 +6,7 @@ import { Autocomplete, Button, TextField } from '@mui/material';
 import {GameSummary} from "../components/GameSummary";
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import RankingEntry from '../components/RankingEntry';
+import { FaTrophy, FaSearch  } from 'react-icons/fa';
 import axios from "axios";
 
 const Leaderboard = () => {
@@ -126,13 +127,18 @@ const Leaderboard = () => {
             <div className={styles.scoreRankingSection}>
                 <h2 className={styles.rankingTitle}>Score Ranking</h2>
                 
+                <div className={styles.rankingHeader}>
+                  <span className={styles.headerRank}><FaTrophy/></span>
+                  <span className={styles.headerUsername}>Username</span>
+                  <span className={styles.headerScore}>Best Score</span>
+                  <span className={styles.headerMatches}>Matches</span>
+                  <span className={styles.headerTime}>Average Time</span>
+                </div>
+
                 {scoreRanking.length > 0 ? (
                 scoreRanking.map((user, index) => {
                 // Extraer score de forma segura
-                const score = user.statistics && user.statistics.bestScore ? 
-                    user.statistics.bestScore : 0;
-                
-                  return (
+                return (
                     <RankingEntry
                         key={user._id || index}
                         rank={user.rank}
@@ -150,8 +156,18 @@ const Leaderboard = () => {
             </div>
 
             <div className={styles.numberMatchesRankingSection}>
-                <h2 className={styles.rankingTitle}>Most hardworking players</h2>
+                <h2 className={styles.rankingTitle}>Most Active Players</h2>
+
+                <div className={styles.rankingHeader}>
+                  <span className={styles.headerRank}><FaTrophy/></span>
+                  <span className={styles.headerUsername}>Username</span>
+                  <span className={styles.headerScore}>Best Score</span>
+                  <span className={styles.headerMatches}>Matches</span>
+                  <span className={styles.headerTime}>Average Time</span>
+                </div>
+
                 {nMatchesRanking.length > 0 ? (
+
                     nMatchesRanking.map((user, index) => {
                         return (
                             <RankingEntry
@@ -188,7 +204,7 @@ const Leaderboard = () => {
                 />
 
                 <Button variant="contained" color="primary" onClick={handleUsernameSearch} className={styles.searchButton}>
-                    Search
+                    Search&nbsp;<FaSearch />
                 </Button>
            </div> 
 
@@ -196,14 +212,15 @@ const Leaderboard = () => {
             <Scrollbars autoHide ref={scrollRef} className={styles.matchesScrollbar} style={{ height: '100%' }}>
                 {games.length > 0 ? (
                     games.map((game, index) => (
-                    <GameSummary
-                        key={game.id || index}
-                        date={new Date(game.date).toLocaleDateString()}
-                        hour={new Date(game.date).toLocaleTimeString()}
-                        correctAnswers={game.correctAnswers}
-                        wrongAnswers={game.wrongAnswers}
-                        time={game.time}
-                    />
+                      <div key={game.id || index} className={styles.gameSummaryWrapper}>
+                        <GameSummary
+                            date={new Date(game.date).toLocaleDateString()}
+                            hour={new Date(game.date).toLocaleTimeString()}
+                            correctAnswers={game.correctAnswers}
+                            wrongAnswers={game.wrongAnswers}
+                            time={game.time}
+                        />
+                      </div>
                     ))
                 ) : (
                     <div className={styles.noGamesMessage}>

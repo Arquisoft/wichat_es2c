@@ -23,6 +23,7 @@
   .username {
     font-weight: 600;
     color: #333;
+    
   }
   
   .stat {
@@ -33,7 +34,7 @@
   
 
   .gold {
-    color: gold;
+    color: rgba(197, 168, 0, 0.801);
     font-weight: bold;
   }
   .silver {

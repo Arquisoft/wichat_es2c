@@ -96,6 +96,10 @@
   flex: 1;
   overflow: hidden;
   position: relative;
+
+  padding: 0.8rem;
+
+  
 }
 
 .matchesScrollbar {
@@ -111,4 +115,43 @@
   font-size: 1.2rem;
   color: #444;
   font-style: italic;
+}
+
+
+
+.rankingHeader {
+  display: grid;
+  grid-template-columns: 0.5fr 2fr 1fr 1fr 1.2fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background-color: #fff9d7;
+  font-weight: bold;
+  font-size: 1rem;
+  color: #444;
+
+  border-bottom: 1px solid #ccc;
+}
+
+
+.headerRank {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.headerUsername {
+  font-weight: 600;
+  color: #333;
+}
+
+.headerScore, .headerMatches, .headerTime {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+
+.userFoundMatchesList .gameSummaryWrapper {
+  margin-bottom: 0.3rem;
 }
