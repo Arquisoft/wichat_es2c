@@ -145,12 +145,11 @@ app.post('/askllm', async (req, res) => {
     res.json(llmResponse.data);
   } catch (error) {
     console.error("Error en /askllm:", error.message);
-    
-    // Manejo adecuado de errores de la API
+
     if (error.response) {
       res.status(error.response.status).json({ error: error.response.data.error });
     } else {
-      res.status(500).json({ error: 'Error interno al procesar la solicitud' });
+      res.status(500).json({ error: 'Internal error' });
     }
   }
 });
@@ -176,7 +175,7 @@ app.get('/userStatistics', async (req, res) => {
     });
     res.json(userResponse.data);
   } catch (error) {
-    res.status(error.response?.status || 500).json({ error: error.response?.data?.error || 'Error desconocido' });
+    res.status(error.response?.status || 500).json({ error: error.response?.data?.error || 'Internal error trying to obtain the user list' });
   }
 });
 
@@ -199,7 +198,7 @@ app.get('/users', async (req, res) => {
     if (error.response) {
       res.status(error.response.status).json({ error: error.response.data.error });
     } else {
-      res.status(500).json({ error: 'Error interno al obtener la lista de usuarios' });
+      res.status(500).json({ error: 'Error when trying to access the user list' });
     }
   }
 });
@@ -218,7 +217,7 @@ app.get('/userinfo/matches/:username', async (req, res) => {
     if (error.response) {
       res.status(error.response.status).json({ error: error.response.data.error });
     } else {
-      res.status(500).json({ error: 'Error interno al obtener las partidas del usuario' });
+      res.status(500).json({ error: 'Error when trying to access users matches' });
     }
   }
 });
@@ -235,7 +234,7 @@ app.get('/scoreRanking', async (req, res) => {
     if (error.response) {
       res.status(error.response.status).json({ error: error.response.data.error });
     } else {
-      res.status(500).json({ error: 'Error interno al obtener el ranking por score' });
+      res.status(500).json({ error: 'Error fetching score ranking' });
     }
   }
 });
@@ -252,7 +251,7 @@ app.get('/nMatchesRanking', async (req, res) => {
     if (error.response) {
       res.status(error.response.status).json({ error: error.response.data.error });
     } else {
-      res.status(500).json({ error: 'Error interno al obtener el ranking por cantidad de partidas' });
+      res.status(500).json({ error: 'Error fetching number of matches ranking' });
     }
   }
 });

@@ -126,8 +126,7 @@
     text-align: center;
     font-weight: bold;
     padding: 15px;
-    /*background: #f8f8f8; /**/
-    background: linear-gradient(135deg, #f8f8f8, #e3eaf1);
+    background: #f8f8f8;
     border-radius: 10px;
     width: 100%;
     height: 100%;
@@ -136,8 +135,11 @@
 }
 
 .questionContainer p {
-    margin-bottom: 2rem;  /*asi para poner el cronmetro debajp*/
     width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .optionsGrid {
