@@ -380,7 +380,14 @@ function Game() {
                         {categoryOptions.map(({ key, label, image }) => (
                             <div
                                 key={key}
+                                role="button"
+                                tabIndex={0}
                                 onClick={() => setSelectedCategory(key)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        setSelectedCategory(key);
+                                    }
+                                }}
                                 style={{
                                     width: 100,
                                     height: 100,
