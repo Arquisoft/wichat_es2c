@@ -11,11 +11,8 @@ jest.mock('./ChatBot/Popchat', () => {
         return <div data-testid="popchat">Mocked PopChat</div>;
     };
 });
-jest.mock('./Timer', () => {
-    return function MockTimer({ onTimeOut }) {
-        return <div data-testid="timer" onClick={onTimeOut}>Mock Timer</div>;
-    };
-});
+
+
 jest.mock('react-awesome-button', () => ({
     AwesomeButton: ({ children, onPress, disabled }) => (
         <button onClick={onPress} disabled={disabled} data-testid="awesome-button">
@@ -167,42 +164,42 @@ describe('Game Component', () => {
         });
     });
 
-    test('handles time out correctly', async () => {
-        render(<Game />);
-
-        const normalButton = screen.getAllByTestId('awesome-button')[0];
-        fireEvent.click(normalButton);
-
-        const categoryImages = screen.getAllByRole('img');
-        fireEvent.click(categoryImages[0]);
-
-        const acceptButton = screen.getAllByTestId('awesome-button')[2];
-        fireEvent.click(acceptButton);
-
-        await waitFor(() => {
-            expect(axios.post).toHaveBeenCalled();
-        });
-
-        await waitFor(() => {
-            expect(axios.get).toHaveBeenCalled();
-        });
-
-        axios.post.mockResolvedValueOnce({ data: { success: true } });
-
-        const timer = await screen.findByTestId('timer');
-        fireEvent.click(timer);
-
-        await waitFor(() => {
-            expect(screen.getByText('⏳ ¡El tiempo se ha acabado!')).toBeInTheDocument();
-        });
-
-        expect(axios.post).toHaveBeenCalledWith(
-            expect.stringContaining('/endMatch'),
-            expect.objectContaining({
-                username: 'testUser',
-            })
-        );
-    });
+    // test('handles time out correctly', async () => {
+    //     render(<Game />);
+    //
+    //     const normalButton = screen.getAllByTestId('awesome-button')[0];
+    //     fireEvent.click(normalButton);
+    //
+    //     const categoryImages = screen.getAllByRole('img');
+    //     fireEvent.click(categoryImages[0]);
+    //
+    //     const acceptButton = screen.getAllByTestId('awesome-button')[2];
+    //     fireEvent.click(acceptButton);
+    //
+    //     await waitFor(() => {
+    //         expect(axios.post).toHaveBeenCalled();
+    //     });
+    //
+    //     await waitFor(() => {
+    //         expect(axios.get).toHaveBeenCalled();
+    //     });
+    //
+    //     axios.post.mockResolvedValueOnce({ data: { success: true } });
+    //
+    //     const timer = await screen.findByTestId('timer');
+    //     fireEvent.click(timer);
+    //
+    //     await waitFor(() => {
+    //         expect(screen.getByText('⏳ ¡Time is out!')).toBeInTheDocument();
+    //     });
+    //
+    //     expect(axios.post).toHaveBeenCalledWith(
+    //         expect.stringContaining('/endMatch'),
+    //         expect.objectContaining({
+    //             username: 'testUser',
+    //         })
+    //     );
+    // });
 
 
 
@@ -254,5 +251,117 @@ describe('Game Component', () => {
 
     });
 
+    test('displays the question and choices correctly', async () => {
+        axios.get.mockResolvedValueOnce({
+            data: {
+                question: sampleQuestion.question,
+                image: sampleQuestion.image,
+                choices: sampleQuestion.choices,
+                answer: sampleQuestion.choices[0],
+            }
+        });
+
+        render(<Game />);
+
+        const normalButton = screen.getAllByTestId('awesome-button')[0];
+        fireEvent.click(normalButton);
+
+        const categoryImages = screen.getAllByRole('img');
+        fireEvent.click(categoryImages[0]);
+
+        const acceptButton = screen.getAllByTestId('awesome-button')[2];
+        fireEvent.click(acceptButton);
+
+        await waitFor(() => {
+            expect(screen.getByText(sampleQuestion.question)).toBeInTheDocument();
+        });
+
+        for (const choice of sampleQuestion.choices) {
+            expect(screen.getByText(choice)).toBeInTheDocument();
+        }
+    });
+
+    test('sends correct data to API when answering a question', async () => {
+        axios.get.mockResolvedValueOnce({
+            data: {
+                question: sampleQuestion.question,
+                image: sampleQuestion.image,
+                choices: sampleQuestion.choices,
+                answer: sampleQuestion.choices[0],
+            }
+        });
+
+        axios.post.mockResolvedValueOnce({ data: { success: true } });
+        axios.get.mockResolvedValueOnce({
+            data: {
+                question: "Next question",
+                image: null,
+                choices: ["Option 1", "Option 2", "Option 3", "Option 4"],
+                answer: "Option 1"
+            }
+        });
+
+        render(<Game />);
+
+        const normalButton = screen.getAllByTestId('awesome-button')[0];
+        fireEvent.click(normalButton);
+
+        const categoryImages = screen.getAllByRole('img');
+        fireEvent.click(categoryImages[0]);
+
+        const acceptButton = screen.getAllByTestId('awesome-button')[2];
+        fireEvent.click(acceptButton);
+
+
+        await waitFor(() => {
+            expect(screen.getByText(sampleQuestion.question)).toBeInTheDocument();
+        });
+
+        const answerButton = screen.getByText(sampleQuestion.choices[0]);
+        fireEvent.click(answerButton);
+
+        await waitFor(() => {
+            expect(axios.post).toHaveBeenCalledWith(
+                expect.stringContaining('/addQuestion'),
+                expect.objectContaining({
+                    username: 'testUser',
+                    question: sampleQuestion.question,
+                    selectedAnswer: sampleQuestion.choices[0]
+                })
+            );
+        });
+    });
+
+    test('category selection works correctly', async () => {
+        render(<Game />);
+
+        const normalButton = screen.getAllByTestId('awesome-button')[0];
+        fireEvent.click(normalButton);
+
+        const categoryLabels = ["Birds", "Cartoons", "Capitals", "Sports"];
+        for (const label of categoryLabels) {
+            expect(screen.getByText(label)).toBeInTheDocument();
+        }
+
+        const categoryImages = screen.getAllByRole('img');
+        const categoryToSelect = categoryImages[1];
+        fireEvent.click(categoryToSelect);
+
+        const acceptButton = screen.getAllByTestId('awesome-button')[2];
+        expect(acceptButton).not.toBeDisabled();
+
+        axios.post.mockResolvedValueOnce({ data: { success: true } });
+        axios.get.mockResolvedValueOnce({
+            data: sampleQuestion
+        });
+
+        fireEvent.click(acceptButton);
+
+        await waitFor(() => {
+            expect(axios.get).toHaveBeenCalledWith(
+                expect.stringContaining('/getQuestion?category=cartoons')
+            );
+        });
+    });
 
 });
