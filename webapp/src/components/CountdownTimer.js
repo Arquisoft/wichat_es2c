@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 
-export default function CountdownTimer({ maxTime = 60 }) {
+const CountdownTimer = forwardRef(({ maxTime = 60, size = 100, onTimeOut}, ref) => {
   const radius = 20;
   const circumference = 2 * Math.PI * radius;
   const initialRotation = 225;
@@ -9,11 +9,29 @@ export default function CountdownTimer({ maxTime = 60 }) {
   const [rotation, setRotation] = useState(initialRotation);
   const [intervalId, setIntervalId] = useState(null);
 
+  useImperativeHandle(ref, () => ({
+    addTime: (amount) => {
+      setTimeLeft((prev) => Math.min(maxTime, prev + amount));
+    },
+    restTime: (amount) => {
+      setTimeLeft((prev) => Math.max(0, prev - amount));
+    },
+    reset: () => {
+      setTimeLeft(maxTime);
+      clearInterval(intervalId);
+      setRotation(initialRotation);
+      startTimer();
+    }
+  }));
+
   const startTimer = () => {
     const id = setInterval(() => {
       setTimeLeft((prev) => {
-        if (prev <= 0.05) {
+        if (prev <= 1) {
           clearInterval(id);
+          if (onTimeOut && typeof onTimeOut === 'function') {
+            onTimeOut();
+          }
           return 0;
         }
         return prev - 0.05;
@@ -34,25 +52,10 @@ export default function CountdownTimer({ maxTime = 60 }) {
   const progress = timeLeft / maxTime;
   const offset = -circumference * progress;
 
-  const restTime = (amount) => {
-    setTimeLeft((prev) => Math.max(0, prev - amount));
-  };
-
-  const addtime = (amount) => {
-    setTimeLeft((prev) => Math.min(maxTime, prev + amount));
-  };
-
-  const restart = () => {
-    clearInterval(intervalId);
-    setTimeLeft(maxTime);
-    setRotation(initialRotation);
-    startTimer();
-  };
-
   return (
       <svg
-        width="800px"
-        height="800px"
+        width={size}
+        height={size}
         viewBox="0 0 64 64"
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -61,7 +64,7 @@ export default function CountdownTimer({ maxTime = 60 }) {
         className="iconify iconify--emojione"
         preserveAspectRatio="xMidYMid meet"
       >
-        <circle cx="32" cy="39" r="20" fill="#ed4c5c">
+        <circle cx="32" cy="39" r={radius} fill="#ed4c5c">
         </circle>
 
         <circle
@@ -69,7 +72,7 @@ export default function CountdownTimer({ maxTime = 60 }) {
           cy="39"
           r={radius}
           fill="none"
-          stroke="white"
+          stroke="#f8f8f8"
           strokeWidth={radius * 2}
           strokeDasharray={circumference}
           strokeDashoffset={offset}
@@ -144,4 +147,5 @@ export default function CountdownTimer({ maxTime = 60 }) {
         </g>
       </svg>
   );
-}
+});
+export default CountdownTimer;
