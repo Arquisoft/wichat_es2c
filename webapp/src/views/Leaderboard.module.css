@@ -1,0 +1,157 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f0f4f8;
+}
+
+.leaderboardContainer {
+  background-color: #8590AA;
+  display: grid;
+  grid-template-columns: 40% 60%;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.rankingsContainer {
+  background-color: #C4DBF6;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.scoreRankingSection,
+.numberMatchesRankingSection {
+  background-color: #fefae0;
+  border: 2px solid #b8b8b8;
+  border-radius: 12px;
+  padding: 15px;
+  overflow: auto;
+  flex: 1;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+}
+
+.rankingTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.globalMatchesContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: #C4DBF6;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  height: 100%;
+}
+
+.sectionTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #2a2a2a;
+}
+
+.userMatchesSearchArea {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.searchInput {
+  flex: 3;
+  background-color: white;
+  border-radius: 8px;
+}
+
+.searchButton {
+  flex: 1;
+  background-color: #4e88ff;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, transform 0.2s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.searchButton:hover {
+  background-color: #3366cc;
+  transform: scale(1.03);
+}
+
+.userFoundMatchesList {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+
+  padding: 0.8rem;
+
+  
+}
+
+.matchesScrollbar {
+  height: 100%;
+}
+
+.noGamesMessage,
+.noRankingData {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 1.2rem;
+  color: #444;
+  font-style: italic;
+}
+
+
+
+.rankingHeader {
+  display: grid;
+  grid-template-columns: 0.5fr 2fr 1fr 1fr 1.2fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background-color: #fff9d7;
+  font-weight: bold;
+  font-size: 1rem;
+  color: #444;
+
+  border-bottom: 1px solid #ccc;
+}
+
+
+.headerRank {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.headerUsername {
+  font-weight: 600;
+  color: #333;
+}
+
+.headerScore, .headerMatches, .headerTime {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+
+.userFoundMatchesList .gameSummaryWrapper {
+  margin-bottom: 0.3rem;
+}

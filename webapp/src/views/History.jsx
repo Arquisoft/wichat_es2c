@@ -118,7 +118,7 @@ const History = () => {
   //const gamesCurrentPage = games.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
-    <>
+    <div className="history-page-container">
       <Nav />
 
       <div className={styles.mainContainer}>
@@ -224,7 +224,7 @@ const History = () => {
         </div>
 
       </div>
-    </>
+    </div>
   );
 };
 

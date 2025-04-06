@@ -5,7 +5,18 @@ html, body {
   overflow-y: auto;
 
   /*background-color: #E7E3D4 !important;*/
+  /*
   background-color: #8590AA !important;
+  */
+}
+
+.history-page-container {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #8590AA;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
 }
 .modalOverlay {
   position: fixed;
