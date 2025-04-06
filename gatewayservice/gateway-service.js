@@ -160,7 +160,6 @@ app.get('/userMatches', async (req, res) => {
     const userResponse = await axios.get(`${gameServiceUrl}/userMatches`, {
       params: req.query //esto para pasar los params de la query
     });
-    console.log("Datos recibidos del servicio de juegos:", userResponse.data);
     res.json(userResponse.data);
   } catch (error) {
     res.status(error.response?.status || 500).json({ error: error.response?.data?.error || 'Error desconocido' });
