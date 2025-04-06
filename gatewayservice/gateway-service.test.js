@@ -442,4 +442,146 @@ describe('Gateway Service', () => {
             expect(response.body.error).toBe('Internal error trying to obtain the user list');
         });
     });
-});
+
+
+        });
+
+        describe('User Service Endpoints', () => {
+            it('should handle detailed user list response', async () => {
+                axios.get.mockImplementationOnce((url) => {
+                    if (url.includes('/userinfo')) {
+                        return Promise.resolve({
+                            data: [
+                                { _id: 'user1', username: 'user1', email: 'user1@example.com' },
+                                { _id: 'user2', username: 'user2', email: 'user2@example.com' }
+                            ]
+                        });
+                    }
+                });
+
+                const response = await request(app).get('/users');
+
+                expect(response.statusCode).toBe(200);
+                expect(response.body).toHaveLength(2);
+                expect(response.body[0]).toHaveProperty('username');
+                expect(response.body[0]).not.toHaveProperty('email'); // Should only return username
+            });
+
+            it('should handle network errors when fetching users', async () => {
+                axios.get.mockImplementationOnce((url) => {
+                    if (url.includes('/userinfo')) {
+                        return Promise.reject(new Error('Network error'));
+                    }
+                });
+
+                const response = await request(app).get('/users');
+
+                expect(response.statusCode).toBe(500);
+                expect(response.body.error).toBe('Error when trying to access the user list');
+            });
+        });
+
+
+
+
+
+            it('should handle network errors for userMatches', async () => {
+                axios.get.mockImplementationOnce(() => {
+                    return Promise.reject(new Error('Network error'));
+                });
+
+                const response = await request(app)
+                    .get('/userMatches')
+                    .query({ userId: 'user123' });
+
+                expect(response.statusCode).toBe(500);
+                expect(response.body.error).toBeDefined();
+            });
+
+
+
+
+
+
+                it('should validate all required fields for askllm endpoint', async () => {
+                    // Test missing gameQuestion
+                    let response = await request(app)
+                        .post('/askllm')
+                        .send({
+                            userQuestion: 'Can you give me a hint?',
+                            // gameQuestion is missing
+                            answers: ['A', 'B', 'C'],
+                            correctAnswer: 'B',
+                            model: 'empathy'
+                        });
+
+                    expect(response.statusCode).toBe(400);
+                    expect(response.body.error).toContain('Missing required field: gameQuestion');
+
+                    // Test missing answers
+                    response = await request(app)
+                        .post('/askllm')
+                        .send({
+                            userQuestion: 'Can you give me a hint?',
+                            gameQuestion: 'What is 2+2?',
+                            // answers is missing
+                            correctAnswer: '4',
+                            model: 'empathy'
+                        });
+
+                    expect(response.statusCode).toBe(400);
+                    expect(response.body.error).toContain('Missing required field: answers');
+
+                    // Test missing model
+                    response = await request(app)
+                        .post('/askllm')
+                        .send({
+                            userQuestion: 'Can you give me a hint?',
+                            gameQuestion: 'What is 2+2?',
+                            answers: ['3', '4', '5'],
+                            correctAnswer: '4',
+                            // model is missing
+                        });
+
+                    expect(response.statusCode).toBe(400);
+                    expect(response.body.error).toContain('Missing required field: model');
+            });
+
+
+                it('should handle network errors for score ranking', async () => {
+                    axios.get.mockImplementationOnce(() => {
+                        return Promise.reject(new Error('Network error'));
+                    });
+
+                    const response = await request(app).get('/scoreRanking');
+
+                    expect(response.statusCode).toBe(500);
+                    expect(response.body.error).toBe('Error fetching score ranking');
+                });
+
+                it('should handle network errors for matches ranking', async () => {
+                    axios.get.mockImplementationOnce(() => {
+                        return Promise.reject(new Error('Network error'));
+                    });
+
+                    const response = await request(app).get('/nMatchesRanking');
+
+                    expect(response.statusCode).toBe(500);
+                    expect(response.body.error).toBe('Error fetching number of matches ranking');
+                });
+
+                it('should handle network errors for user matches', async () => {
+                    axios.get.mockImplementationOnce(() => {
+                        return Promise.reject(new Error('Network error'));
+                    });
+
+                    const response = await request(app).get('/userinfo/matches/testuser');
+
+                    expect(response.statusCode).toBe(500);
+                    expect(response.body.error).toBe('Error when trying to access users matches');
+
+            });
+
+
+
+
