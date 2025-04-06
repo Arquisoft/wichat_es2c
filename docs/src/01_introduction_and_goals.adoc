@@ -22,11 +22,24 @@ endif::arc42help[]
 **WIChat** is a project that, following the path of the application developed in the past by the HappySw company, seeks to implement top-notch technologies to take the user experience to the next level when playing this online version of the famous quiz show “Saber y Ganar”.
 The project is developed by the company ChattySw, and the development team consists of the following programmers:
 
-* Pelayo García Varela (UO294381@uniovi.es / Github account: ElPandaP).
-* Pablo Pérez Álvarez (UO294197@uniovi.es / Github account: latiose).
-* Héctor Hernández Iglesias (UO296095@uniovi.es / Github account: HernandezIglesiasHector).
-* Juan Fernández López (UO296143@uniovi.es / Github account: juanferlop).
-* Lucas Gisbert López (UO295526@uniovi.es / Github account: LucasGisb).
+== Team Members
+
+* *Pelayo García Varela* +
+  Correo: mailto:UO294381@uniovi.es[UO294381@uniovi.es] +
+  GitHub: https://github.com/ElPandaP[ElPandaP]
+
+* *Pablo Pérez Álvarez* +
+  Correo: mailto:UO294197@uniovi.es[UO294197@uniovi.es] +
+  GitHub: https://github.com/latiose[latiose]
+
+* *Héctor Hernández Iglesias* +
+  Correo: mailto:UO296095@uniovi.es[UO296095@uniovi.es] +
+  GitHub: https://github.com/HernandezIglesiasHector[HernandezIglesiasHector]
+
+* *Lucas Gisbert López* +
+  Correo: mailto:UO295526@uniovi.es[UO295526@uniovi.es] +
+  GitHub: https://github.com/LucasGisb[LucasGisb]
+
 
 === Requirements Overview
 

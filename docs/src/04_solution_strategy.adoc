@@ -12,7 +12,6 @@ ifndef::imagesdir[:imagesdir: ../images]
 * *npm*: default package manager for Node.js, providing a command-line interface to install, manage, and publish JavaScript packages. With over a million packages available in its registry, npm simplifies adding functionality to Node.js projects by handling dependencies and providing tools for versioning and publishing packages.
 * *Docker*: platform that will be used for deploying our services inside containers. Containers are lightweight, portable, and self-sufficient units that contain everything needed to run an application, including the code, runtime, system tools, libraries, and settings. Docker enables developers to package their applications along with all dependencies into containers, ensuring consistency across different environments, such as development, testing, and production.
 * *GitHub Actions*: built-in automation tool on GitHub that allows us to automate some workflows that are triggered after some specific github branches actions at development. It provides as continuous integration of the game functionality.
-* *Azure*: Cloud computing service used for creating virtual machines and running Docker containers. Azure provides a scalable and flexible infrastructure for hosting our microservices-based application, ensuring high availability and reliability.
 * *GitHub*: Version control and project management platform used for managing our game project. GitHub provides features for collaboration, issue tracking, and code review, facilitating efficient development workflows and team communication.
 
 
@@ -39,7 +38,7 @@ The master branch contains the final version of the product, so that every accep
 * *Documentation*: it must be always updated for making our work valuable and consistent.
 * *Weekly meetings*: Weekly discussions about what has been done and what needs to be done will be key for our team success. 
 * *Github*: this control version systems not only allows us to share and collabortively write code, but also provides other resources such as issues and project management (kanban board) tools for organizing the work to be done. Also, wiki section allows us to save all of our minutes from each scheduled meeting.
-* *Whatsapp*: will allow us to be in constant communication for helping each other out whenever needed. 
+* *Whatsapp and Discord*: will allow us to be in constant communication for helping each other out whenever needed. 
 
 ifdef::arc42help[]
 [role="arc42help"]

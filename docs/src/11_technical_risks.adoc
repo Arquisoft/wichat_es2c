@@ -42,6 +42,7 @@ Prioritized from highest to lowest, they are as follows:
 | *Limited Experience Working in Large Teams* | Since we lack experience working in large teams, the communication process may be somewhat confusing. | Follow teamwork best practices and guidelines, and use tools like Pull Requests to ensure better version control.
 | *Project Deadlines Overlapping with Other Tasks* | Since all members are students, the various project deadlines may clash with other important dates, such as exams and assignments. | Keep up with the work, and if any such issues arise, inform the rest of the team so they are aware of the situation.
 | *Team Members with Limited Experience in GitHub and Pull Requests* | Not all team members are proficient with *Pull Requests*, which significantly limits their initial contributions. | Learn and practice using this functionality.
+| *Team members leaving* | A certain team member left after not putting in any work for a few weeks, leaving all of us with extra work. | Reorganizing our work and spending more time on this project.
 |===
 
 ==== External Risks
@@ -64,4 +65,5 @@ At this stage, since we have only recently started working on this project, we h
 | Debt | Description | How to Deal With It
 | *Limited Familiarity with the Base Project* | We have been given a template to work from, but we are not yet fully familiar with its contents, even though this would be highly beneficial. | During the application design process, the team should review what parts of the application were provided and what is missing.
 | *Technology Choices That Not All Members Are Experienced With* | We have chosen to work with certain programming languages in which we still lack experience, aiming to create the best possible application in the long run. | Try to become familiar with these technologies as soon as possible to avoid creating more problems in the future.
+| *The team member that left left us a very broken timer component* | We decided to just make a new one from scratch.
 |===
