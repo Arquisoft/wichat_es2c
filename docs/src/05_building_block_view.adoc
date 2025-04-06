@@ -67,4 +67,6 @@ In the best case you will get away with examples or simple signatures.
 ****
 endif::arc42help[]
 
+image::scope.png["Overall System"]
+
 Once we have made progress in the development of the application, the following diagrams should be created according to the chosen implementation
