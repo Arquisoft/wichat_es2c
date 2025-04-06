@@ -1,23 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
 import "./LoginRegister.css";
 
 function Login() {
 
-    const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    
+
     const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
-    //Inicializar tsparticles
     const particlesInit = useCallback(async (engine) => {
         await loadSlim(engine);
     }, []);
@@ -26,8 +23,7 @@ function Login() {
         if (isLoggedIn) {
             window.location.href = '/home';
         }
-    }, [isLoggedIn, navigate]);
-
+    }, [isLoggedIn]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -36,7 +32,7 @@ function Login() {
             setError('Please enter both username and password');
             return;
         }
-        
+
         setLoading(true);
         try {
             const response = await axios.post(`${apiEndpoint}/login`, { username, password });
@@ -56,7 +52,6 @@ function Login() {
         }
     };
 
-    //Configuración de las partículas del fondo
     const particlesOptions = {
         background: {
             color: {
@@ -119,13 +114,21 @@ function Login() {
                 options={particlesOptions}
             />
 
-           
-            <Box className="boxContainer" sx={{ maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1  }}>
-                
-                <Link to="/home">
-                    <img src="/wiChatLogos/LogoWichat2_512.png" alt="Logo" className="logoAplicacion" />
-                </Link>
-                
+            <Box className="boxContainer" sx={{maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1}}>
+
+                <img
+                    src="/wiChatLogos/LogoWichat2_512.png"
+                    alt="Logo"
+                    className="logoAplicacion"
+                    onClick={() => window.location.href = '/home'}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            window.location.href = '/home';
+                        }
+                    }}
+                />
+
                 <div className="mainContent">
                     <Typography variant="h5" component="h1" gutterBottom>
                         Login
@@ -143,7 +146,7 @@ function Login() {
                             required
                             onChange={(e) => setUsername(e.target.value)}
                         />
-                        
+
                         <TextField
                             name="password"
                             label="Password"
@@ -154,29 +157,29 @@ function Login() {
                             disabled={loading}
                             required
                         />
-                        
+
                         {error && (
-                            <Typography color="error" sx={{ mt: 2 }}>
+                            <Typography color="error" sx={{mt: 2}}>
                                 {error}
                             </Typography>
                         )}
-                        
+
                         <Button
                             type="submit"
                             variant="contained"
                             fullWidth
-                            sx={{ mt: 3 }}
+                            sx={{mt: 3}}
                             disabled={loading}
                         >
-                            {loading ? <CircularProgress size={24} /> : 'Login'}
+                            {loading ? <CircularProgress size={24}/> : 'Login'}
                         </Button>
-                        
-                        <Box sx={{ mt: 2, textAlign: 'center' }}>
+
+                        <Box sx={{mt: 2, textAlign: 'center'}}>
                             <Typography variant="body2">
                                 Don't have an account?{' '}
-                                <Link to="/signup" style={{ textDecoration: 'none' }}>
+                                <a href="/signup" style={{textDecoration: 'none'}}>
                                     Register here
-                                </Link>
+                                </a>
                             </Typography>
                         </Box>
                     </form>

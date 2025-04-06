@@ -9,7 +9,7 @@ import PopChat from './ChatBot/Popchat';
 import Timer from './Timer';
 import axios from "axios";
 
-function Game({}) { //onNavigate
+function Game() {
     // Replace react-router-dom's useNavigate with a prop-based navigation
 
     //Revisar si es correcto tener esto aqui (creo que de esta forma de saltan el gateway service)
@@ -225,13 +225,7 @@ function Game({}) { //onNavigate
         fetchNewQuestion();
     }, [apiEndpointWiki]);
 
-    // Changed to use the navigation prop instead of useNavigate hook
     const handleHomeClick = () => {
-        /*
-        if (onNavigate) {
-            onNavigate('/');
-        }
-        */
         window.location.href = '/home';
     };
 

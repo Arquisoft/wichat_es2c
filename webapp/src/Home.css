@@ -89,7 +89,7 @@ body, html {
   box-shadow: 0px 0px 30px rgba(0, 174, 255, 0.8);
 }
 
-.boxMainPresentation:hover .logoAplicacion{
+.boxMainPresentation:hover .logoAplicacionHome{
   filter: drop-shadow(0px 0px 10px #00eaff);
   transform: scale(1.05);
   transition: transform 0.3s ease-in-out, filter 0.9s ease-in-out;
@@ -125,4 +125,8 @@ body, html {
   0% { left: -30%; opacity: 0.3; }
   50% { left: 50%; opacity: 0.8; }
   100% { left: 120%; opacity: 0.3; }
+}
+
+.logoAplicacion {
+  cursor: default;
 }
