@@ -4,3 +4,4 @@ Feature: Checking game history as a logged in user
     Given A registered user
     When I click on the view history button on the nav
     Then My match history appears
+

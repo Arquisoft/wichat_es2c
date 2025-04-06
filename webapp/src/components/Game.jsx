@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AwesomeButton } from 'react-awesome-button';
 import 'react-awesome-button/dist/styles.css';
 import styles from './Game.module.css';
@@ -13,7 +12,7 @@ import axios from "axios";
 import {CircularProgress} from "@mui/material";
 
 function Game() {
-    // Replace react-router-dom's useNavigate with a prop-based navigation
+
 
     //Revisar si es correcto tener esto aqui (creo que de esta forma de saltan el gateway service)
     const apiEndpointGame = process.env.GAME_SERVICE_API_ENDPOINT || 'http://localhost:8004';
