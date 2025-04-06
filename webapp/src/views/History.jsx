@@ -120,7 +120,7 @@ const History = () => {
 
 
   return (
-    <>
+    <div className="history-page-container">
       <Nav />
 
       <div className={styles.mainContainer}>
@@ -229,7 +229,7 @@ const History = () => {
         </div>
 
       </div>
-    </>
+    </div>
   );
 };
 
