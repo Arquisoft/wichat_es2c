@@ -58,7 +58,7 @@ const QuestionModal = ({ isOpen, closeModal, questions }) => {
                     onClick={closeModal}
                     accessKey="c"
                 >
-                    <u>C</u>lose
+                    Close
                 </button>
             </div>
         </div>
