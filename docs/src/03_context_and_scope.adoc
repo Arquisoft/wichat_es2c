@@ -81,13 +81,13 @@ endif::arc42help[]
 [options="header",cols="1,2"]
 |===
 | Technology | Description
-| _TypeScript_ | Language used for most of the application development.
+| _JavaScript_ | Language used for most of the back end development.
 | _React_ | For user interfaces.
 | _Wikidata_ | Information base used to formulate questions.
 | _MongoDB_ | Database used to store question data.
 | _GitHub_ | Code collaboration platform.
-| _Undecided_ | AI help bot.
-| _Undecided_ | Web host.
+| _Empathy_ | AI help bot.
+| _Local server from https://github.com/ElPandaP[ElPandaP]_  | Web host.
 |===
 
 
