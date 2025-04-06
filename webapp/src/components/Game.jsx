@@ -11,30 +11,33 @@ import PopChat from './ChatBot/Popchat';
 import Timer from './Timer';
 import axios from "axios";
 
+function Game({ onNavigate }) {
+    // Replace react-router-dom's useNavigate with a prop-based navigation
 
-function Game() {
-    const navigate = useNavigate();
+    //Revisar si es correcto tener esto aqui (creo que de esta forma de saltan el gateway service)
     const apiEndpointGame = process.env.GAME_SERVICE_API_ENDPOINT || 'http://localhost:8004';
     const apiEndpointWiki = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:3005';
+    const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+
     const [difficulty, setDifficulty] = useState(1);
     const [showDifficultyModal, setShowDifficultyModal] = useState(true);
     const [difficultyModalFadeIn, setDifficultyModalFadeIn] = useState(true);
     const [questionData, setQuestionData] = useState(null); // Estado para la pregunta actual
     const [selectedAnswer, setSelectedAnswer] = useState(null); // Estado para la respuesta seleccionada
     const [isCorrect, setIsCorrect] = useState(false); // Estado para saber si la respuesta es correcta
-    const [msgs, setMsgs] = useState(["Guayaba"]); // Mensajes del chatbot
+    const [msgs, setMsgs] = useState(["Ask me anything"]); // Mensajes del chatbot
+    const [showChatBot, setShowChatBot] = useState(false);
     const [open, setOpen] = useState(false);
     const [buttonsActive, setButtonsActive] = useState(true);
     const [timeOut, setTimeOut] = useState(false); // Estado para controlar el tiempo
     const [showTimeOutModal, setShowTimeOutModal] = useState(false); // Modal para el tiempo agotado
     const [timerReset, setTimerReset] = useState(false); // Estado para reiniciar el contador
-    const [showChatBot, setShowChatBot] = useState(false);
     const [fadeIn, setFadeIn] = useState(false);
     const [timeLeft, setTimeLeft] = useState(60); // Tiempo inicial
     const [reset, setReset] = useState(false);
     const [totalTime, setTotalTime] = useState(0); // Nuevo estado para el tiempo total de la partida
     const [gameStartTime, setGameStartTime] = useState(null); // Nuevo estado para registrar cuando inicia la partida
-    const [finished,setFinished] = useState(false);
+    const [finished, setFinished] = useState(false);
     const [questionQueue, setQuestionQueue] = useState([]);
     const [selectedDifficulty, setSelectedDifficulty] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -97,7 +100,7 @@ function Game() {
             addMatch(level);
             setGameStartTime(Date.now());
             setTotalTime(0);
-            fetchNewQuestion(category); // 👈 también aquí
+            fetchNewQuestion(category);
         }, 300);
     };
 
@@ -114,17 +117,47 @@ function Game() {
         }
     };
 
+    const getMessage = async (userMsg) => {
+        try {
+            // Verificar que tenemos datos de la pregunta actual
+            if (!questionData) {
+                return "No hay una pregunta activa en este momento.";
+            }
 
+            //const response = await axios.post(`${apiEndpoint}/askllm`, {
+            const response = await axios.post(`${apiEndpoint}/askllm`, {
+                model: 'empathy', // O el modelo que prefieras
+                userQuestion: userMsg, // La pregunta que hace el usuario al chatbot
+                gameQuestion: questionData.question, // La pregunta actual del juego
+                answers: questionData.choices, // Las opciones disponibles
+                correctAnswer: questionData.correctAnswer // La respuesta correcta
+            });
 
-    const getMessage = (msg) => {
-        //msgs.push(msg);
-        setMsgs((prevMsgs) => [...prevMsgs, msg]);
+            return response.data.answer;
+        } catch (error) {
+            console.error("Error al obtener respuesta del LLM:", error);
+            return "Lo siento, no puedo proporcionarte una pista en este momento.";
+        }
     };
 
+    const handleNewMessage = (message) => {
+        setMsgs(prevMsgs => [...prevMsgs, message]);
+    };
 
+    const handleBotResponse = (response) => {
+        setMsgs(prevMsgs => [...prevMsgs, response]);
+    };
+
+    //Al responder pregunta o acabarse el juego, se limpia el chat para que no se acumule info entre preguntas diferentes
+    const clearChat = () => {
+        setMsgs(["Ask me anything"]);
+    };
 
     const handleButtonClick = async (index, category) => {
         if (!questionData) return;
+
+        //Limpio el chatbot
+        clearChat();
 
         setButtonsActive(false);
 
@@ -137,14 +170,13 @@ function Game() {
 
         const apiRequest = axios.post(`${apiEndpointGame}/addQuestion`, {
             username: localStorage.getItem("username"),
-            question: questionData.choices,
+            question: questionData.question,
             correctAnswer: questionData.choices.indexOf(questionData.correctAnswer),
             answers: questionData.choices,
             selectedAnswer: selectedOption,
         }).catch(error => {
             console.error("Error submitting answer:", error);
         });
-
 
         if (isAnswerCorrect) {
             setIsCorrect(true);
@@ -159,10 +191,6 @@ function Game() {
         await fetchNewQuestion(category);
         setButtonsActive(true);
         setTimerReset(prev => !prev);
-    };
-
-    const handleChatBotToggle = () => {
-        setShowChatBot(!showChatBot);
     };
 
     const fetchNewQuestion = (category) => {
@@ -213,7 +241,13 @@ function Game() {
       //  fetchNewQuestion();
     ///}, [apiEndpointWiki]);
 
-    const handleHomeClick = () => navigate('/');
+    // Changed to use the navigation prop instead of useNavigate hook
+    const handleHomeClick = () => {
+        if (onNavigate) {
+            onNavigate('/');
+        }
+    };
+
     const handleReplayClick = () => {
         setTimeOut(false);
         setShowTimeOutModal(false);
@@ -288,8 +322,6 @@ function Game() {
                     }}
                 >
                     <h1 className={styles.winnerTitle}>Select difficulty level</h1>
-
-                    {/* Dificultad */}
                     <div style={{
                         display: 'flex',
                         justifyContent: 'center',
@@ -421,8 +453,8 @@ function Game() {
                                 difficulty={difficulty}
                             />
                         )}
-                          </div>
-                      )}
+                    </div>
+                )}
 
 
                 {/* Opciones en Grid */}
@@ -454,7 +486,13 @@ function Game() {
 
                 {/* Sección para mostrar el chatbot */}
                 <div className={styles.chatContainer}>
-                    <PopChat messages={msgs} getMessage={getMessage}/>
+                    <PopChat
+                        messages={msgs}
+                        getMessage={getMessage}
+                        questionData={questionData}
+                        onNewMessage={handleNewMessage}
+                        onBotResponse={handleBotResponse}
+                    />
                 </div>
 
                 {/* Modal para el tiempo agotado */}

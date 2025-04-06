@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { Link } from "react-router-dom";
 import "./LoginRegister.css";
 
 function Login() {
-    const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -14,14 +11,12 @@ function Login() {
     const [loading, setLoading] = useState(false);
     const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
     const apiKey = process.env.REACT_APP_LLM_API_KEY || 'None';
-   // const message = await axios.post(`${apiEndpoint}/askllm`, { question, model, apiKey })
-   // setMessage(message.data.answer); left this as a reference for future use
 
     useEffect(() => {
         if (isLoggedIn) {
-            navigate('/home');
+            window.location.href = '/home';
         }
-    }, [isLoggedIn, navigate]);
+    }, [isLoggedIn]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -51,10 +46,11 @@ function Login() {
 
     return (
         <Box className="boxContainer" sx={{ maxWidth: 400, mx: 'auto', p: 2 }}>
-            <Link to="/home">
+
+            <a href="/home">
                 <img src="/logo512.png" alt="Logo" className="logoAplicacion" />
-            </Link>
-            
+            </a>
+
             <div className="mainContent">
                 <Typography variant="h5" component="h1" gutterBottom>
                     Login
@@ -99,9 +95,9 @@ function Login() {
                     <Box sx={{ mt: 2, textAlign: 'center' }}>
                         <Typography variant="body2">
                             Don't have an account?{' '}
-                            <Link to="/signup" style={{ textDecoration: 'none' }}>
+                            <a href="/signup" style={{ textDecoration: 'none' }}>
                                 Register here
-                            </Link>
+                            </a>
                         </Typography>
                     </Box>
                 </form>

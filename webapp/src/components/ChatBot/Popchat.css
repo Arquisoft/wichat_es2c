@@ -10,7 +10,8 @@
   #chatCon .chat-box {
     /* display: none; */
     width: 100%;
-    height: 500px;
+    /*height: 500px;*/
+    height: 480px;
     border-radius: 25px;
     background-color: #eee;
   }
@@ -57,6 +58,10 @@
     -webkit-box-pack: justify;
         -ms-flex-pack: justify;
             justify-content: space-between;
+
+
+    margin-top: 10px;
+    padding-bottom: 0px;
   }
   
   #chatCon .chat-box .footer input {
@@ -64,18 +69,22 @@
     padding: 10px;
     width: 80%;
     border-radius: 15px;
+
+    font-size: 15px;
   }
   
-  #chatCon .chat-box .footer input:foucs {
+  #chatCon .chat-box .footer input:focus {
     outline: none;
   }
   
   #chatCon .chat-box .footer button {
     border: none;
-    font-size: 22.5px;
-    color: lightgreen;
+    font-size: 18.5px;
+    color: white;
 
     background-color: rgb(54, 121, 223);
+
+    border-radius: 10px;
     
     cursor: pointer;
   }
@@ -95,3 +104,72 @@
     width: 25%;
   }
   
+
+
+  /***************************************************/
+  .typing-indicator {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .typing-indicator span {
+    height: 8px;
+    width: 8px;
+    background-color: #666;
+    border-radius: 50%;
+    margin: 0 3px;
+    display: inline-block;
+    animation: bounce 1.3s linear infinite;
+  }
+  
+  .typing-indicator span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  
+  .typing-indicator span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  
+  @keyframes bounce {
+    0%, 60%, 100% {
+      transform: translateY(0);
+    }
+    30% {
+      transform: translateY(-4px);
+    }
+  }
+
+
+
+  
+  /* Aumentar el espacio entre los mensajes */
+#chatCon .chat-box .msg-area p {
+  margin-top: 15px; /* Espacio entre mensajes */
+  position: relative;  /* Para posicionamiento relativo de elementos internos */
+}
+
+/* Último mensaje sin margen inferior */
+#chatCon .chat-box .msg-area p:last-of-type {
+  margin-bottom: 12px;
+}
+
+/* Asegurar que los mensajes y burbujas tengan espacio adecuado */
+#chatCon .chat-box .msg-area .left span,
+#chatCon .chat-box .msg-area .right span {
+  display: inline-block;
+  font-size: 17.5px;
+  border-radius: 15px;
+  padding: 12px 15px;
+  max-width: 85%;      /* Evitar que las burbujas sean demasiado anchas */
+  word-wrap: break-word; /* Permitir que el texto se envuelva */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Sombra sutil para profundidad */
+}
+
+
+#chatCon .chat-box .msg-area .left{
+  margin-left: 5px;
+}
+#chatCon .chat-box .msg-area .right{
+  margin-right: 5px;
+}
+

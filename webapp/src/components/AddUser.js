@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { TextField, Button, Typography, Box, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
-import {useNavigate} from "react-router-dom";
-import { Link } from "react-router-dom";
 import "./LoginRegister.css";
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
@@ -13,13 +11,12 @@ function AddUser() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (isLoggedIn) {
-            navigate('/home');
+            window.location.href = '/home';
         }
-    }, [isLoggedIn, navigate]);
+    }, [isLoggedIn]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -45,7 +42,7 @@ function AddUser() {
             setError('');
             setSuccess(true);
             setTimeout(() => {
-                navigate('/login');
+                window.location.href = '/login';
             }, 1500);
         } catch (err) {
             console.error('Registration error:', err);
@@ -64,9 +61,9 @@ function AddUser() {
 
     return (
         <Box className="boxContainer" sx={{ maxWidth: 400, mx: 'auto', p: 2 }}>
-            <Link to="/home">
-                <img src="/logo512.png" alt="Logo" className="logoAplicacion" />
-            </Link>
+            <a href="/home">
+                <img src="/logo512.png" alt="Logo" className="logoAplicacion"/>
+            </a>
 
             <div className="mainContent">
                 <Typography variant="h5" component="h1" gutterBottom>
@@ -117,9 +114,9 @@ function AddUser() {
                     <Box sx={{ mt: 2, textAlign: 'center' }}>
                         <Typography variant="body2">
                             Already have an account?{' '}
-                            <Link to="/login" style={{ textDecoration: 'none' }}>
+                            <a href="/login">
                                 Login here
-                            </Link>
+                            </a>
                         </Typography>
                     </Box>
                 </form>
@@ -127,5 +124,4 @@ function AddUser() {
         </Box>
     );
 }
-
 export default AddUser;
