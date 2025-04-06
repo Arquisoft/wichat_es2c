@@ -22,7 +22,7 @@ endif::arc42help[]
 **WIChat** is a project that, following the path of the application developed in the past by the HappySw company, seeks to implement top-notch technologies to take the user experience to the next level when playing this online version of the famous quiz show “Saber y Ganar”.
 The project is developed by the company ChattySw, and the development team consists of the following programmers:
 
-== Integrantes del equipo
+== Team Members
 
 * *Pelayo García Varela* +
   Correo: mailto:UO294381@uniovi.es[UO294381@uniovi.es] +
