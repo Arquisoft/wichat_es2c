@@ -11,13 +11,18 @@ let added = false;
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/userdb';
 mongoose.connect(mongoUri);
 const PORT = 3005;
-let cachedQuestions = null;
-let lastCacheTime = null;
+const questionCache = {
+    capitals: { data: null, lastUpdate: null },
+    sports: { data: null, lastUpdate: null },
+    cartoons: { data: null, lastUpdate: null },
+    birds: { data: null, lastUpdate: null },
+};
 
 async function addQuestionsCapital() {
     const CACHE_DURATION = 1000 * 60 * 60;
+    const cache = questionCache.capitals;
 
-    if (!cachedQuestions || (Date.now() - lastCacheTime > CACHE_DURATION)) {
+    if (!cache.data || (Date.now() - cache.lastUpdate > CACHE_DURATION)) {
         try {
             let query = `
                 SELECT ?countryLabel ?capitalLabel (SAMPLE(?flagURL) as ?flag)
@@ -35,53 +40,54 @@ async function addQuestionsCapital() {
             const response = await axios.get(url);
             const countries = response.data.results.bindings;
 
-            cachedQuestions = countries.map(country => {
-                    const incorrectCountries = countries
-                        .filter(c => c.countryLabel.value !== country.countryLabel.value)
-                        .sort(() => 0.5 - Math.random())
-                        .slice(0, 3);
+            cache.data = countries.map(country => {
+                const incorrectCountries = countries
+                    .filter(c => c.countryLabel.value !== country.countryLabel.value)
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 3);
 
-                    const answers = [
+                const answers = [
+                    new Answer({
+                        text: country.capitalLabel.value,
+                        correct: true,
+                        selected: false
+                    }),
+                    ...incorrectCountries.map(incorrectCountry =>
                         new Answer({
-                            text: country.capitalLabel.value,
-                            correct: true,
+                            text: incorrectCountry.capitalLabel.value,
+                            correct: false,
                             selected: false
-                        }),
-                        ...incorrectCountries.map(incorrectCountry =>
-                            new Answer({
-                                text: incorrectCountry.capitalLabel.value,
-                                correct: false,
-                                selected: false
-                            })
-                        )
-                    ];
+                        })
+                    )
+                ];
 
-                    const shuffledAnswers = answers.sort(() => 0.5 - Math.random());
+                const shuffledAnswers = answers.sort(() => 0.5 - Math.random());
 
-                    const flagUrl = country.flag ? country.flag.value : null;
-                    return new Question({
-                        text: `Whats the capital city of ${country.countryLabel.value}?`,
-                        answers: shuffledAnswers,
-                        image: flagUrl,
-                        category: 'capitals',
-                    });
+                const flagUrl = country.flag ? country.flag.value : null;
+                return new Question({
+                    text: `Whats the capital city of ${country.countryLabel.value}?`,
+                    answers: shuffledAnswers,
+                    image: flagUrl,
+                    category: 'capitals',
                 });
+            });
+            cache.lastUpdate = Date.now();
 
-            lastCacheTime = Date.now();
             await Question.deleteMany({category: 'capitals'});
-            await Question.insertMany(cachedQuestions);
+            await Question.insertMany(cache.data);
         } catch (error) {
             console.error("Error fetching or saving capital questions:", error);
         }
     }
-    return cachedQuestions;
+    return cache.data;
 }
 
 async function addQuestionsSports() {
     const CACHE_DURATION = 1000 * 60 * 60;
+    const cache = questionCache.sports;
 
     // Si no hay caché o ha pasado más de una hora desde la última actualización, se generan preguntas
-    if (!cachedQuestions || (Date.now() - lastCacheTime > CACHE_DURATION)) {
+    if (!cache.data || (Date.now() - cache.lastUpdate > CACHE_DURATION)) {
         try {
             let query = `
                 SELECT DISTINCT ?teamLabel ?crest ?countryLabel
@@ -103,7 +109,7 @@ async function addQuestionsSports() {
 
             const results = response.data.results.bindings;
 
-            cachedQuestions = results.map(result => {
+            cache.data = results.map(result => {
                 // Filtrar equipos incorrectos para generar opciones
                 const incorrectTeams = results
                     .filter(t => t.teamLabel.value !== result.teamLabel.value)
@@ -142,24 +148,25 @@ async function addQuestionsSports() {
             });
 
             // Actualizamos la hora del último caché
-            lastCacheTime = Date.now();
+            cache.lastUpdate = Date.now();
 
             // Eliminar solo las preguntas de la categoría "sports" y agregar las nuevas preguntas
             await Question.deleteMany({ category: 'sports' });
-            await Question.insertMany(cachedQuestions);
+            await Question.insertMany(cache.data);
 
         } catch (error) {
             console.error("Error fetching or saving team questions:", error);
         }
     }
 
-    return cachedQuestions;
+    return cache.data;
 }
 
 async function addQuestionsCartoons() {
     const CACHE_DURATION = 1000 * 60 * 60;
+    const cache = questionCache.cartoons;
 
-    if (!cachedQuestions || (Date.now() - lastCacheTime > CACHE_DURATION)) {
+    if (!cache.data || (Date.now() - cache.lastUpdate > CACHE_DURATION)) {
         try {
             let query = `
                 SELECT ?itemLabel ?image
@@ -190,7 +197,7 @@ async function addQuestionsCartoons() {
             const results = response.data.results.bindings;
 
             // Mapeamos los resultados de la consulta
-            cachedQuestions = results.map(result => {
+            cache.data = results.map(result => {
                 // Filtrar personajes incorrectos para generar opciones
                 const incorrectCharacters = results
                     .filter(c => c.itemLabel.value !== result.itemLabel.value)
@@ -229,23 +236,25 @@ async function addQuestionsCartoons() {
             });
 
             // Actualizamos la hora del último caché
-            lastCacheTime = Date.now();
+            cache.lastUpdate = Date.now();
 
             // Eliminar las preguntas anteriores de la base de datos y agregar las nuevas
             await Question.deleteMany({category: 'cartoons'});
-            await Question.insertMany(cachedQuestions);
+            await Question.insertMany(cache.data);
         } catch (error) {
             console.error("Error fetching or saving cartoon character questions:", error);
         }
     }
 
-    return cachedQuestions;
+    return cache.data;
 }
 
 async function addQuestionsBirds() {
     const CACHE_DURATION = 1000 * 60 * 60;
 
-    if (!cachedQuestions || (Date.now() - lastCacheTime > CACHE_DURATION)) {
+    const cache = questionCache.birds;
+
+    if (!cache.data || (Date.now() - cache.lastUpdate > CACHE_DURATION)) {
         try {
             let query = `
                 SELECT DISTINCT ?animalLabel ?image
@@ -276,7 +285,7 @@ async function addQuestionsBirds() {
             const results = response.data.results.bindings;
 
             // Mapeamos los resultados de la consulta
-            cachedQuestions = results.map(result => {
+            cache.data = results.map(result => {
                 // Filtrar aves incorrectas para generar opciones
                 const incorrectBirds = results
                     .filter(b => b.animalLabel.value !== result.animalLabel.value)
@@ -315,17 +324,17 @@ async function addQuestionsBirds() {
             });
 
             // Actualizamos la hora del último caché
-            lastCacheTime = Date.now();
+            cache.lastUpdate = Date.now();
 
             // Eliminar las preguntas anteriores de la base de datos y agregar las nuevas
             await Question.deleteMany({category: 'birds'});
-            await Question.insertMany(cachedQuestions);
+            await Question.insertMany(cache.data);
         } catch (error) {
             console.error("Error fetching or saving bird questions:", error);
         }
     }
 
-    return cachedQuestions;
+    return cache.data;
 }
 
 app.get('/getQuestion', async (req, res) => {
