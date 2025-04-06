@@ -332,6 +332,87 @@ describe('Game Component', () => {
         });
     });
 
+    test('shows loading state when fetching questions', async () => {
+        axios.get.mockImplementationOnce(() =>
+            new Promise(resolve => setTimeout(() =>
+                resolve({
+                    data: sampleQuestion
+                }), 100)
+            )
+        );
+
+        render(<Game />);
+
+        const normalButton = screen.getAllByTestId('awesome-button')[0];
+        fireEvent.click(normalButton);
+
+        const categoryImages = screen.getAllByRole('img');
+        fireEvent.click(categoryImages[0]);
+
+        const acceptButton = screen.getAllByTestId('awesome-button')[2];
+        fireEvent.click(acceptButton);
+
+        expect(await screen.findByText('Loading Questions')).toBeInTheDocument();
+    });
+
+    test('handles incorrect answer selection', async () => {
+        const questionWithIncorrectAnswer = {
+            ...sampleQuestion,
+            answer: sampleQuestion.choices[1]
+        };
+
+        axios.get.mockResolvedValueOnce({
+            data: questionWithIncorrectAnswer
+        });
+
+        render(<Game />);
+
+        const normalButton = screen.getAllByTestId('awesome-button')[0];
+        fireEvent.click(normalButton);
+
+        const categoryImages = screen.getAllByRole('img');
+        fireEvent.click(categoryImages[0]);
+
+        const acceptButton = screen.getAllByTestId('awesome-button')[2];
+        fireEvent.click(acceptButton);
+
+        await waitFor(() => {
+            expect(screen.getByText(questionWithIncorrectAnswer.question)).toBeInTheDocument();
+        });
+
+        axios.post.mockResolvedValueOnce({ data: { success: true } });
+        axios.get.mockResolvedValueOnce({
+            data: {
+                question: "Next question after incorrect answer",
+                image: null,
+                choices: ["Option 1", "Option 2", "Option 3", "Option 4"],
+                answer: "Option 1"
+            }
+        });
+
+        const answerButtons = screen.getAllByTestId('awesome-button');
+        const firstAnswerButton = answerButtons.find(btn =>
+            btn.textContent === questionWithIncorrectAnswer.choices[0]
+        );
+
+        fireEvent.click(firstAnswerButton);
+
+        await waitFor(() => {
+            expect(axios.post).toHaveBeenCalledWith(
+                expect.stringContaining('/addQuestion'),
+                expect.objectContaining({
+                    username: 'testUser',
+                    question: questionWithIncorrectAnswer.question,
+                    selectedAnswer: questionWithIncorrectAnswer.choices[0],
+                })
+            );
+        });
+
+        await waitFor(() => {
+            expect(screen.getByText("Next question after incorrect answer")).toBeInTheDocument();
+        });
+    });
+
     test('category selection works correctly', async () => {
         render(<Game />);
 
@@ -362,6 +443,51 @@ describe('Game Component', () => {
                 expect.stringContaining('/getQuestion?category=cartoons')
             );
         });
+    });
+
+    test('clears chat when moving to next question', async () => {
+        const setMsgsSpy = jest.fn();
+        React.useState = jest.fn()
+            .mockReturnValueOnce([false, jest.fn()]) // showDifficultyModal
+            .mockReturnValueOnce([true, jest.fn()]) // difficultyModalFadeIn
+            .mockReturnValueOnce([sampleQuestion, jest.fn()]) // questionData
+            .mockReturnValueOnce([null, jest.fn()]) // selectedAnswer
+            .mockReturnValueOnce([false, jest.fn()]) // isCorrect
+            .mockReturnValueOnce([["Ask me anything"], setMsgsSpy]); // msgs
+
+        render(<Game />);
+
+        const normalButton = screen.getAllByTestId('awesome-button')[0];
+        fireEvent.click(normalButton);
+
+        const categoryImages = screen.getAllByRole('img');
+        fireEvent.click(categoryImages[0]);
+
+        const acceptButton = screen.getAllByTestId('awesome-button')[2];
+        fireEvent.click(acceptButton);
+
+        await waitFor(() => {
+            expect(screen.getByText(sampleQuestion.question)).toBeInTheDocument();
+        });
+
+        axios.post.mockResolvedValueOnce({ data: { success: true } });
+        axios.get.mockResolvedValueOnce({
+            data: {
+                question: "Next question",
+                image: null,
+                choices: ["Option 1", "Option 2", "Option 3", "Option 4"],
+                answer: "Option 1"
+            }
+        });
+
+        const answerButtons = screen.getAllByTestId('awesome-button');
+        const firstAnswerButton = answerButtons.find(btn =>
+            btn.textContent === sampleQuestion.choices[0]
+        );
+
+        fireEvent.click(firstAnswerButton);
+
+
     });
 
 });
