@@ -58,12 +58,16 @@ Prioritized from highest to lowest, they are as follows:
 
 === Technical Debts
 
-At this stage, since we have only recently started working on this project, we have not yet accumulated *technical debt*. However, given our initial situation, we can anticipate the following:
+At this stage of the project, we have encountered with the following:
 
 [cols="3,3,3", options="header"]
 |===
 | Debt | Description | How to Deal With It
 | *Limited Familiarity with the Base Project* | We have been given a template to work from, but we are not yet fully familiar with its contents, even though this would be highly beneficial. | During the application design process, the team should review what parts of the application were provided and what is missing.
 | *Technology Choices That Not All Members Are Experienced With* | We have chosen to work with certain programming languages in which we still lack experience, aiming to create the best possible application in the long run. | Try to become familiar with these technologies as soon as possible to avoid creating more problems in the future.
-| *The team member that left left us a very broken timer component* | We decided to just make a new one from scratch.
+| *Dealing with bad code from fired member*  | The team member that was fired left us a very broken timer component and other bad practices | We decided to just make a new one from scratch and remade its functionality.
+| *Database schema* | The schemas used for our database may appear complex to a user accessing the application. | We have traded off agility and flexibility in favor of future scalability when structuring the database.
+| *Lack of clear criteria in components* | In certain views of the application, there are elements that could have been separated into their own components. | Extract these pieces of code into their own classes to improve reusability, structure, and visibility.
+| *Poor HTML practices* | Since we are using React, we have over-standardized the use of <div> tags in our page structure. | Improve the structure by replacing unnecessary <div>s with more appropriate tags that better serve their purpose.
+| *Poorly resizable CSS* | The CSS rules applied in certain components and views are not resizable. | Redesign the problematic rules with resizability in mind.
 |===
