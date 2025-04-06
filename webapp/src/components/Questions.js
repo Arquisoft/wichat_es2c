@@ -5,8 +5,21 @@ const QuestionModal = ({ isOpen, closeModal, questions }) => {
     if (!isOpen) return null;
 
     return (
-        <div className={styles.modalOverlay} onClick={closeModal}>
-            <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        <div
+            className={styles.modalOverlay}
+            onClick={closeModal}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    closeModal();
+                }
+            }}
+            role="button"
+            tabIndex={0}
+        >
+            <div
+                className={styles.modalContent}
+                onClick={(e) => e.stopPropagation()}
+            >
                 <h2>Questions:</h2>
 
                 {questions && questions.length > 0 ? (
@@ -40,7 +53,13 @@ const QuestionModal = ({ isOpen, closeModal, questions }) => {
                     <p>There are no questions</p>
                 )}
 
-                <button className={styles.closeButton} onClick={closeModal}>Close</button>
+                <button
+                    className={styles.closeButton}
+                    onClick={closeModal}
+                    accessKey="c"
+                >
+                    Close
+                </button>
             </div>
         </div>
     );

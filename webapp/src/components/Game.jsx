@@ -26,12 +26,16 @@ function Game() {
     const [selectedAnswer, setSelectedAnswer] = useState(null); // Estado para la respuesta seleccionada
     const [isCorrect, setIsCorrect] = useState(false); // Estado para saber si la respuesta es correcta
     const [msgs, setMsgs] = useState(["Ask me anything"]); // Mensajes del chatbot
+    const [showChatBot, setShowChatBot] = useState(false);
     const [open, setOpen] = useState(false);
     const [buttonsActive, setButtonsActive] = useState(true);
     const [timeOut, setTimeOut] = useState(false); // Estado para controlar el tiempo
     const [showTimeOutModal, setShowTimeOutModal] = useState(false); // Modal para el tiempo agotado
+    const [timerReset, setTimerReset] = useState(false); // Estado para reiniciar el contador
     const [fadeIn, setFadeIn] = useState(false);
     const [timeLeft, setTimeLeft] = useState(60); // Tiempo inicial
+    const [reset, setReset] = useState(false);
+    const [totalTime, setTotalTime] = useState(0); // Nuevo estado para el tiempo total de la partida
     const [gameStartTime, setGameStartTime] = useState(null); // Nuevo estado para registrar cuando inicia la partida
     const [finished, setFinished] = useState(false);
     const [questionQueue, setQuestionQueue] = useState([]);
@@ -192,7 +196,7 @@ function Game() {
 
         await fetchNewQuestion(category);
         setButtonsActive(true);
-        
+
     };
 
     const fetchNewQuestion = (category) => {
@@ -240,6 +244,11 @@ function Game() {
             setFadeIn(false);
         }
     }, [open]);
+
+
+    //useEffect(() => {
+      //  fetchNewQuestion();
+    ///}, [apiEndpointWiki]);
 
     const handleHomeClick = () => {
         window.location.href = '/home';
@@ -361,61 +370,68 @@ function Game() {
                         </div>
                         <h1 className={styles.winnerTitle} style={{ marginTop: '10px' }}>Select category</h1>
 
-                        <div style={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            flexWrap: 'wrap',
-                            gap: '20px',
-                            margin: '20px 0'
-                        }}>
-                            {categoryOptions.map(({ key, label, image }) => (
-                                <div
-                                    key={key}
-                                    onClick={() => setSelectedCategory(key)}
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        flexWrap: 'wrap',
+                        gap: '20px',
+                        margin: '20px 0'
+                    }}>
+                        {categoryOptions.map(({ key, label, image }) => (
+                            <div
+                                key={key}
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => setSelectedCategory(key)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        setSelectedCategory(key);
+                                    }
+                                }}
+                                style={{
+                                    width: 100,
+                                    height: 100,
+                                    borderRadius: '50%',
+                                    border: selectedCategory === key ? '4px solid #00bcd4' : '2px solid #ddd',
+                                    background: selectedCategory === key
+                                        ? 'linear-gradient(145deg, #e0f7fa, #ffffff)'
+                                        : 'linear-gradient(145deg, #f0f0f0, #ffffff)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s ease',
+                                    boxShadow: selectedCategory === key
+                                        ? '0 4px 15px rgba(0, 188, 212, 0.5)'
+                                        : '0 2px 10px rgba(0, 0, 0, 0.1)',
+                                    position: 'relative',
+                                    transform: selectedCategory === key ? 'scale(1.05)' : 'scale(1)',
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.08)'}
+                                onMouseLeave={(e) => e.currentTarget.style.transform = selectedCategory === key ? 'scale(1.05)' : 'scale(1)'}
+                            >
+                                <img
+                                    src={image}
+                                    alt={label}
                                     style={{
-                                        width: 100,
-                                        height: 100,
-                                        borderRadius: '50%',
-                                        border: selectedCategory === key ? '4px solid #00bcd4' : '2px solid #ddd',
-                                        background: selectedCategory === key
-                                            ? 'linear-gradient(145deg, #e0f7fa, #ffffff)'
-                                            : 'linear-gradient(145deg, #f0f0f0, #ffffff)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.3s ease',
-                                        boxShadow: selectedCategory === key
-                                            ? '0 4px 15px rgba(0, 188, 212, 0.5)'
-                                            : '0 2px 10px rgba(0, 0, 0, 0.1)',
-                                        position: 'relative',
-                                        transform: selectedCategory === key ? 'scale(1.05)' : 'scale(1)',
+                                        width: '60%',
+                                        height: '60%',
+                                        objectFit: 'contain',
                                     }}
-                                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.08)'}
-                                    onMouseLeave={(e) => e.currentTarget.style.transform = selectedCategory === key ? 'scale(1.05)' : 'scale(1)'}
-                                >
-                                    <img
-                                        src={image}
-                                        alt={label}
-                                        style={{
-                                            width: '60%',
-                                            height: '60%',
-                                            objectFit: 'contain',
-                                        }}
-                                    />
-                                    <div style={{
-                                        position: 'absolute',
-                                        bottom: -25,
-                                        textAlign: 'center',
-                                        width: '100%',
-                                        fontSize: '0.9rem',
-                                        color: selectedCategory === key ? '#007BFF' : '#333'
-                                    }}>
-                                        {label}
-                                    </div>
+                                />
+                                <div style={{
+                                    position: 'absolute',
+                                    bottom: -25,
+                                    textAlign: 'center',
+                                    width: '100%',
+                                    fontSize: '0.9rem',
+                                    color: selectedCategory === key ? '#007BFF' : '#333'
+                                }}>
+                                    {label}
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
+                    </div>
 
                         {/* Botón aceptar */}
                         <AwesomeButton
@@ -450,8 +466,8 @@ function Game() {
                     {questionData && (
                         <div className={styles.questionContainer}>
                             <p>{questionData.question}</p>
-                            <CountdownTimer 
-                            ref={timerComponent} 
+                            <CountdownTimer
+                            ref={timerComponent}
                             maxTime={difficulty === 1 ? 60 : 45}
                             onTimeOut={handleTimeOut}
                             ></CountdownTimer>
