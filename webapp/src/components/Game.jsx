@@ -166,6 +166,8 @@ function Game() {
 
 
         const isAnswerCorrect = selectedOption === questionData.correctAnswer;
+        console.log(questionData);
+        console.log(selectedOption);
 
 
         const apiRequest = axios.post(`${apiEndpointGame}/addQuestion`, {
@@ -465,15 +467,12 @@ function Game() {
                                     key={index}
                                     type="secondary"
                                     active={buttonsActive && !timeOut} // Desactivar botones si el tiempo se acaba o están deshabilitados
-                                    className={`${styles.awsBtn} 
-                                    selectedAnswer === option
-                                        ? isCorrect
-                                            ? styles.buttonActive// Estilo para respuesta correcta
+                                    className={`${styles.awsBtn} ${
+                                    option === questionData.correctAnswer
+                                        ? styles.buttonActive// Estilo para respuesta correcta
                                             : styles.buttonInactive // Estilo para respuesta incorrecta
-                                        : ""
                                         
-                                     */
-                                }`}
+                                    }`}
                                     onPress={() => handleButtonClick(index, selectedCategory)}
                                 >
                                     {option}
@@ -481,8 +480,6 @@ function Game() {
                             ))}
                         </div>
                     )}
-
-
 
                     {/* Sección para mostrar el chatbot */}
                     <div className={styles.chatContainer}>
