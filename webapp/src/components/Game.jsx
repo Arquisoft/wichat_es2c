@@ -10,6 +10,7 @@ import { HomeButton, ChartButton, ReplayButton, ButtonContainer } from './ModelB
 import PopChat from './ChatBot/Popchat';
 import Timer from './Timer';
 import axios from "axios";
+import {CircularProgress} from "@mui/material";
 
 function Game({ onNavigate }) {
     // Replace react-router-dom's useNavigate with a prop-based navigation
@@ -47,6 +48,8 @@ function Game({ onNavigate }) {
         { key: "capitals", label: "Capitals", image: "/capitals.png" },
         { key: "sports", label: "Sports", image: "/sports.png" },
     ];
+    const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
+    const [initialLoad, setInitialLoad] = useState(true);
 
 
     useEffect(() => {
@@ -58,6 +61,7 @@ function Game({ onNavigate }) {
     }, []);
 
     const preloadQuestions = async (category,count = 5) => {
+        setIsLoadingQuestions(true);
         try {
             const questions = await Promise.all(
                 Array(count).fill().map(() =>
@@ -75,6 +79,8 @@ function Game({ onNavigate }) {
             setQuestionQueue(processedQuestions);
         } catch (error) {
             console.error("Error preloading questions:", error);
+        } finally {
+            setIsLoadingQuestions(false); // Desactivar loading
         }
     };
 
@@ -207,24 +213,27 @@ function Game({ onNavigate }) {
         }
     };
     const fetchNewQuestionOG = async (category) => {
-        try {
-            const response = await axios.get(`${apiEndpointWiki}/getQuestion?category=${category}`)
+        if (initialLoad) {
+            setIsLoadingQuestions(true); // Solo mostrar loading en carga inicial
+        }
 
-            if (!response.data) {
-                console.error('No data received from getQuestion endpoint');
-                return;
-            }
+        try {
+            const response = await axios.get(`${apiEndpointWiki}/getQuestion?category=${category}`);
+
             setQuestionData({
                 question: response.data.question,
                 image: response.data.image || null,
                 choices: response.data.choices || [],
                 correctAnswer: response.data.answer,
             });
-            setSelectedAnswer(null);
-            setIsCorrect(false);
-            setTimerReset(true);
+
         } catch (error) {
-            console.error("Error fetching question:", error.response ? error.response.data : error.message);
+            console.error("Error fetching question:", error);
+        } finally {
+            if (initialLoad) {
+                setInitialLoad(false);
+                setIsLoadingQuestions(false);
+            }
         }
     };
 
@@ -292,6 +301,15 @@ function Game({ onNavigate }) {
     return (
 
         <div className={styles.containerLayout}>
+
+            {isLoadingQuestions && (
+                <div className={styles.loadingOverlay}>
+                    <div className={styles.loadingContent}>
+                        <CircularProgress color="primary" size={60} />
+                        <p className={styles.loadingText}>Loading Questions</p>
+                    </div>
+                </div>
+            )}
             <Modal
                 disableEnforceFocus={true}
                 open={showDifficultyModal}
@@ -482,7 +500,7 @@ function Game({ onNavigate }) {
                     </div>
                 )}
 
-                
+
 
                 {/* Sección para mostrar el chatbot */}
                 <div className={styles.chatContainer}>
