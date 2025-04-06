@@ -7,13 +7,12 @@ import Box from '@mui/material/Box';
 import { HomeButton, ReplayButton, ChartButton, ButtonContainer } from './ModelButtons';
 import Nav from './Nav';
 import PopChat from './ChatBot/Popchat';
-import Timer from './Timer';
 import CountdownTimer from './CountdownTimer';
 import axios from "axios";
 import { CircularProgress } from "@mui/material";
 
 function Game() {
-    // Replace react-router-dom's useNavigate with a prop-based navigation
+
 
     //Revisar si es correcto tener esto aqui (creo que de esta forma de saltan el gateway service)
     const apiEndpointGame = process.env.GAME_SERVICE_API_ENDPOINT || 'http://localhost:8004';
@@ -508,20 +507,26 @@ function Game() {
                                 top: '50%',
                                 left: '50%',
                                 transform: 'translate(-50%, -50%)',
-                                width: 400,
+                                width: '80%',
+                                maxWidth: 600,
+                                minHeight: 400,
                                 bgcolor: 'background.paper',
-                                borderRadius: '10px',
+                                border: '2px solid #000',
+                                borderRadius: 4,
                                 boxShadow: 24,
-                                p: 4,
-                                textAlign: 'center',
+                                p:4,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
                             }}
                         >
                             <h2>⏳ ¡Time is out!</h2>
-                            <p>Do you want to try it again?</p>
+                            <h2>Do you want to try it again?</h2>
                             <ButtonContainer>
-                            <HomeButton onClick={handleHomeClick}></HomeButton>
-                            <ChartButton onClick={handleChartClick}></ChartButton>
-                            <ReplayButton onClick={handleReplayClick}></ReplayButton>
+                                <HomeButton onClick={handleHomeClick}></HomeButton>
+                                <ChartButton onClick={handleChartClick}></ChartButton>
+                                <ReplayButton onClick={handleReplayClick}></ReplayButton>
                             </ButtonContainer>
                         </Box>
                     </Modal>
