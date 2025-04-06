@@ -36,8 +36,8 @@ endif::arc42help[]
 |===
 |Term |Definition
 
-|<TypeScript>
-|<TypeScript is a strongly typed, object-oriented, compiled programming language that builds on JavaScript by adding static typing. Is the programming lenguage we are using>
+|<JavaScript>
+|<JavaScript is a lightweight, interpreted programming language that follows the object-oriented paradigm. It is the language we are using for this project.>
 
 |<Node.js>
 |<An open-source, cross-platform runtime environment that allows you to run JavaScript(or TypeScript in our case) code outside of a web browser. We are using it in the back-end. We are using it in the front-end part of the app.>
@@ -61,5 +61,5 @@ endif::arc42help[]
 |<The server-side of an application, where data processing, storage, and business logic happen, and it communicates with the front-end.>
 
 |<Wikidata>
-|<Wikidata is a free, collaborative, multilingual knowledge base that stores structured data.>
+|<Wikidata is a free, collaborative, multilingual knowledge database that stores structured data.>
 |===
