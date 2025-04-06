@@ -9,4 +9,3 @@ Feature: Registering and logging in as a new user
     Given The user is on the login page
     When They fill the login form with the same credentials
     Then They should be redirected to the home page
-

@@ -15,9 +15,9 @@ try {
     const swaggerDocument = yaml.load(fs.readFileSync('./swagger.yaml', 'utf8'));
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     console.log('Swagger UI disponible en /api-docs');
-  } catch (e) {
-    console.error('Error al cargar la documentación Swagger:', e);
-  }
+} catch (e) {
+    console.error('Error loading Swagger documentation:', e);
+}
 
 // Connect to MongoDB
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/userdb';
@@ -26,18 +26,16 @@ mongoose.connect(mongoUri);
 
 app.get('/userinfo', async (req, res) => {
     try {
-        console.log('Intentando recuperar usuarios directamente desde la colección...');
         const users = await mongoose.connection.db.collection('users').find().toArray();
-        console.log(`Encontrados ${users.length} usuarios directamente`);
 
         const safeUsers = users.map(user => {
-            const { password, ...userData } = user;
+            const { password, __v, ...userData } = user;
             return userData;
         });
 
         res.json(safeUsers);
     } catch (error) {
-        console.error('Error al recuperar usuarios directamente:', error);
+        console.error('Error searching for users:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -45,22 +43,123 @@ app.get('/userinfo', async (req, res) => {
 app.get('/userinfo/:username', async (req, res) => {
     try {
         const username = req.params.username;
-        console.log(`Buscando usuario con username: ${username}`);
 
         const user = await mongoose.connection.db.collection('users').findOne({ username });
 
         if (!user) {
-            console.log(`Usuario con username ${username} no encontrado`);
-            return res.status(404).json({ error: 'Usuario no encontrado' });
+            console.log(`User ${username} not found`);
+            return res.status(404).json({ error: 'User not found' });
         }
 
-        console.log(`Usuario ${username} encontrado`);
-
-        const { password, ...userData } = user;
+        const { password, __v, ...userData } = user;
 
         res.json(userData);
     } catch (error) {
-        console.error(`Error al buscar usuario ${req.params.username}:`, error);
+        console.error(`Error searching for user ${req.params.username}:`, error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/userinfo/matches/:username', async (req, res) => {
+    try {
+        const username = req.params.username;
+
+        const user = await mongoose.connection.db.collection('users').findOne({ username });
+
+        if (!user) {
+            console.log(`User ${username} not found`);
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const matches = await mongoose.connection.db.collection('matches')
+            .find({ username })
+            .sort({ date: -1 })
+            .toArray();
+
+            const formattedMatches = matches.map(match => {
+                let correctAnswers = 0;
+                let wrongAnswers = 0;
+    
+                // Contar respuestas correctas e incorrectas
+                if (match.questions && Array.isArray(match.questions)) {
+                    match.questions.forEach(question => {
+                        if (question.answers && Array.isArray(question.answers)) {
+                            question.answers.forEach(answer => {
+                                if (answer.selected) {
+                                    if (answer.correct) {
+                                        correctAnswers++;
+                                    } else {
+                                        wrongAnswers++;
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+                return {
+                    id: match._id,
+                    username: match.username,
+                    date: match.date,
+                    time: match.time,
+                    score: match.score,
+                    difficulty: match.difficulty,
+                    correctAnswers,
+                    wrongAnswers,
+                    questions: match.questions
+                };
+            });
+
+        res.json(formattedMatches);
+    } catch (error) {
+        console.error(`Error searching for matches of the user ${req.params.username}:`, error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/userinfo/ranking/bestScore', async (req, res) => {
+    try {
+        const users = await mongoose.connection.db.collection('users')
+            .find({
+                "statistics.bestScore": { $exists: true }
+            })
+            .sort({ "statistics.bestScore": -1 })
+            .limit(5)
+            .toArray();
+
+        const rankingUsers = users.map((user, index) => {
+            const { password, __v, ...safeUserData } = user;
+            return {
+                rank: index + 1,
+                ...safeUserData
+            };
+        });
+        res.json(rankingUsers);
+    } catch (error) {
+        console.error('Error generating best score ranking:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/userinfo/ranking/morePlayed', async (req, res) => {
+    try {
+        const users = await mongoose.connection.db.collection('users')
+            .find({
+                "statistics.gamesPlayed": { $exists: true }
+            })
+            .sort({ "statistics.gamesPlayed": -1 })
+            .limit(5)
+            .toArray();
+
+        const rankingUsers = users.map((user, index) => {
+            const { password, __v, ...safeUserData } = user;
+            return {
+                rank: index + 1,
+                ...safeUserData
+            };
+        });
+        res.json(rankingUsers);
+    } catch (error) {
+        console.error('Error generating more played ranking:', error);
         res.status(500).json({ error: error.message });
     }
 });

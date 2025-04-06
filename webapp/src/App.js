@@ -6,6 +6,7 @@ import Home from "./Home";
 import Login from "./components/Login";
 import AddUser from "./components/AddUser";
 import History from "./views/History";
+import Leaderboard from "./views/Leaderboard";
 import Game from "./components/Game"
 
 
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/signup" element={<AddUser />} />
                 <Route path="/register" element={<AddUser />} />
                 <Route path="/history" element={<History />} />
+                <Route path="/Leaderboard" element={<Leaderboard />} />
                 <Route path="/game" element={<Game />} />
             </Routes>
         </>

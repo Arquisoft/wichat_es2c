@@ -1,50 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AwesomeButton } from 'react-awesome-button';
 import 'react-awesome-button/dist/styles.css';
 import styles from './Game.module.css';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { HomeButton, ChartButton, ReplayButton, ButtonContainer } from './ModelButtons';
-
 import PopChat from './ChatBot/Popchat';
 import Timer from './Timer';
 import axios from "axios";
 
-
 function Game() {
-    const navigate = useNavigate();
+    // Replace react-router-dom's useNavigate with a prop-based navigation
+
+    //Revisar si es correcto tener esto aqui (creo que de esta forma de saltan el gateway service)
     const apiEndpointGame = process.env.GAME_SERVICE_API_ENDPOINT || 'http://localhost:8004';
     const apiEndpointWiki = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:3005';
+    const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+
     const [difficulty, setDifficulty] = useState(1);
     const [showDifficultyModal, setShowDifficultyModal] = useState(true);
     const [difficultyModalFadeIn, setDifficultyModalFadeIn] = useState(true);
     const [questionData, setQuestionData] = useState(null); // Estado para la pregunta actual
     const [selectedAnswer, setSelectedAnswer] = useState(null); // Estado para la respuesta seleccionada
     const [isCorrect, setIsCorrect] = useState(false); // Estado para saber si la respuesta es correcta
-    const [msgs, setMsgs] = useState(["Guayaba"]); // Mensajes del chatbot
+    const [msgs, setMsgs] = useState(["Ask me anything"]); // Mensajes del chatbot
+    const [showChatBot, setShowChatBot] = useState(false);
     const [open, setOpen] = useState(false);
     const [buttonsActive, setButtonsActive] = useState(true);
     const [timeOut, setTimeOut] = useState(false); // Estado para controlar el tiempo
     const [showTimeOutModal, setShowTimeOutModal] = useState(false); // Modal para el tiempo agotado
     const [timerReset, setTimerReset] = useState(false); // Estado para reiniciar el contador
-    const [showChatBot, setShowChatBot] = useState(false);
     const [fadeIn, setFadeIn] = useState(false);
     const [timeLeft, setTimeLeft] = useState(60); // Tiempo inicial
     const [reset, setReset] = useState(false);
     const [totalTime, setTotalTime] = useState(0); // Nuevo estado para el tiempo total de la partida
     const [gameStartTime, setGameStartTime] = useState(null); // Nuevo estado para registrar cuando inicia la partida
-    const [finished,setFinished] = useState(false);
+    const [finished, setFinished] = useState(false);
     const [questionQueue, setQuestionQueue] = useState([]);
-    const [selectedDifficulty, setSelectedDifficulty] = useState(null);
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const categoryOptions = [
-        { key: "birds", label: "Birds", image: "/birds.png" },
-        { key: "cartoons", label: "Cartoons", image: "/cartoon.png" },
-        { key: "capitals", label: "Capitals", image: "/capitals.png" },
-        { key: "sports", label: "Sports", image: "/sports.png" },
-    ];
-
 
     useEffect(() => {
         if (showDifficultyModal) {
@@ -54,11 +46,11 @@ function Game() {
         }
     }, []);
 
-    const preloadQuestions = async (category,count = 5) => {
+    const preloadQuestions = async (count = 5) => {
         try {
             const questions = await Promise.all(
                 Array(count).fill().map(() =>
-                    axios.get(`${apiEndpointWiki}/getQuestion?category=${category}`)
+                    axios.get(`${apiEndpointWiki}/getQuestion`)
                 )
             );
 
@@ -75,9 +67,9 @@ function Game() {
         }
     };
 
-   // useEffect(() => {
-     //   preloadQuestions();
-    //}, []);
+    useEffect(() => {
+        preloadQuestions();
+    }, []);
 
     useEffect(() => {
         if (questionData && questionData.image) {
@@ -88,7 +80,7 @@ function Game() {
         }
     }, [questionData?.image]);
 
-    const handleDifficultySelect = (level, category) => {
+    const handleDifficultySelect = (level) => {
         setDifficulty(level);
         setTimeLeft(level === 1 ? 60 : 45); // 60s en Normal, 45s en dificil
         setDifficultyModalFadeIn(false);
@@ -97,10 +89,8 @@ function Game() {
             addMatch(level);
             setGameStartTime(Date.now());
             setTotalTime(0);
-            fetchNewQuestion(category); // 👈 también aquí
         }, 300);
     };
-
 
     const addMatch = async (diffLevel) => {
         try {
@@ -114,37 +104,64 @@ function Game() {
         }
     };
 
+    const getMessage = async (userMsg) => {
+        try {
+            // Verificar que tenemos datos de la pregunta actual
+            if (!questionData) {
+                return "No hay una pregunta activa en este momento.";
+            }
 
+            //const response = await axios.post(`${apiEndpoint}/askllm`, {
+            const response = await axios.post(`${apiEndpoint}/askllm`, {
+                model: 'empathy', // O el modelo que prefieras
+                userQuestion: userMsg, // La pregunta que hace el usuario al chatbot
+                gameQuestion: questionData.question, // La pregunta actual del juego
+                answers: questionData.choices, // Las opciones disponibles
+                correctAnswer: questionData.correctAnswer // La respuesta correcta
+            });
 
-    const getMessage = (msg) => {
-        //msgs.push(msg);
-        setMsgs((prevMsgs) => [...prevMsgs, msg]);
+            return response.data.answer;
+        } catch (error) {
+            console.error("Error al obtener respuesta del LLM:", error);
+            return "Lo siento, no puedo proporcionarte una pista en este momento.";
+        }
     };
 
+    const handleNewMessage = (message) => {
+        setMsgs(prevMsgs => [...prevMsgs, message]);
+    };
 
+    const handleBotResponse = (response) => {
+        setMsgs(prevMsgs => [...prevMsgs, response]);
+    };
 
-    const handleButtonClick = async (index, category) => {
+    //Al responder pregunta o acabarse el juego, se limpia el chat para que no se acumule info entre preguntas diferentes
+    const clearChat = () => {
+        setMsgs(["Ask me anything"]);
+    };
+
+    const handleButtonClick = async (index) => {
         if (!questionData) return;
+
+        //Limpio el chatbot
+        clearChat();
 
         setButtonsActive(false);
 
         const selectedOption = questionData.choices[index];
         setSelectedAnswer(selectedOption);
 
-
         const isAnswerCorrect = selectedOption === questionData.correctAnswer;
-
 
         const apiRequest = axios.post(`${apiEndpointGame}/addQuestion`, {
             username: localStorage.getItem("username"),
-            question: questionData.choices,
+            question: questionData.question,
             correctAnswer: questionData.choices.indexOf(questionData.correctAnswer),
             answers: questionData.choices,
             selectedAnswer: selectedOption,
         }).catch(error => {
             console.error("Error submitting answer:", error);
         });
-
 
         if (isAnswerCorrect) {
             setIsCorrect(true);
@@ -156,32 +173,28 @@ function Game() {
             setTimeLeft(prevTime => Math.max(prevTime + bonusTime, 0));
         }
 
-        await fetchNewQuestion(category);
+        await fetchNewQuestion();
         setButtonsActive(true);
         setTimerReset(prev => !prev);
     };
 
-    const handleChatBotToggle = () => {
-        setShowChatBot(!showChatBot);
-    };
-
-    const fetchNewQuestion = (category) => {
+    const fetchNewQuestion = () => {
         if (questionQueue.length > 0) {
             const [nextQuestion, ...remainingQuestions] = questionQueue;
             setQuestionData(nextQuestion);
             setQuestionQueue(remainingQuestions);
 
             if (remainingQuestions.length < 2) {
-                preloadQuestions(category);
+                preloadQuestions();
             }
         } else {
-            fetchNewQuestionOG(category);
+            fetchNewQuestionOG();
         }
     };
-    const fetchNewQuestionOG = async (category) => {
-        try {
-            const response = await axios.get(`${apiEndpointWiki}/getQuestion?category=${category}`)
 
+    const fetchNewQuestionOG = async () => {
+        try {
+            const response = await axios.get(`${apiEndpointWiki}/getQuestion`);
             if (!response.data) {
                 console.error('No data received from getQuestion endpoint');
                 return;
@@ -208,12 +221,14 @@ function Game() {
         }
     }, [open]);
 
+    useEffect(() => {
+        fetchNewQuestion();
+    }, [apiEndpointWiki]);
 
-    //useEffect(() => {
-      //  fetchNewQuestion();
-    ///}, [apiEndpointWiki]);
+    const handleHomeClick = () => {
+        window.location.href = '/home';
+    };
 
-    const handleHomeClick = () => navigate('/');
     const handleReplayClick = () => {
         setTimeOut(false);
         setShowTimeOutModal(false);
@@ -222,13 +237,11 @@ function Game() {
         addMatch(difficulty);
         const newInitialTime = difficulty === 1 ? 60 : 45;
         setTimeLeft(newInitialTime);
-        fetchNewQuestion(selectedCategory);
+        fetchNewQuestion();
         setGameStartTime(Date.now());
         setTotalTime(0);
         setTimerReset(prev => !prev);
     };
-
-
 
     const handleTimeOut = () => {
         if(!finished) {
@@ -254,10 +267,7 @@ function Game() {
         }
     };
 
-
-
     return (
-
         <div className={styles.containerLayout}>
             <Modal
                 disableEnforceFocus={true}
@@ -276,7 +286,7 @@ function Game() {
                         transform: 'translate(-50%, -50%)',
                         width: '80%',
                         maxWidth: 600,
-                        minHeight: 400,
+                        minHeight: 300,
                         bgcolor: 'background.paper',
                         border: '2px solid #000',
                         borderRadius: 4,
@@ -289,111 +299,29 @@ function Game() {
                     }}
                 >
                     <h1 className={styles.winnerTitle}>Select difficulty level</h1>
-
-                    {/* Dificultad */}
                     <div style={{
                         display: 'flex',
                         justifyContent: 'center',
                         gap: '20px',
-                        margin: '20px 0'
+                        margin: '30px 0'
                     }}>
                         <AwesomeButton
-                            type={selectedDifficulty === 1 ? "primary" : "secondary"}
+                            type="primary"
                             size="large"
-                            onPress={() => setSelectedDifficulty(1)}
-                            style={{
-                                minWidth: '150px',
-                                fontSize: '1.2rem',
-                                opacity: selectedDifficulty === 1 ? 1 : 0.6,
-                            }}
+                            onPress={() => handleDifficultySelect(1)}
+                            style={{minWidth: '150px', fontSize: '1.2rem'}}
                         >
                             Normal
                         </AwesomeButton>
                         <AwesomeButton
-                            type={selectedDifficulty === 2 ? "primary" : "secondary"}
+                            type="secondary"
                             size="large"
-                            onPress={() => setSelectedDifficulty(2)}
-                            style={{
-                                minWidth: '150px',
-                                fontSize: '1.2rem',
-                                opacity: selectedDifficulty === 2 ? 1 : 0.6,
-                            }}
+                            onPress={() => handleDifficultySelect(2)}
+                            style={{minWidth: '150px', fontSize: '1.2rem'}}
                         >
                             Hard
                         </AwesomeButton>
                     </div>
-                    <h1 className={styles.winnerTitle} style={{ marginTop: '10px' }}>Select category</h1>
-
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        flexWrap: 'wrap',
-                        gap: '20px',
-                        margin: '20px 0'
-                    }}>
-                        {categoryOptions.map(({ key, label, image }) => (
-                            <div
-                                key={key}
-                                onClick={() => setSelectedCategory(key)}
-                                style={{
-                                    width: 100,
-                                    height: 100,
-                                    borderRadius: '50%',
-                                    border: selectedCategory === key ? '4px solid #00bcd4' : '2px solid #ddd',
-                                    background: selectedCategory === key
-                                        ? 'linear-gradient(145deg, #e0f7fa, #ffffff)'
-                                        : 'linear-gradient(145deg, #f0f0f0, #ffffff)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.3s ease',
-                                    boxShadow: selectedCategory === key
-                                        ? '0 4px 15px rgba(0, 188, 212, 0.5)'
-                                        : '0 2px 10px rgba(0, 0, 0, 0.1)',
-                                    position: 'relative',
-                                    transform: selectedCategory === key ? 'scale(1.05)' : 'scale(1)',
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.08)'}
-                                onMouseLeave={(e) => e.currentTarget.style.transform = selectedCategory === key ? 'scale(1.05)' : 'scale(1)'}
-                            >
-                                <img
-                                    src={image}
-                                    alt={label}
-                                    style={{
-                                        width: '60%',
-                                        height: '60%',
-                                        objectFit: 'contain',
-                                    }}
-                                />
-                                <div style={{
-                                    position: 'absolute',
-                                    bottom: -25,
-                                    textAlign: 'center',
-                                    width: '100%',
-                                    fontSize: '0.9rem',
-                                    color: selectedCategory === key ? '#007BFF' : '#333'
-                                }}>
-                                    {label}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Botón aceptar */}
-                    <AwesomeButton
-                        type="primary"
-                        size="medium"
-                        disabled={selectedDifficulty === null || selectedCategory === null}
-                        onPress={() => {
-                            if (selectedDifficulty !== null && selectedCategory !== null) {
-                                handleDifficultySelect(selectedDifficulty, selectedCategory);
-                            }
-                        }}
-                        style={{ marginTop: '10px', fontSize: '1rem', minWidth: '120px' }}
-                    >
-                        Accept
-                    </AwesomeButton>
                 </Box>
             </Modal>
             {/* Sección de la imagen */}
@@ -422,9 +350,8 @@ function Game() {
                                 difficulty={difficulty}
                             />
                         )}
-                          </div>
-                      )}
-
+                    </div>
+                )}
 
                 {/* Opciones en Grid */}
                 {questionData && (
@@ -443,7 +370,7 @@ function Game() {
                                         
                                      */
                                 }`}
-                                onPress={() => handleButtonClick(index, selectedCategory)}
+                                onPress={() => handleButtonClick(index)}
                             >
                                 {option}
                             </AwesomeButton>
@@ -451,11 +378,15 @@ function Game() {
                     </div>
                 )}
 
-                
-
                 {/* Sección para mostrar el chatbot */}
                 <div className={styles.chatContainer}>
-                    <PopChat messages={msgs} getMessage={getMessage}/>
+                    <PopChat
+                        messages={msgs}
+                        getMessage={getMessage}
+                        questionData={questionData}
+                        onNewMessage={handleNewMessage}
+                        onBotResponse={handleBotResponse}
+                    />
                 </div>
 
                 {/* Modal para el tiempo agotado */}

@@ -2,7 +2,7 @@ const request = require('supertest');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 let app;
-const { User, Match } = require('./game-model');
+const { User, Match, Statistics } = require('./game-model');
 
 let mongoServer;
 
@@ -17,6 +17,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
+    await new Promise(resolve => app.close(resolve));
     await mongoose.connection.dropDatabase();
     await mongoose.disconnect();
     await mongoServer.stop();
@@ -149,8 +150,6 @@ describe('Game Service', () => {
     describe('POST /endMatch', () => {
         it('should end a match and update user statistics', async () => {
             const user = await createTestUser();
-
-            // Create a match with questions
             const match = new Match({
                 username: 'testuser',
                 difficulty: 1

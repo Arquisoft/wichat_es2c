@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const { Match, Answer, Statistics, User, Question } = require('./game-model');
+const { Match, User } = require('./game-model');
 const app = express();
 const port = 8004;
 const cors = require('cors');
@@ -232,9 +232,10 @@ const server = app.listen(port, () => {
   console.log(`Game Service listening at http://localhost:${port}`);
 });
 
-server.on('close', () => {
-  // Close the Mongoose connection
-  mongoose.connection.close();
+process.on('SIGTERM', () => {
+  server.close(() => {
+    mongoose.connection.close();
+  });
 });
 
 module.exports = server;

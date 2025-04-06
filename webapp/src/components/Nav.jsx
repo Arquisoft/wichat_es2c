@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Nav.module.css";
-import { Link, useNavigate } from "react-router-dom";
 
 // Iconos
 import { IoGameController } from 'react-icons/io5';
@@ -40,19 +39,17 @@ export default function Nav() {
 
     return (
         <nav className={styles.navContainer}>
-            <Link to="/home">
+            <a href="/home">
                 <img src="/wiChatLogos/LogoWichat2_512.png" alt="Logo" className={styles.logo} />
-            </Link>
-
-            
+            </a>
 
             <div className={styles.navGeneralLinks}>
-                <Link to={isLoggedIn ? "/game" : "/login"} className={styles.navLink}>
+                <a href={isLoggedIn ? "/game" : "/login"} className={styles.navLink}>
                     <IoGameController style={{ marginRight: '5px' }} /> Play
-                </Link>
-                <Link to="/leaderboard" className={styles.navLink}>
+                </a>
+                <a href="/leaderboard" className={styles.navLink}>
                     <MdLeaderboard style={{ marginRight: '5px' }} /> Leaderboard
-                </Link>
+                </a>
             </div>
 
             {isLoggedIn && (
@@ -60,9 +57,9 @@ export default function Nav() {
             )}
             {isLoggedIn && (
                 <div className={styles.navPersonalLinks}>
-                    <Link to="/history" className={styles.navLink}>
+                    <a href="/history" className={styles.navLink}>
                         <CgNotes style={{ marginRight: '5px' }} /> History
-                    </Link>
+                    </a>
                 </div>
             )}
 
@@ -89,31 +86,31 @@ export default function Nav() {
                             />
                         </div>
 
-                    {dropdownOpen && (
-                        <div className={styles.dropdownMenu}>
-                            <div className={styles.dropdownContent}>
-                                <Link
-                                    to="/login"
-                                    className={`${styles.dropdownItem} ${styles.logoutButton}`}
-                                    onClick={(e) => {
-                                        e.preventDefault(); // Prevenir la navegación inmediata
-                                        handleLogout();     // Ejecutar la lógica de cierre de sesión
-                                    }}
-                                >
-                                    Log out
-                                </Link>
+                        {dropdownOpen && (
+                            <div className={styles.dropdownMenu}>
+                                <div className={styles.dropdownContent}>
+                                    <a
+                                        href="/login"
+                                        className={`${styles.dropdownItem} ${styles.logoutButton}`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            handleLogout();
+                                        }}
+                                    >
+                                        Log out
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                    )}
-                </div>
-            ) : (
+                        )}
+                    </div>
+                ) : (
                     <div className={styles.authLinks}>
-                        <Link to="/login" className={styles.authLink}>
+                        <a href="/login" className={styles.authLink}>
                             <FaSignInAlt style={{ marginRight: '8px' }} /> Log in
-                        </Link>
-                        <Link to="/signup" className={styles.authLink}>
+                        </a>
+                        <a href="/signup" className={styles.authLink}>
                             <FaUserPlus style={{ marginRight: '8px' }} /> Register
-                        </Link>
+                        </a>
                     </div>
                 )}
             </div>

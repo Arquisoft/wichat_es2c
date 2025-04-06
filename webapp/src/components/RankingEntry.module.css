@@ -1,0 +1,45 @@
+.rankingEntryContainer {
+    display: grid;
+    grid-template-columns: 0.5fr 2fr 1fr 1fr 1.2fr;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    transition: background 0.2s ease-in-out;
+  }
+  
+  .rankingEntryContainer:hover {
+    background-color: #eaeaea;
+  }
+  
+  .rank {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .username {
+    font-weight: 600;
+    color: #333;
+    
+  }
+  
+  .stat {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #444;
+  }
+  
+
+  .gold {
+    color: rgba(197, 168, 0, 0.801);
+    font-weight: bold;
+  }
+  .silver {
+    color: silver;
+  }
+  .bronze {
+    color: #cd7f32;
+  }
