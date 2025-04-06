@@ -51,7 +51,7 @@ endif::arc42help[]
 |====
 | Restriction | Explanation
 
-| Team of 5 people | The work will be distributed among the 5 members of the group.
+| Team of 4 people | The work will be distributed among the 4 members of the group.
 
 | Reports | Every week during the class practice time, we must write minutes documenting what we have done and the next steps to follow.
 

@@ -117,10 +117,8 @@ const History = () => {
   //const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   //const gamesCurrentPage = games.slice(indexOfFirstItem, indexOfLastItem);
 
-
-
   return (
-    <>
+    <div className="history-page-container">
       <Nav />
 
       <div className={styles.mainContainer}>
@@ -135,7 +133,7 @@ const History = () => {
           <div className={styles.scItem3}>
             <div className={styles.pieChartTitle}>
 
-            {statistics.gamesPlayed > 0 ? (
+              {statistics.gamesPlayed > 0 ? (
                 <PieChart
                   series={[
                     {
@@ -204,22 +202,19 @@ const History = () => {
         <div className={styles.divider}></div>
 
         <div className={styles.gamesHistoryContainer}>
-              {games.length > 0 ? (
-                games.map((game, index) => (
-                  <GameSummary
+          {games.map((game, index) => {
+            return (
+                <GameSummary
                     key={game.id || index}
                     date={new Date(game.date).toLocaleDateString()}
                     hour={new Date(game.date).toLocaleTimeString()}
                     correctAnswers={game.correctAnswers}
                     wrongAnswers={game.wrongAnswers}
                     time={game.time}
-                  />
-                ))
-              ) : (
-                <div className={styles.noGamesMessage}>
-                  <p>There are no matches to display on this page.</p>
-                </div>
-              )}
+                    questions={game.questions}
+                />
+            );
+          })}
         </div>
 
         <div className={styles.divider}></div>
@@ -229,7 +224,7 @@ const History = () => {
         </div>
 
       </div>
-    </>
+    </div>
   );
 };
 
