@@ -19,6 +19,11 @@ const QuestionModal = ({ isOpen, closeModal, questions }) => {
             <div
                 className={styles.modalContent}
                 onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.stopPropagation();
+                    }
+                }}
             >
                 <h2>Questions:</h2>
 
