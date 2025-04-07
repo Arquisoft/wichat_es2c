@@ -258,9 +258,9 @@ function Game() {
     };
 
     const handleTimeOut = () => {
-        console.log("se acabo pin pin run pin pin pirin pirunpin");
+        //console.log("se acabo pin pin run pin pin pirin pirunpin");
         if (!finished) {
-            console.log("se acabo de verdad de la buena");
+          //  console.log("se acabo de verdad de la buena");
             setFinished(true);
             let gameTime;
             if (gameStartTime) {
@@ -274,7 +274,7 @@ function Game() {
                 time: gameTime,
             })
                 .then(response => {
-                    console.log("Game ended successfully:", response.data);
+                   // console.log("Game ended successfully:", response.data);
                 })
                 .catch(error => {
                     console.error("Error ending the game:", error);
