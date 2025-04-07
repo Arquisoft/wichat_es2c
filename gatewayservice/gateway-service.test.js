@@ -50,16 +50,7 @@ describe('Gateway Service', () => {
         });
 
         it('should handle login error from auth service', async () => {
-            axios.post.mockImplementationOnce((url) => {
-                if (url.includes('/login')) {
-                    return Promise.reject({
-                        response: {
-                            status: 401,
-                            data: { error: 'Invalid credentials' }
-                        }
-                    });
-                }
-            });
+            mockAxiosError('post', '/login', 401, 'Invalid credentials');
 
             const response = await request(app)
                 .post('/login')
@@ -68,6 +59,7 @@ describe('Gateway Service', () => {
             expect(response.statusCode).toBe(401);
             expect(response.body.error).toBe('Invalid credentials');
         });
+
 
         it('should forward add user request to user service', async () => {
             const response = await request(app)
@@ -79,20 +71,14 @@ describe('Gateway Service', () => {
         });
 
         it('should handle error when adding user', async () => {
-            axios.post.mockImplementationOnce((url) => {
-                if (url.includes('/adduser')) {
-                    return Promise.reject({
-                        response: {
-                            status: 409,
-                            data: { error: 'Username already exists' }
-                        }
-                    });
-                }
-            });
+            mockAxiosError('post', '/adduser', 409, 'Username already exists');
 
             const response = await request(app)
                 .post('/adduser')
-                .send({ username: 'existinguser', password: 'somepassword' });
+                .send({
+                    username: 'existingUser',
+                    password: 'securePassword123'
+                });
 
             expect(response.statusCode).toBe(409);
             expect(response.body.error).toBe('Username already exists');
@@ -404,18 +390,10 @@ describe('Gateway Service', () => {
         });
 
         it('should handle errors from userinfo service', async () => {
-            axios.get.mockImplementationOnce((url) => {
-                if (url.includes('/userinfo/matches')) {
-                    return Promise.reject({
-                        response: {
-                            status: 404,
-                            data: { error: 'User not found' }
-                        }
-                    });
-                }
-            });
+            mockAxiosError('get', '/userinfo/matches', 404, 'User not found');
 
-            const response = await request(app).get('/userinfo/matches/nonexistent');
+            const response = await request(app)
+                .get('/userinfo/matches/nonexistent');
 
             expect(response.statusCode).toBe(404);
             expect(response.body.error).toBe('User not found');
