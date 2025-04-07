@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
-import Particles from "react-tsparticles";
-import { loadSlim } from "tsparticles-slim";
 import "./LoginRegister.css";
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
@@ -21,9 +19,6 @@ function AddUser() {
         }
     }, [isLoggedIn]);
 
-    const particlesInit = useCallback(async (engine) => {
-        await loadSlim(engine);
-    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -66,68 +61,10 @@ function AddUser() {
         }
     };
 
-    const particlesOptions = {
-        background: {
-            color: {
-                value: "transparent"
-            }
-        },
-        fpsLimit: 60,
-        particles: {
-            color: {
-                value: "#8590AA"
-            },
-            links: {
-                color: "#8590AA",
-                distance: 150,
-                enable: true,
-                opacity: 0.7,
-                width: 2.5
-            },
-            move: {
-                enable: true,
-                direction: "none",
-                outModes: {
-                    default: "bounce"
-                },
-                random: false,
-                speed: 1,
-                straight: false
-            },
-            number: {
-                density: {
-                    enable: true,
-                    area: 800
-                },
-                value: 80
-            },
-            opacity: {
-                value: 0.8
-            },
-            shape: {
-                type: "circle"
-            },
-            size: {
-                value: { min: 3, max: 6 }
-            }
-        },
-        detectRetina: true
-    };
 
     return (
         <>
-            <Particles
-                id="tsparticles"
-                init={particlesInit}
-                style={{
-                    position: "absolute",
-                    width: "100%",
-                    height: "100%",
-                    zIndex: -1
-                }}
-                options={particlesOptions}
-            />
-
+        
             <Box className="boxContainer" sx={{maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1}}>
                 <img
                     src="/wiChatLogos/LogoWichat2_512.png"
