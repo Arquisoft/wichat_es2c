@@ -4,6 +4,7 @@ import axios from 'axios';
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
 import "./LoginRegister.css";
+import AuthForm from "./AuthForm";
 
 function Login() {
 
@@ -101,91 +102,21 @@ function Login() {
     };
 
     return (
-        <>
-            <Particles
-                id="tsparticles"
-                init={particlesInit}
-                style={{
-                    position: "absolute",
-                    width: "100%",
-                    height: "100%",
-                    zIndex: -1
-                }}
-                options={particlesOptions}
-            />
-
-            <Box className="boxContainer" sx={{maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1}}>
-
-                <img
-                    src="/wiChatLogos/LogoWichat2_512.png"
-                    alt="Logo"
-                    className="logoAplicacion"
-                    onClick={() => window.location.href = '/home'}
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                            window.location.href = '/home';
-                        }
-                    }}
-                />
-
-                <div className="mainContent">
-                    <Typography variant="h5" component="h1" gutterBottom>
-                        Login
-                    </Typography>
-
-                    <div className="divider"></div>
-
-                    <form onSubmit={handleSubmit}>
-                        <TextField
-                            name="username"
-                            label="Username"
-                            fullWidth
-                            margin="normal"
-                            disabled={loading}
-                            required
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
-
-                        <TextField
-                            name="password"
-                            label="Password"
-                            type="password"
-                            fullWidth
-                            margin="normal"
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={loading}
-                            required
-                        />
-
-                        {error && (
-                            <Typography color="error" sx={{mt: 2}}>
-                                {error}
-                            </Typography>
-                        )}
-
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            fullWidth
-                            sx={{mt: 3}}
-                            disabled={loading}
-                        >
-                            {loading ? <CircularProgress size={24}/> : 'Login'}
-                        </Button>
-
-                        <Box sx={{mt: 2, textAlign: 'center'}}>
-                            <Typography variant="body2">
-                                Don't have an account?{' '}
-                                <a href="/signup" style={{textDecoration: 'none'}}>
-                                    Register here
-                                </a>
-                            </Typography>
-                        </Box>
-                    </form>
-                </div>
-            </Box>
-        </>
+        <AuthForm
+            title="Login"
+            onSubmit={handleSubmit}
+            username={username}
+            setUsername={setUsername}
+            password={password}
+            setPassword={setPassword}
+            loading={loading}
+            error={error}
+            success={false}
+            buttonText="Login"
+            linkText="Don't have an account?"
+            linkHref="/signup"
+            disabled={loading}
+        />
     );
 }
 

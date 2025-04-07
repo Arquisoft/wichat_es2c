@@ -73,11 +73,14 @@ describe('Gateway Service', () => {
         it('should handle error when adding user', async () => {
             mockAxiosError('post', '/adduser', 409, 'Username already exists');
 
+            const testUsername = 'existingUser';
+            const testPassword = 'securePassword123';
+
             const response = await request(app)
                 .post('/adduser')
                 .send({
-                    username: 'existingUser',
-                    password: 'securePassword123'
+                    username: testUsername,
+                    password: testPassword
                 });
 
             expect(response.statusCode).toBe(409);

@@ -4,6 +4,7 @@ import axios from 'axios';
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
 import "./LoginRegister.css";
+import AuthForm from "./AuthForm";
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
 function AddUser() {
@@ -115,99 +116,26 @@ function AddUser() {
     };
 
     return (
-        <>
-            <Particles
-                id="tsparticles"
-                init={particlesInit}
-                style={{
-                    position: "absolute",
-                    width: "100%",
-                    height: "100%",
-                    zIndex: -1
-                }}
-                options={particlesOptions}
-            />
-
-            <Box className="boxContainer" sx={{maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1}}>
-                <img
-                    src="/wiChatLogos/LogoWichat2_512.png"
-                    alt="Logo"
-                    className="logoAplicacion"
-                    onClick={() => window.location.href = '/home'}
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                            window.location.href = '/home';
-                        }
-                    }}
-                />
-
-                <div className="mainContent">
-                    <Typography variant="h5" component="h1" gutterBottom>
-                        Register
-                    </Typography>
-                    {success && (
-                        <Alert severity="success" sx={{mb: 2}}>
-                            Successfully registered! Redirecting to login page...
-                        </Alert>
-                    )}
-                    <div className="divider"></div>
-                    <form onSubmit={handleSubmit}>
-                        <TextField
-                            name="username"
-                            label="Username"
-                            fullWidth
-                            margin="normal"
-                            disabled={loading || success}
-                            required
-                            onChange={(e) => setUsername(e.target.value)}
-                            helperText="Username must be at least 3 characters long"
-                        />
-                        <TextField
-                            name="password"
-                            label="Password"
-                            type="password"
-                            fullWidth
-                            margin="normal"
-                            onChange={(e) => setPassword(e.target.value)}
-                            disabled={loading || success}
-                            required
-                            helperText="Password must be at least 3 characters long"
-                        />
-                        {error && (
-                            <Typography color="error" sx={{mt: 2}}>
-                                {error}
-                            </Typography>
-                        )}
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            fullWidth
-                            sx={{mt: 3}}
-                            disabled={loading || success}
-                        >
-                            {loading ? <CircularProgress size={24}/> : 'Register'}
-                        </Button>
-                        <Box sx={{mt: 2, textAlign: 'center'}}>
-                            <Typography variant="body2">
-                                Already have an account?{' '}
-                                <span
-                                    style={{ textDecoration: 'underline', cursor: 'pointer' }}
-                                    onClick={() => window.location.href = '/login'}
-                                    tabIndex={0}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter' || e.key === ' ') {
-                                            window.location.href = '/login';
-                                        }
-                                    }}
-                                >Login
-                                </span>
-                            </Typography>
-                        </Box>
-                    </form>
-                </div>
-            </Box>
-        </>
+        <AuthForm
+            title="Register"
+            onSubmit={handleSubmit}
+            username={username}
+            setUsername={setUsername}
+            password={password}
+            setPassword={setPassword}
+            loading={loading}
+            error={error}
+            success={success}
+            buttonText="Register"
+            helperTexts={{
+                username: "Username must be at least 3 characters long",
+                password: "Password must be at least 3 characters long"
+            }}
+            successMessage="Successfully registered! Redirecting to login page..."
+            linkText="Already have an account?"
+            linkHref="/login"
+            disabled={loading || success}
+        />
     );
 }
 
