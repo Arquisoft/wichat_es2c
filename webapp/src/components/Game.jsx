@@ -372,6 +372,11 @@ function Game() {
                                 <div
                                     key={key}
                                     onClick={() => setSelectedCategory(key)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            setSelectedCategory(key);
+                                        }
+                                    }}
                                     style={{
                                         width: 100,
                                         height: 100,
