@@ -12,6 +12,7 @@ jest.mock('./RankingEntry.module.css', () => ({
     bronze: 'bronze'
 }));
 
+
 describe('RankingEntry Component', () => {
     const defaultProps = {
         rank: 4,
