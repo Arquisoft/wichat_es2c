@@ -8,7 +8,6 @@ const CountdownTimer = forwardRef(({ maxTime = 60, size = 100, onTimeOut}, ref) 
   const [timeLeft, setTimeLeft] = useState(maxTime);
   const [rotation, setRotation] = useState(initialRotation);
   const [intervalId, setIntervalId] = useState(null);
-  const [hasCalledTimeout, setHasCalledTimeout] = useState(false);
 
   useImperativeHandle(ref, () => ({
     addTime: (amount) => {
