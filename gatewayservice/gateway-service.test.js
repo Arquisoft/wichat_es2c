@@ -8,6 +8,19 @@ afterAll(async () => {
 
 jest.mock('axios');
 
+const mockAxiosError = (method, urlFragment, status, errorMessage) => {
+    axios[method].mockImplementationOnce((url) => {
+        if (url.includes(urlFragment)) {
+            return Promise.reject({
+                response: {
+                    status: status,
+                    data: { error: errorMessage }
+                }
+            });
+        }
+    });
+};
+
 describe('Gateway Service', () => {
     it('should return OK for health check', async () => {
         const response = await request(app).get('/health');
@@ -157,16 +170,7 @@ describe('Gateway Service', () => {
         });
 
         it('should handle errors from game service', async () => {
-            axios.get.mockImplementationOnce((url) => {
-                if (url.includes('/userStatistics')) {
-                    return Promise.reject({
-                        response: {
-                            status: 404,
-                            data: { error: 'User not found' }
-                        }
-                    });
-                }
-            });
+            mockAxiosError('get', '/userStatistics', 404, 'User not found');
 
             const response = await request(app)
                 .get('/userStatistics')
@@ -215,16 +219,7 @@ describe('Gateway Service', () => {
         });
 
         it('should handle errors from llm service', async () => {
-            axios.post.mockImplementationOnce((url) => {
-                if (url.includes('/ask')) {
-                    return Promise.reject({
-                        response: {
-                            status: 500,
-                            data: { error: 'LLM service error' }
-                        }
-                    });
-                }
-            });
+            mockAxiosError('post', '/ask', 500, 'LLM service error');
 
             const response = await request(app)
                 .post('/askllm')
