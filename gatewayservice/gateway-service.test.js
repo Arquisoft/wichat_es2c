@@ -11,12 +11,7 @@ jest.mock('axios');
 const mockAxiosError = (method, urlFragment, status, errorMessage) => {
     axios[method].mockImplementationOnce((url) => {
         if (url.includes(urlFragment)) {
-            return Promise.reject({
-                response: {
-                    status: status,
-                    data: { error: errorMessage }
-                }
-            });
+            return returnNotDuplicated(status, errorMessage)
         }
     });
 };
