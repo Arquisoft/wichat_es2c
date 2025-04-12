@@ -164,45 +164,6 @@ describe('Game Component', () => {
         });
     });
 
-    // test('handles time out correctly', async () => {
-    //     render(<Game />);
-    //
-    //     const normalButton = screen.getAllByTestId('awesome-button')[0];
-    //     fireEvent.click(normalButton);
-    //
-    //     const categoryImages = screen.getAllByRole('img');
-    //     fireEvent.click(categoryImages[0]);
-    //
-    //     const acceptButton = screen.getAllByTestId('awesome-button')[2];
-    //     fireEvent.click(acceptButton);
-    //
-    //     await waitFor(() => {
-    //         expect(axios.post).toHaveBeenCalled();
-    //     });
-    //
-    //     await waitFor(() => {
-    //         expect(axios.get).toHaveBeenCalled();
-    //     });
-    //
-    //     axios.post.mockResolvedValueOnce({ data: { success: true } });
-    //
-    //     const timer = await screen.findByTestId('timer');
-    //     fireEvent.click(timer);
-    //
-    //     await waitFor(() => {
-    //         expect(screen.getByText('⏳ ¡Time is out!')).toBeInTheDocument();
-    //     });
-    //
-    //     expect(axios.post).toHaveBeenCalledWith(
-    //         expect.stringContaining('/endMatch'),
-    //         expect.objectContaining({
-    //             username: 'testUser',
-    //         })
-    //     );
-    // });
-
-
-
     test('preloads questions properly', async () => {
         axios.get.mockImplementation(() => Promise.resolve({
             data: {

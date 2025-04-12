@@ -52,12 +52,7 @@ describe('Gateway Service', () => {
         it('should handle login error from auth service', async () => {
             axios.post.mockImplementationOnce((url) => {
                 if (url.includes('/login')) {
-                    return Promise.reject({
-                        response: {
-                            status: 401,
-                            data: { error: 'Invalid credentials' }
-                        }
-                    });
+                    return returnNotDuplicated(401, 'Invalid credentials')
                 }
             });
 
@@ -81,12 +76,7 @@ describe('Gateway Service', () => {
         it('should handle error when adding user', async () => {
             axios.post.mockImplementationOnce((url) => {
                 if (url.includes('/adduser')) {
-                    return Promise.reject({
-                        response: {
-                            status: 409,
-                            data: { error: 'Username already exists' }
-                        }
-                    });
+                    return returnNotDuplicated(409, 'Username already exists');
                 }
             });
 
@@ -406,12 +396,7 @@ describe('Gateway Service', () => {
         it('should handle errors from userinfo service', async () => {
             axios.get.mockImplementationOnce((url) => {
                 if (url.includes('/userinfo/matches')) {
-                    return Promise.reject({
-                        response: {
-                            status: 404,
-                            data: { error: 'User not found' }
-                        }
-                    });
+                    return returnNotDuplicated(404, 'User not found');
                 }
             });
 
@@ -495,9 +480,6 @@ describe('Gateway Service', () => {
 
 
 
-
-
-
                 it('should validate all required fields for askllm endpoint', async () => {
                     // Test missing gameQuestion
                     let response = await request(app)
@@ -577,6 +559,14 @@ describe('Gateway Service', () => {
 
             });
 
+function returnNotDuplicated(status, error){
+    return Promise.reject({
+        response: {
+            status: status,
+            data: { error: error }
+        }
+    });
 
+}
 
 
