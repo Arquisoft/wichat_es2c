@@ -73,7 +73,7 @@ endif::arc42help[]
 |===
 | Constraint | Explanation
 | Arc42 | The team will follow the Arc42 template in order to structure the project documentation in a consistent and efficient way.
-| Use of English | 	English will be used throughout the project, including documentation, coding, and the GitHub repository, as it is the most widely accepted and understood language in the software development community.
+| Use of English | English will be used throughout the project, including documentation, coding, and the GitHub repository, as it is the most widely accepted and understood language in the software development community.
 | Good coding practices | The team will adhere to clean code principles such as meaningful naming, modularity, simplicity, and comprehensive documentation. 
 | Branchs usage | The team will adopt a branching strategy, keeping every issue in its own branch until it is brought to master via a Pull Request.
 |===
