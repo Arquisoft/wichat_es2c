@@ -67,7 +67,7 @@ endif::arc42help[]
 | Question | Questions spawned in a match, storing all its answers.
 | Answer | Every answer associated to a match's question, saving if it was the correct option and if was selected by the player.
 |===
-**************AQUI EL MODELO DE DOMINIO DEL GAME******************
+image:08-domainModel.png["Concepts - Domain Model"]
 
 
 === _"Under-the-hood"_
