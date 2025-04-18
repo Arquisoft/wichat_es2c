@@ -22,10 +22,40 @@ image:06-login.png["Runtime view - Logging in"]
 
 When it comes to logging in, the user firstly enters their credentials, then the back end retrieves the user's information from the database and verifies if it's correct.
 
-=== Future diagrams
 
-Once we have made progress in the development of the application, the following diagrams should be created according to the chosen implementation:
+=== Questions generation
+&nbsp;
 
-==== Questions generation
-==== WiChat quiz game
-==== Obtaining hints via Chatbot
+image:06-questionGeneration.png["Runtime view - Question generation"]
+
+&nbsp;
+
+The user accesses the game, selects its mode and difficulty, and the call is made. The backend is responsible for obtaining the questions (along with their images and answers) and transmitting them to the frontend.
+
+=== WiChat quiz game
+&nbsp;
+
+image:06-gameCycle.png["Runtime view - Game cycle"]
+
+&nbsp;
+
+
+The user enters the game, selects the mode and difficulty, and once the question is answered, the user begins the game, answering each question until the timer runs out, ending the game. After the game ends, and after the information has been saved, the user can replay the game or access other views.
+
+=== Obtaining hints via Chatbot
+&nbsp;
+
+image:06-chatBotFunctionality.png["Runtime view - Hints by chatbot"]
+
+&nbsp;
+
+In the Game view, the user types their questions into the Chatbot component, which are then sent to the LLM, where the prompt to be passed to the AI ​​is configured and the response is generated, which is then returned to the frontend for the user to view.
+
+=== Leaderboard and match search
+&nbsp;
+
+image:06-leaderboardAndSearch.png["Runtime view - Leaderboard and match search"]
+
+&nbsp;
+
+The user accesses the Leaderboard, and on the one hand, data related to rankings and users is loaded, and on the other, the user can search for games by typing the name in the search input.
