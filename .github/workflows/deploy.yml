@@ -20,5 +20,5 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd wichat_es2c
-            git pull origin main
+            git pull origin master
             ./deploy.sh
