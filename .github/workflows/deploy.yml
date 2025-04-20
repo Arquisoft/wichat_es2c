@@ -21,4 +21,5 @@ jobs:
           script: |
             cd wichat_es2c
             git pull origin master
+            chmod +x deploy.sh
             ./deploy.sh
