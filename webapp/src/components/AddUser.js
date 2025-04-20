@@ -2,8 +2,14 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
 import "./LoginRegister.css";
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://143.47.54.63:8000';
 
+let apiEndpoint;
+
+if (window.location.hostname === 'localhost') {
+    apiEndpoint = 'http://localhost:8000'; // Para desarrollo
+} else {
+    apiEndpoint = 'http://143.47.54.63:8000'; // Para producción
+}
 function AddUser() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');

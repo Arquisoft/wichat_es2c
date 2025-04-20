@@ -10,7 +10,13 @@ import { FaTrophy, FaSearch  } from 'react-icons/fa';
 import axios from "axios";
 
 const Leaderboard = () => {
-  const apiEndpoint = 'http://143.47.54.63:8000'; //'http://localhost:8004'
+  let apiEndpoint;
+
+  if (window.location.hostname === 'localhost') {
+    apiEndpoint = 'http://localhost:8000'; // Para desarrollo
+  } else {
+    apiEndpoint = 'http://143.47.54.63:8000'; // Para producción
+  }
 
   ////////////////////////////////////////////////////////////
   const [scoreRanking, setScoreRanking] = React.useState([]);

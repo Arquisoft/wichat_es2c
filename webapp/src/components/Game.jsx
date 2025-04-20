@@ -12,11 +12,17 @@ import axios from "axios";
 import { CircularProgress } from "@mui/material";
 
 function Game() {
-
-
     //Revisar si es correcto tener esto aqui (creo que de esta forma de saltan el gateway service)
-    const apiEndpointGame = 'http://143.47.54.63:8004';
-    const apiEndpointWiki = 'http://143.47.54.63:3005';
+    let apiEndpointGame;
+    let apiEndpointWiki;
+
+    if (window.location.hostname === 'localhost') {
+        apiEndpointGame = 'http://localhost:8004'; // Para desarrollo
+        apiEndpointWiki =   'http://localhost:3005'
+    } else {
+        apiEndpointGame = 'http://143.47.54.63:8004'; // Para producción
+        apiEndpointWiki =   'http://143.47.54.63:3005'
+    }
     const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
     const [difficulty, setDifficulty] = useState(1);
