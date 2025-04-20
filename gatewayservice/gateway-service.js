@@ -186,7 +186,7 @@ app.get('/users', async (req, res) => {
     const userInfoServiceUrl = process.env.USERINFO_SERVICE_URL || 'http://localhost:8005';
     const userResponse = await axios.get(`${userInfoServiceUrl}/userinfo`);
     
-    //Solo los usernames
+
     const usernames = userResponse.data.map(user => ({
       username: user.username
     }));
