@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expose the port the app runs on
-EXPOSE 3004
+EXPOSE 3005
 
 # Define the command to run your app
 CMD ["node", "question-service.js"]
