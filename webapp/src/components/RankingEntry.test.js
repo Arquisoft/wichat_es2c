@@ -23,56 +23,60 @@ describe('RankingEntry Component', () => {
         }
     };
 
+    const renderRankingEntry = (customProps = {}) => {
+        const props = { ...defaultProps, ...customProps };
+        return render(<RankingEntry {...props} />);
+    };
+
+    const testMedalClass = (rank, expectedClass) => {
+        const { container } = renderRankingEntry({ rank });
+        const rankElement = container.querySelector('.rank');
+
+        if (expectedClass) {
+            expect(rankElement).toHaveClass(expectedClass);
+        } else {
+            expect(rankElement).not.toHaveClass('gold');
+            expect(rankElement).not.toHaveClass('silver');
+            expect(rankElement).not.toHaveClass('bronze');
+        }
+    };
+
     it('renders without crashing', () => {
-        render(<RankingEntry {...defaultProps} />);
+        renderRankingEntry();
         expect(screen.getByText('testUser')).toBeInTheDocument();
     });
 
-    it('displays rank number correctly', () => {
-        render(<RankingEntry {...defaultProps} />);
+    it('displays rank number, username and statistics correctly', () => {
+        renderRankingEntry();
+
         expect(screen.getByText('4')).toBeInTheDocument();
-    });
-
-    it('displays username correctly', () => {
-        render(<RankingEntry {...defaultProps} />);
         expect(screen.getByText('testUser')).toBeInTheDocument();
-    });
 
-    it('displays statistics correctly', () => {
-        render(<RankingEntry {...defaultProps} />);
         expect(screen.getByText('1000')).toBeInTheDocument();
         expect(screen.getByText('42')).toBeInTheDocument();
         expect(screen.getByText('2:30')).toBeInTheDocument();
     });
 
-    it('applies gold class for rank 1', () => {
-        const { container } = render(<RankingEntry {...defaultProps} rank={1} />);
-        const rankElement = container.querySelector('.rank');
-        expect(rankElement).toHaveClass('gold');
-    });
+    describe('Medal Classes', () => {
+        it('applies gold class for rank 1', () => {
+            testMedalClass(1, 'gold');
+        });
 
-    it('applies silver class for rank 2', () => {
-        const { container } = render(<RankingEntry {...defaultProps} rank={2} />);
-        const rankElement = container.querySelector('.rank');
-        expect(rankElement).toHaveClass('silver');
-    });
+        it('applies silver class for rank 2', () => {
+            testMedalClass(2, 'silver');
+        });
 
-    it('applies bronze class for rank 3', () => {
-        const { container } = render(<RankingEntry {...defaultProps} rank={3} />);
-        const rankElement = container.querySelector('.rank');
-        expect(rankElement).toHaveClass('bronze');
-    });
+        it('applies bronze class for rank 3', () => {
+            testMedalClass(3, 'bronze');
+        });
 
-    it('does not apply medal classes for ranks > 3', () => {
-        const { container } = render(<RankingEntry {...defaultProps} rank={4} />);
-        const rankElement = container.querySelector('.rank');
-        expect(rankElement).not.toHaveClass('gold');
-        expect(rankElement).not.toHaveClass('silver');
-        expect(rankElement).not.toHaveClass('bronze');
+        it('does not apply medal classes for ranks > 3', () => {
+            testMedalClass(4, null);
+        });
     });
 
     it('handles changes in props correctly', () => {
-        const { rerender } = render(<RankingEntry {...defaultProps} />);
+        const { rerender } = renderRankingEntry();
 
         expect(screen.getByText('testUser')).toBeInTheDocument();
         expect(screen.getByText('4')).toBeInTheDocument();

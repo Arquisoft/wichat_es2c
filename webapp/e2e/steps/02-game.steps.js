@@ -80,7 +80,7 @@ defineFeature(feature, test => {
                 return modalContent ? modalContent.textContent : '';
             });
 
-            expect(gameOverText).toContain('¡El tiempo se ha acabado!');
+            expect(gameOverText).toContain('¡Time is out!');
         });
     });
 

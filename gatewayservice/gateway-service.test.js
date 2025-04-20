@@ -8,6 +8,14 @@ afterAll(async () => {
 
 jest.mock('axios');
 
+const mockAxiosError = (method, urlFragment, status, errorMessage) => {
+    axios[method].mockImplementationOnce((url) => {
+        if (url.includes(urlFragment)) {
+            return returnNotDuplicated(status, errorMessage)
+        }
+    });
+};
+
 describe('Gateway Service', () => {
     it('should return OK for health check', async () => {
         const response = await request(app).get('/health');
@@ -39,12 +47,7 @@ describe('Gateway Service', () => {
         it('should handle login error from auth service', async () => {
             axios.post.mockImplementationOnce((url) => {
                 if (url.includes('/login')) {
-                    return Promise.reject({
-                        response: {
-                            status: 401,
-                            data: { error: 'Invalid credentials' }
-                        }
-                    });
+                    return returnNotDuplicated(401, 'Invalid credentials')
                 }
             });
 
@@ -68,12 +71,7 @@ describe('Gateway Service', () => {
         it('should handle error when adding user', async () => {
             axios.post.mockImplementationOnce((url) => {
                 if (url.includes('/adduser')) {
-                    return Promise.reject({
-                        response: {
-                            status: 409,
-                            data: { error: 'Username already exists' }
-                        }
-                    });
+                    return returnNotDuplicated(409, 'Username already exists');
                 }
             });
 
@@ -157,16 +155,7 @@ describe('Gateway Service', () => {
         });
 
         it('should handle errors from game service', async () => {
-            axios.get.mockImplementationOnce((url) => {
-                if (url.includes('/userStatistics')) {
-                    return Promise.reject({
-                        response: {
-                            status: 404,
-                            data: { error: 'User not found' }
-                        }
-                    });
-                }
-            });
+            mockAxiosError('get', '/userStatistics', 404, 'User not found');
 
             const response = await request(app)
                 .get('/userStatistics')
@@ -215,16 +204,7 @@ describe('Gateway Service', () => {
         });
 
         it('should handle errors from llm service', async () => {
-            axios.post.mockImplementationOnce((url) => {
-                if (url.includes('/ask')) {
-                    return Promise.reject({
-                        response: {
-                            status: 500,
-                            data: { error: 'LLM service error' }
-                        }
-                    });
-                }
-            });
+            mockAxiosError('post', '/ask', 500, 'LLM service error');
 
             const response = await request(app)
                 .post('/askllm')
@@ -411,12 +391,7 @@ describe('Gateway Service', () => {
         it('should handle errors from userinfo service', async () => {
             axios.get.mockImplementationOnce((url) => {
                 if (url.includes('/userinfo/matches')) {
-                    return Promise.reject({
-                        response: {
-                            status: 404,
-                            data: { error: 'User not found' }
-                        }
-                    });
+                    return returnNotDuplicated(404, 'User not found');
                 }
             });
 
@@ -500,9 +475,6 @@ describe('Gateway Service', () => {
 
 
 
-
-
-
                 it('should validate all required fields for askllm endpoint', async () => {
                     // Test missing gameQuestion
                     let response = await request(app)
@@ -582,6 +554,14 @@ describe('Gateway Service', () => {
 
             });
 
+function returnNotDuplicated(status, error){
+    return Promise.reject({
+        response: {
+            status: status,
+            data: { error: error }
+        }
+    });
 
+}
 
 

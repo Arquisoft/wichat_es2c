@@ -72,6 +72,7 @@ services:
       - mongodb
       - userservice
       - authservice
+      - userinfoapi
       - llmservice
       - game
       - wikidata
@@ -84,13 +85,14 @@ services:
       USER_SERVICE_URL: http://userservice:8001
       LLM_SERVICE_URL: http://llmservice:8003
       GAME_SERVICE_URL: http://game:8004
+      USERINFO_SERVICE_URL: http://userinfoapi:8005
       WIKIDATA_SERVICE_URL: http://wikidata:3005
 
   webapp:
     container_name: webapp-wichat_es2c
     image: ghcr.io/arquisoft/wichat_es2c/webapp:latest
     profiles: ["dev", "prod"]
-    build: 
+    build:
       context: ./webapp
       args:
         LLM_API_KEY: ${LLM_API_KEY}
@@ -110,9 +112,9 @@ services:
       - prometheus_data:/prometheus
     ports:
       - "9090:9090"
-    depends_on: 
+    depends_on:
       - gatewayservice
-      
+
   grafana:
     image: grafana/grafana
     container_name: grafana-wichat_es2c
@@ -129,7 +131,7 @@ services:
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
     ports:
       - "9091:9091"
-    depends_on: 
+    depends_on:
       - prometheus
 
   game:
@@ -163,8 +165,8 @@ services:
 
 volumes:
   mongodb_data:
-  prometheus_data: 
-  grafana_data: 
+  prometheus_data:
+  grafana_data:
 
 networks:
   mynetwork:

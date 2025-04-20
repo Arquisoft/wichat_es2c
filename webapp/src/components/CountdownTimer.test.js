@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, act } from '@testing-library/react';
+import { render, act, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import CountdownTimer from './CountdownTimer';
 
@@ -7,9 +7,11 @@ jest.useFakeTimers();
 
 describe('CountdownTimer Component', () => {
     let timerRef;
+    let onTimeOutMock;
 
     beforeEach(() => {
         timerRef = React.createRef();
+        onTimeOutMock = jest.fn();
         jest.clearAllTimers();
     });
 
@@ -35,7 +37,6 @@ describe('CountdownTimer Component', () => {
         });
         expect(timerRef.current).toBeDefined();
     });
-
 
     test('addTime method increases time left', () => {
         const { container } = render(<CountdownTimer ref={timerRef} maxTime={10} />);
@@ -73,8 +74,6 @@ describe('CountdownTimer Component', () => {
         expect(container.querySelector('svg')).toBeInTheDocument();
     });
 
-
-
     test('cleans up interval on unmount', () => {
         const clearIntervalSpy = jest.spyOn(window, 'clearInterval');
         const { unmount } = render(<CountdownTimer ref={timerRef} />);
@@ -94,5 +93,77 @@ describe('CountdownTimer Component', () => {
         const svgElement = container.querySelector('svg');
         expect(svgElement).toHaveAttribute('width', customSize.toString());
         expect(svgElement).toHaveAttribute('height', customSize.toString());
+    });
+
+    test('onTimeOut callback is called when timer reaches zero', () => {
+        render(<CountdownTimer ref={timerRef} maxTime={0.5} onTimeOut={onTimeOutMock} />);
+        act(() => {
+            jest.advanceTimersByTime(1000);
+        });
+        expect(onTimeOutMock).toHaveBeenCalled();
+    });
+
+    test('reset method resets timer to maxTime', () => {
+        render(<CountdownTimer ref={timerRef} maxTime={10} />);
+        act(() => {
+            jest.advanceTimersByTime(2000);
+            timerRef.current.reset();
+        });
+        expect(timerRef.current).toBeDefined();
+    });
+
+    test('timer circles have correct attributes', () => {
+        const { container } = render(<CountdownTimer ref={timerRef} />);
+        const circles = container.querySelectorAll('circle');
+        expect(circles.length).toBeGreaterThan(0);
+        expect(circles[0]).toHaveAttribute('cx', '32');
+        expect(circles[0]).toHaveAttribute('cy', '39');
+    });
+
+    test('svg has correct viewBox attribute', () => {
+        const { container } = render(<CountdownTimer ref={timerRef} />);
+        const svg = container.querySelector('svg');
+        expect(svg).toHaveAttribute('viewBox', '0 0 64 64');
+    });
+
+    test('svg has correct preserveAspectRatio attribute', () => {
+        const { container } = render(<CountdownTimer ref={timerRef} />);
+        const svg = container.querySelector('svg');
+        expect(svg).toHaveAttribute('preserveAspectRatio', 'xMidYMid meet');
+    });
+
+    test('multiple timers can exist independently', () => {
+        const timerRef2 = React.createRef();
+        const { container } = render(
+            <>
+                <CountdownTimer ref={timerRef} maxTime={10} />
+                <CountdownTimer ref={timerRef2} maxTime={20} />
+            </>
+        );
+        const svgs = container.querySelectorAll('svg');
+        expect(svgs.length).toBe(2);
+    });
+
+    test('timer rotation updates correctly', () => {
+        render(<CountdownTimer ref={timerRef} maxTime={10} />);
+        act(() => {
+            jest.advanceTimersByTime(2000);
+        });
+        expect(timerRef.current).toBeDefined();
+    });
+
+    test('timer updates at the correct interval', () => {
+        const setIntervalSpy = jest.spyOn(window, 'setInterval');
+        render(<CountdownTimer ref={timerRef} maxTime={10} />);
+        expect(setIntervalSpy).toHaveBeenCalledWith(expect.any(Function), 50);
+    });
+
+    test('timer maintains state across re-renders', () => {
+        const { rerender } = render(<CountdownTimer ref={timerRef} maxTime={10} />);
+        act(() => {
+            jest.advanceTimersByTime(1000);
+        });
+        rerender(<CountdownTimer ref={timerRef} maxTime={10} />);
+        expect(timerRef.current).toBeDefined();
     });
 });

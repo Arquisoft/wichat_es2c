@@ -29,9 +29,6 @@ const CountdownTimer = forwardRef(({ maxTime = 60, size = 100, onTimeOut}, ref) 
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(id);
-          if (onTimeOut && typeof onTimeOut === 'function') {
-            onTimeOut();
-          }
           return 0;
         }
         return prev - 0.05;
@@ -39,6 +36,17 @@ const CountdownTimer = forwardRef(({ maxTime = 60, size = 100, onTimeOut}, ref) 
     }, 50);
     setIntervalId(id);
   };
+
+  const timeoutRef = React.useRef(false);
+
+  useEffect(() => {
+    if (timeLeft <= 0 && onTimeOut && typeof onTimeOut === 'function' && !timeoutRef.current) {
+      timeoutRef.current = true;
+      onTimeOut();
+    } else if (timeLeft > 0) {
+      timeoutRef.current = false;
+    }
+  }, [timeLeft, onTimeOut]);
 
   useEffect(() => {
     startTimer();
