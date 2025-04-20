@@ -15,8 +15,8 @@ function Game() {
 
 
     //Revisar si es correcto tener esto aqui (creo que de esta forma de saltan el gateway service)
-    const apiEndpointGame = process.env.GAME_SERVICE_API_ENDPOINT || 'http://localhost:8004';
-    const apiEndpointWiki = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:3005';
+    const apiEndpointGame = 'http://143.47.54.63:8004';
+    const apiEndpointWiki = 'http://143.47.54.63:3005';
     const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
     const [difficulty, setDifficulty] = useState(1);

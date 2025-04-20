@@ -4,7 +4,7 @@ import axios from 'axios';
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
 import "./LoginRegister.css";
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://143.47.54.63:8000';
 
 function AddUser() {
     const [username, setUsername] = useState('');
