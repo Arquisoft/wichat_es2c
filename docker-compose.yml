@@ -111,7 +111,7 @@ services:
       - ./gatewayservice/monitoring/prometheus:/etc/prometheus
       - prometheus_data:/prometheus
     ports:
-      - "9090:9090"
+      - "9091:9090"
     depends_on:
       - gatewayservice
 
