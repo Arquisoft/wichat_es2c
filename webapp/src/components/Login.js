@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
 import "./LoginRegister.css";
+import Particles from "react-tsparticles";
+import { loadSlim } from "tsparticles-slim";
 
 function Login() {
 
@@ -12,6 +14,10 @@ function Login() {
     const [loading, setLoading] = useState(false);
 
     const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
+
+    const particlesInit = useCallback(async (engine) => {
+        await loadSlim(engine);
+    }, []);
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -46,8 +52,67 @@ function Login() {
         }
     };
 
+    const particlesOptions = {
+        background: {
+            color: {
+                value: "transparent"
+            }
+        },
+        fpsLimit: 60,
+        particles: {
+            color: {
+                value: "#8590AA"
+            },
+            links: {
+                color: "#8590AA",
+                distance: 150,
+                enable: true,
+                opacity: 0.7,
+                width: 2.5
+            },
+            move: {
+                enable: true,
+                direction: "none",
+                outModes: {
+                    default: "bounce"
+                },
+                random: false,
+                speed: 1,
+                straight: false
+            },
+            number: {
+                density: {
+                    enable: true,
+                    area: 800
+                },
+                value: 80
+            },
+            opacity: {
+                value: 0.8
+            },
+            shape: {
+                type: "circle"
+            },
+            size: {
+                value: { min: 3, max: 6 }
+            }
+        },
+        detectRetina: true
+    };
+
     return (
         <>
+            <Particles
+                id="tsparticles"
+                init={particlesInit}
+                style={{
+                    position: "absolute",
+                    width: "100%",
+                    height: "100%",
+                    zIndex: -1
+                }}
+                options={particlesOptions}
+            />
 
             <Box className="boxContainer" sx={{maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1}}>
 
@@ -103,7 +168,14 @@ function Login() {
                             type="submit"
                             variant="contained"
                             fullWidth
-                            sx={{mt: 3}}
+                            sx={{
+                                mt: 3,
+                                backgroundColor: '#00eaff', // Cambia 'green' al color que desees
+                                color: 'white', // Cambia 'white' al color del texto que desees
+                                '&:hover': { // Estilo para cuando el ratón está encima
+                                    backgroundColor: '#0056b3', // Un tono más oscuro al hacer hover
+                                },
+                            }}
                             disabled={loading}
                         >
                             {loading ? <CircularProgress size={24}/> : 'Login'}
