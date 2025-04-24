@@ -18,6 +18,12 @@ const questionCache = {
     birds: { data: null, lastUpdate: null },
 };
 
+const recentlyUsedQuestions = {
+    capitals: new Set(),
+    sports: new Set(),
+    cartoons: new Set(),
+    birds: new Set()
+};
 async function addQuestionsCapital() {
     const CACHE_DURATION = 1000 * 60 * 60;
     const cache = questionCache.capitals;
@@ -34,7 +40,7 @@ async function addQuestionsCapital() {
                 SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
               }       
                 GROUP BY ?countryLabel ?capitalLabel
-                LIMIT 50
+                LIMIT 100
                 `;
             const url = `https://query.wikidata.org/sparql?query=${encodeURIComponent(query)}&format=json`;
             const response = await axios.get(url);
@@ -100,7 +106,7 @@ async function addQuestionsSports() {
                     ?country wdt:P30 wd:Q46.             # País debe estar en Europa
                     SERVICE wikibase:label { bd:serviceParam wikibase:language "es". }
                 }
-                LIMIT 50
+                LIMIT 100
             `;
 
             // Realizamos la solicitud SPARQL
@@ -186,7 +192,7 @@ async function addQuestionsCartoons() {
                     # Filtra identificadores numéricos (como "Q1234")
                     FILTER (!REGEX(STR(?itemLabel), "^Q[0-9]+$"))
                 }
-                LIMIT 50
+                LIMIT 100
             `;
 
             // Usamos la query para hacer la solicitud SPARQL
@@ -274,7 +280,7 @@ async function addQuestionsBirds() {
                     # Filtra para asegurarse de que la etiqueta esté en español
                     FILTER(LANG(?animalLabel) = "es")
                 }
-                LIMIT 50
+                LIMIT 100
             `;
 
             // Usamos la query para hacer la solicitud SPARQL
@@ -366,9 +372,19 @@ app.get('/getQuestion', async (req, res) => {
             }
         }
 
-        // Seleccionamos una pregunta aleatoria
-        const selectedQuestion = questions[Math.floor(Math.random() * questions.length)];
+        const availableQuestions = questions.filter(q =>
+            !recentlyUsedQuestions[category].has(q._id.toString())
+        );
 
+        if (availableQuestions.length < questions.length * 0.2) {
+            recentlyUsedQuestions[category].clear();
+        }
+
+        const selectedQuestion = availableQuestions.length > 0
+            ? availableQuestions[Math.floor(Math.random() * availableQuestions.length)]
+            : questions[Math.floor(Math.random() * questions.length)];
+
+        recentlyUsedQuestions[category].add(selectedQuestion._id.toString());
         const choices = selectedQuestion.answers
             .map(answer => answer.text)
             .sort(() => 0.5 - Math.random());

@@ -52,7 +52,7 @@ function Game() {
     const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
     const [initialLoad, setInitialLoad] = useState(true);
     const timerComponent = useRef(null); // Referencia al componente del temporizador
-
+    const [gameQuestions, setGameQuestions] = useState([]);
 
     useEffect(() => {
         if (showDifficultyModal) {
@@ -86,10 +86,6 @@ function Game() {
         }
     };
 
-    // useEffect(() => {
-    //   preloadQuestions();
-    //}, []);
-
     useEffect(() => {
         if (questionData && questionData.image) {
             const img = new Image();
@@ -104,23 +100,10 @@ function Game() {
         setDifficultyModalFadeIn(false);
         setTimeout(() => {
             setShowDifficultyModal(false);
-            addMatch(level);
+            setGameQuestions([]);
             setGameStartTime(Date.now());
             fetchNewQuestion(category);
         }, 300);
-    };
-
-
-    const addMatch = async (diffLevel) => {
-        try {
-            const response = await axios.post(`${apiEndpointGame}/addMatch`, {
-                username: localStorage.getItem("username"),
-                difficulty: diffLevel,
-            });
-            //console.log(response)
-        } catch (error) {
-            console.error("Error al añadir el match:", error);
-        }
     };
 
     const getMessage = async (userMsg) => {
@@ -169,19 +152,19 @@ function Game() {
 
         const selectedOption = questionData.choices[index];
         setSelectedAnswer(selectedOption);
-
-
         const isAnswerCorrect = selectedOption === questionData.correctAnswer;
 
-        const apiRequest = axios.post(`${apiEndpointGame}/addQuestion`, {
-            username: localStorage.getItem("username"),
-            question: questionData.question,
-            correctAnswer: questionData.choices.indexOf(questionData.correctAnswer),
-            answers: questionData.choices,
-            selectedAnswer: selectedOption,
-        }).catch(error => {
-            console.error("Error submitting answer:", error);
-        });
+        // Store question data locally instead of sending to API immediately
+        const newQuestion = {
+            text: questionData.question,
+            answers: questionData.choices.map((option, i) => ({
+                text: option,
+                selected: i === index,
+                correct: option === questionData.correctAnswer,
+            }))
+        };
+
+        setGameQuestions(prevQuestions => [...prevQuestions, newQuestion]);
 
         if (isAnswerCorrect) {
             setIsCorrect(true);
@@ -195,7 +178,6 @@ function Game() {
 
         await fetchNewQuestion(category);
         setButtonsActive(true);
-        
     };
 
     const fetchNewQuestion = (category) => {
@@ -211,6 +193,7 @@ function Game() {
             fetchNewQuestionOG(category);
         }
     };
+
     const fetchNewQuestionOG = async (category) => {
         if (initialLoad) {
             setIsLoadingQuestions(true); // Solo mostrar loading en carga inicial
@@ -253,7 +236,7 @@ function Game() {
     };
 
     const handleReplayClick = () => {
-        addMatch(difficulty);
+        setGameQuestions([]);
         setTimeOut(false);
         setShowTimeOutModal(false);
         setButtonsActive(true);
@@ -263,10 +246,34 @@ function Game() {
         timerComponent.current.reset();
     };
 
+    const saveGame = async (gameTime) => {
+        try {
+            const matchResponse = await axios.post(`${apiEndpointGame}/addMatch`, {
+                username: localStorage.getItem("username"),
+                difficulty: difficulty,
+            });
+
+            for (const question of gameQuestions) {
+                await axios.post(`${apiEndpointGame}/addQuestion`, {
+                    username: localStorage.getItem("username"),
+                    question: question.text,
+                    correctAnswer: question.answers.findIndex(a => a.correct),
+                    answers: question.answers.map(a => a.text),
+                    selectedAnswer: question.answers.find(a => a.selected).text,
+                });
+            }
+
+            await axios.post(`${apiEndpointGame}/endMatch`, {
+                username: localStorage.getItem("username"),
+                time: gameTime,
+            });
+        } catch (error) {
+            console.error("Error saving game:", error);
+        }
+    };
+
     const handleTimeOut = () => {
-        //console.log("se acabo pin pin run pin pin pirin pirunpin");
         if (!finished) {
-          //  console.log("se acabo de verdad de la buena");
             setFinished(true);
             let gameTime;
             if (gameStartTime) {
@@ -275,20 +282,13 @@ function Game() {
             }
             setTimeOut(true);
             setShowTimeOutModal(true);
-            axios.post(`${apiEndpointGame}/endMatch`, {
-                username: localStorage.getItem("username"),
-                time: gameTime,
-            })
-                .then(response => {
-                   // console.log("Game ended successfully:", response.data);
-                })
-                .catch(error => {
-                    console.error("Error ending the game:", error);
-                });
+
+            // Only save the game if at least one question was answered
+            if (gameQuestions.length > 0) {
+                saveGame(gameTime);
+            }
         }
     };
-
-
 
     return (
         <>
@@ -461,10 +461,10 @@ function Game() {
                     {questionData && (
                         <div className={styles.questionContainer}>
                             <p>{questionData.question}</p>
-                            <CountdownTimer 
-                            ref={timerComponent} 
-                            maxTime={difficulty === 1 ? 60 : 45}
-                            onTimeOut={handleTimeOut}
+                            <CountdownTimer
+                                ref={timerComponent}
+                                maxTime={difficulty === 1 ? 60 : 45}
+                                onTimeOut={handleTimeOut}
                             ></CountdownTimer>
                         </div>
                     )}
@@ -479,10 +479,10 @@ function Game() {
                                     type="secondary"
                                     active={buttonsActive && !timeOut} // Desactivar botones si el tiempo se acaba o están deshabilitados
                                     className={`${styles.awsBtn} ${
-                                    option === questionData.correctAnswer
-                                        ? styles.buttonActive// Estilo para respuesta correcta
+                                        option === questionData.correctAnswer
+                                            ? styles.buttonActive// Estilo para respuesta correcta
                                             : styles.buttonInactive // Estilo para respuesta incorrecta
-                                        
+
                                     }`}
                                     onPress={() => handleButtonClick(index, selectedCategory)}
                                 >
