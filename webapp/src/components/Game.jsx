@@ -55,7 +55,6 @@ function Game() {
     const [gameQuestions, setGameQuestions] = useState([]);
 
     useEffect(() => {
-        deleteAllQuestions();
         if (showDifficultyModal) {
             setTimeout(() => {
                 setDifficultyModalFadeIn(true);
@@ -186,7 +185,6 @@ function Game() {
             const [nextQuestion, ...remainingQuestions] = questionQueue;
             setQuestionData(nextQuestion);
             setQuestionQueue(remainingQuestions);
-
             if (remainingQuestions.length < 2) {
                 preloadQuestions(category);
             }
@@ -202,7 +200,6 @@ function Game() {
 
         try {
             const response = await axios.get(`${apiEndpointWiki}/getQuestion?category=${category}`);
-
             setQuestionData({
                 question: response.data.question,
                 image: response.data.image || null,
@@ -286,19 +283,9 @@ function Game() {
         }
     };
 
-    const deleteAllQuestions = async () => {
-        try {
-            await axios.delete(`${apiEndpointWiki}/clearQuestions`);
-            //console.log(response.data.message);
-        } catch (error) {
-            console.error("Error deleting questions:", error);
-        }
-    };
-
     return (
         <>
             <Nav />
-
             <div className={styles.containerLayout}>
 
                 {isLoadingQuestions && (
