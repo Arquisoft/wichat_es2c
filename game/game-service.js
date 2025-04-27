@@ -208,7 +208,9 @@ app.get('/userMatches', async (req, res) => {
         score: match.score,
         correctAnswers,
         wrongAnswers,
-        questions: match.questions || []
+        questions: match.questions || [],
+
+        difficulty: match.difficulty
       };
     });
 
