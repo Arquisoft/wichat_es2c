@@ -345,14 +345,10 @@ async function addQuestionsBirds() {
 
 app.get('/getQuestion', async (req, res) => {
     try {
-        const category = req.query.category; // Obtiene el parámetro de la URL
-
-        // Verifica si hay preguntas en la base de datos para la categoría solicitada
+        const category = req.query.category;
         let questions = await Question.find({ category: category });
 
         if (questions.length === 0) {
-
-            // Si no hay preguntas, generamos las preguntas correspondientes a la categoría
             if (category === 'birds') {
                 await addQuestionsBirds();
             } else if (category === 'sports') {
@@ -363,8 +359,6 @@ app.get('/getQuestion', async (req, res) => {
                 await addQuestionsCapital();
             }
 
-
-            // Hacer la consulta a la base de datos nuevamente para obtener las preguntas recién generadas
             questions = await Question.find({ category: category });
 
             if (questions.length === 0) {
@@ -372,19 +366,23 @@ app.get('/getQuestion', async (req, res) => {
             }
         }
 
+        // Filtrar las preguntas que no han sido utilizadas recientemente
         const availableQuestions = questions.filter(q =>
             !recentlyUsedQuestions[category].has(q._id.toString())
         );
 
+        // Si hay menos del 20% de preguntas disponibles, vaciar el set de recientemente usadas
         if (availableQuestions.length < questions.length * 0.2) {
             recentlyUsedQuestions[category].clear();
         }
 
+        // Si hay preguntas disponibles, seleccionamos una al azar
         const selectedQuestion = availableQuestions.length > 0
             ? availableQuestions[Math.floor(Math.random() * availableQuestions.length)]
             : questions[Math.floor(Math.random() * questions.length)];
 
         recentlyUsedQuestions[category].add(selectedQuestion._id.toString());
+
         const choices = selectedQuestion.answers
             .map(answer => answer.text)
             .sort(() => 0.5 - Math.random());
@@ -392,17 +390,27 @@ app.get('/getQuestion', async (req, res) => {
         const correctAnswer = selectedQuestion.answers
             .find(answer => answer.correct)?.text;
 
-        const flagUrl = selectedQuestion.image || null;
+        const image = selectedQuestion.image || null;
 
         res.json({
             question: selectedQuestion.text,
             choices: choices,
             answer: correctAnswer,
-            image: flagUrl
+            image: image
         });
     } catch (error) {
         console.error("Error generating question:", error);
         res.status(500).json({ error: 'Failed to generate question', details: error.message });
+    }
+});
+
+app.delete('/clearQuestions', async (req, res) => {
+    try {
+     await Question.deleteMany({});
+     res.status(200).json({ message: 'All questions deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting questions:', error);
+        res.status(500).json({ error: 'Error deleting questions', details: error.message });
     }
 });
 

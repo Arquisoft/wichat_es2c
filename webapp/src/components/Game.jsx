@@ -55,6 +55,7 @@ function Game() {
     const [gameQuestions, setGameQuestions] = useState([]);
 
     useEffect(() => {
+        deleteAllQuestions();
         if (showDifficultyModal) {
             setTimeout(() => {
                 setDifficultyModalFadeIn(true);
@@ -246,27 +247,23 @@ function Game() {
         timerComponent.current.reset();
     };
 
-    const saveGame = async (gameTime) => {
+    const saveGame = async (gameTime,gameEndTime) => {
         try {
-            const matchResponse = await axios.post(`${apiEndpointGame}/addMatch`, {
-                username: localStorage.getItem("username"),
-                difficulty: difficulty,
-            });
-
-            for (const question of gameQuestions) {
-                await axios.post(`${apiEndpointGame}/addQuestion`, {
+            const totalQuestions = gameQuestions.length;
+            for (let i = 0; i < totalQuestions; i++) {
+                const question = gameQuestions[i];
+                await axios.post(`${apiEndpointGame}/addMatch`, {
                     username: localStorage.getItem("username"),
+                    difficulty: difficulty,
                     question: question.text,
                     correctAnswer: question.answers.findIndex(a => a.correct),
                     answers: question.answers.map(a => a.text),
                     selectedAnswer: question.answers.find(a => a.selected).text,
+                    time: gameTime,
+                    endTime: gameEndTime,
+                    isLastQuestion: i === totalQuestions - 1
                 });
             }
-
-            await axios.post(`${apiEndpointGame}/endMatch`, {
-                username: localStorage.getItem("username"),
-                time: gameTime,
-            });
         } catch (error) {
             console.error("Error saving game:", error);
         }
@@ -276,17 +273,25 @@ function Game() {
         if (!finished) {
             setFinished(true);
             let gameTime;
+            let gameEndTime
             if (gameStartTime) {
-                const gameEndTime = Date.now();
+                gameEndTime = Date.now();
                 gameTime = Math.floor((gameEndTime - gameStartTime) / 1000);
             }
             setTimeOut(true);
             setShowTimeOutModal(true);
-
-            // Only save the game if at least one question was answered
             if (gameQuestions.length > 0) {
-                saveGame(gameTime);
+                saveGame(gameTime,gameEndTime);
             }
+        }
+    };
+
+    const deleteAllQuestions = async () => {
+        try {
+            await axios.delete(`${apiEndpointWiki}/clearQuestions`);
+            //console.log(response.data.message);
+        } catch (error) {
+            console.error("Error deleting questions:", error);
         }
     };
 
