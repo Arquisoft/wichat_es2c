@@ -26,7 +26,7 @@
   font-size: 2rem;
   font-weight: 700;
   color: #2a2a2a;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.8rem;
   letter-spacing: 0.5px;
 }
 
@@ -44,12 +44,6 @@
   border-radius: 12px;
   box-shadow: inset 0 2px 6px rgba(0,0,0,0.1), 0 2px 6px rgba(0,0,0,0.05);
   transition: all 0.3s ease;
-}
-
-
-.statisticsContainer:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
 .scItem1,
@@ -154,8 +148,6 @@
   border: 1.5px solid #4e88ff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-
-
 
 .noGamesMessage {
   text-align: center;
