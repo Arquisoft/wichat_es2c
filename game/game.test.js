@@ -48,170 +48,193 @@ async function createTestUser() {
 
 describe('Game Service', () => {
     describe('POST /addMatch', () => {
-        it('should add a new match for a user', async () => {
+        it('should add a new match with a question for a user', async () => {
             const user = await createTestUser();
+            const endTime = new Date();
 
             const response = await request(app)
                 .post('/addMatch')
                 .send({
                     username: 'testuser',
-                    difficulty: 1
+                    difficulty: 1,
+                    question: '¿Cuál es la capital de Francia?',
+                    correctAnswer: 2,
+                    answers: ['Madrid', 'Londres', 'París', 'Berlín'],
+                    selectedAnswer: 'París',
+                    time: 60,
+                    endTime: endTime,
+                    isLastQuestion: false
                 });
 
             expect(response.statusCode).toBe(201);
-            expect(response.body.message).toBe('Match agregado correctamente');
-            expect(response.body.match).toBeDefined();
-            expect(response.body.match.difficulty).toBe(1);
-            expect(response.body.match.username).toBe('testuser');
+            expect(response.body.message).toBe('Question added to match');
 
             const matches = await Match.find({ username: 'testuser' });
             expect(matches.length).toBe(1);
             expect(matches[0].difficulty).toBe(1);
+            expect(matches[0].questions.length).toBe(1);
+            expect(matches[0].questions[0].text).toBe('¿Cuál es la capital de Francia?');
         });
 
-        it('should return 404 if user not found', async () => {
-            const response = await request(app)
+        it('should mark a match as complete and update statistics when isLastQuestion is true', async () => {
+            const user = await createTestUser();
+            const endTime = new Date();
+
+            await request(app)
                 .post('/addMatch')
                 .send({
-                    username: 'nonexistentuser',
-                    difficulty: 1
-                });
-
-            expect(response.statusCode).toBe(404);
-            expect(response.body.error).toBe('Usuario no encontrado');
-        });
-    });
-
-    describe('POST /addQuestion', () => {
-        it('should add a question to the most recent match', async () => {
-            await createTestUser();
-
-            // Create a match directly
-            const match = new Match({
-                username: 'testuser',
-                difficulty: 1
-            });
-            await match.save();
-
-            const response = await request(app)
-                .post('/addQuestion')
-                .send({
                     username: 'testuser',
+                    difficulty: 1,
                     question: '¿Cuál es la capital de Francia?',
                     correctAnswer: 2,
                     answers: ['Madrid', 'Londres', 'París', 'Berlín'],
-                    selectedAnswer: 'París'
+                    selectedAnswer: 'París',
+                    time: 30,
+                    endTime: endTime,
+                    isLastQuestion: false
+                });
+
+            const response = await request(app)
+                .post('/addMatch')
+                .send({
+                    username: 'testuser',
+                    difficulty: 1,
+                    question: '¿Cuál es la capital de España?',
+                    correctAnswer: 0,
+                    answers: ['Madrid', 'Londres', 'París', 'Berlín'],
+                    selectedAnswer: 'Madrid',
+                    time: 60,
+                    endTime: endTime,
+                    isLastQuestion: true
                 });
 
             expect(response.statusCode).toBe(201);
-            expect(response.body.message).toBe('Pregunta añadida al último match');
+            expect(response.body.message).toBe('Game completed and statistics updated');
+            expect(response.body.statistics).toBeDefined();
+            expect(response.body.match).toBeDefined();
+            expect(response.body.match.score).toBeDefined();
 
-            const updatedMatch = await Match.findOne({ username: 'testuser' });
-            expect(updatedMatch.questions.length).toBe(1);
-            expect(updatedMatch.questions[0].text).toBe('¿Cuál es la capital de Francia?');
+            const updatedUser = await User.findOne({ username: 'testuser' });
+            expect(updatedUser.statistics.gamesPlayed).toBe(1);
+            expect(updatedUser.statistics.rightAnswers).toBe(2);
+            expect(updatedUser.statistics.wrongAnswers).toBe(0);
+        });
 
-            const question = updatedMatch.questions[0];
-            const correctAnswerObj = question.answers.find(a => a.correct);
-            expect(correctAnswerObj.text).toBe('París');
+        it('should handle incorrect answers when calculating score', async () => {
+            const user = await createTestUser();
+            const endTime = new Date();
 
-            const selectedAnswerObj = question.answers.find(a => a.selected);
-            expect(selectedAnswerObj.text).toBe('París');
+            await request(app)
+                .post('/addMatch')
+                .send({
+                    username: 'testuser',
+                    difficulty: 1,
+                    question: '¿Cuál es la capital de Francia?',
+                    correctAnswer: 2,
+                    answers: ['Madrid', 'Londres', 'París', 'Berlín'],
+                    selectedAnswer: 'París',
+                    time: 30,
+                    endTime: endTime,
+                    isLastQuestion: false
+                });
+
+            const response = await request(app)
+                .post('/addMatch')
+                .send({
+                    username: 'testuser',
+                    difficulty: 1,
+                    question: '¿Cuál es la capital de España?',
+                    correctAnswer: 0,
+                    answers: ['Madrid', 'Londres', 'París', 'Berlín'],
+                    selectedAnswer: 'Londres',
+                    time: 60,
+                    endTime: endTime,
+                    isLastQuestion: true
+                });
+
+            expect(response.statusCode).toBe(201);
+
+            const updatedUser = await User.findOne({ username: 'testuser' });
+            expect(updatedUser.statistics.rightAnswers).toBe(1);
+            expect(updatedUser.statistics.wrongAnswers).toBe(1);
+
+            const match = await Match.findOne({ username: 'testuser' });
+            expect(match.score).toBe(1 * (1 * 30) - (1 * 20));
+        });
+
+        it('should create a new match if endTime is different', async () => {
+            const user = await createTestUser();
+            const firstEndTime = new Date('2023-01-01T12:00:00Z');
+            const secondEndTime = new Date('2023-01-02T12:00:00Z');
+
+            await request(app)
+                .post('/addMatch')
+                .send({
+                    username: 'testuser',
+                    difficulty: 1,
+                    question: '¿Cuál es la capital de Francia?',
+                    correctAnswer: 2,
+                    answers: ['Madrid', 'Londres', 'París', 'Berlín'],
+                    selectedAnswer: 'París',
+                    time: 30,
+                    endTime: firstEndTime,
+                    isLastQuestion: true
+                });
+
+            await request(app)
+                .post('/addMatch')
+                .send({
+                    username: 'testuser',
+                    difficulty: 2,
+                    question: '¿Cuál es la capital de España?',
+                    correctAnswer: 0,
+                    answers: ['Madrid', 'Londres', 'París', 'Berlín'],
+                    selectedAnswer: 'Madrid',
+                    time: 45,
+                    endTime: secondEndTime,
+                    isLastQuestion: false
+                });
+
+            const matches = await Match.find({ username: 'testuser' }).sort({ date: 1 });
+            expect(matches.length).toBe(2);
+            expect(matches[0].date.toISOString()).toBe(firstEndTime.toISOString());
+            expect(matches[1].date.toISOString()).toBe(secondEndTime.toISOString());
         });
 
         it('should return 400 if required fields are missing', async () => {
             await createTestUser();
 
             const response = await request(app)
-                .post('/addQuestion')
+                .post('/addMatch')
                 .send({
                     username: 'testuser',
+                    difficulty: 1
+                    // Missing required fields
                 });
 
             expect(response.statusCode).toBe(400);
             expect(response.body.error).toBe('Error when processing the request');
         });
 
-        it('should return 404 if user or match not found', async () => {
+        it('should return 404 if user not found', async () => {
+            const endTime = new Date();
+
             const response = await request(app)
-                .post('/addQuestion')
+                .post('/addMatch')
                 .send({
                     username: 'nonexistentuser',
+                    difficulty: 1,
                     question: '¿Cuál es la capital de Francia?',
                     correctAnswer: 2,
                     answers: ['Madrid', 'Londres', 'París', 'Berlín'],
-                    selectedAnswer: 'París'
+                    selectedAnswer: 'París',
+                    time: 60,
+                    endTime: endTime,
+                    isLastQuestion: false
                 });
 
             expect(response.statusCode).toBe(404);
-            expect(response.body.error).toBe('Match not found');
-        });
-    });
-
-    describe('POST /endMatch', () => {
-        it('should end a match and update user statistics', async () => {
-            const user = await createTestUser();
-            const match = new Match({
-                username: 'testuser',
-                difficulty: 1
-            });
-
-            match.questions.push({
-                text: 'Question 1',
-                answers: [
-                    { text: 'A', selected: true, correct: true },
-                    { text: 'B', selected: false, correct: false }
-                ]
-            });
-            match.questions.push({
-                text: 'Question 2',
-                answers: [
-                    { text: 'A', selected: false, correct: false },
-                    { text: 'B', selected: true, correct: true }
-                ]
-            });
-            match.questions.push({
-                text: 'Question 3',
-                answers: [
-                    { text: 'A', selected: true, correct: false },
-                    { text: 'B', selected: false, correct: true }
-                ]
-            });
-
-            await match.save();
-
-            const response = await request(app)
-                .post('/endMatch')
-                .send({
-                    username: 'testuser',
-                    time: 120
-                });
-
-            expect(response.statusCode).toBe(201);
-            expect(response.body.message).toBe('Match actualizado');
-            expect(response.body.score).toBeDefined();
-
-            const updatedMatch = await Match.findById(match._id);
-            expect(updatedMatch.time).toBe(120);
-            expect(updatedMatch.score).toBeDefined();
-            expect(updatedMatch.date).toBeDefined();
-
-            const updatedUser = await User.findOne({ username: 'testuser' });
-            expect(updatedUser.statistics.gamesPlayed).toBe(1);
-            expect(updatedUser.statistics.rightAnswers).toBe(2);
-            expect(updatedUser.statistics.wrongAnswers).toBe(1);
-            expect(updatedUser.statistics.averageTime).toBe(120);
-            expect(updatedUser.statistics.bestTime).toBe(120);
-        });
-
-        it('should return 404 if user not found', async () => {
-            const response = await request(app)
-                .post('/endMatch')
-                .send({
-                    username: 'nonexistentuser',
-                    time: 120
-                });
-            expect(response.statusCode).toBe(404);
-            expect(response.body.error).toBe('Usuario no encontrado');
+            expect(response.body.error).toBe('User not found');
         });
     });
 
@@ -260,17 +283,15 @@ describe('Game Service', () => {
                     difficulty: 1,
                     date: new Date(),
                     time: 100 + i,
-                    score: 200 + i
+                    score: 200 + i,
+                    questions: [{
+                        text: `Question ${i}`,
+                        answers: [
+                            { text: 'A', selected: true, correct: true },
+                            { text: 'B', selected: false, correct: false }
+                        ]
+                    }]
                 });
-
-                match.questions.push({
-                    text: `Question ${i}`,
-                    answers: [
-                        { text: 'A', selected: true, correct: true },
-                        { text: 'B', selected: false, correct: false }
-                    ]
-                });
-
                 await match.save();
             }
 
