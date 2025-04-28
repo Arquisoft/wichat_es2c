@@ -12,17 +12,6 @@ import axios from "axios";
 import { CircularProgress } from "@mui/material";
 
 function Game() {
-    //Revisar si es correcto tener esto aqui (creo que de esta forma de saltan el gateway service)
-    let apiEndpointGame;
-    let apiEndpointWiki;
-
-    if (window.location.hostname === 'localhost') {
-        apiEndpointGame = 'http://localhost:8004'; // Para desarrollo
-        apiEndpointWiki =   'http://localhost:3005'
-    } else {
-        apiEndpointGame = 'http://143.47.54.63:8004'; // Para producción
-        apiEndpointWiki =   'http://143.47.54.63:3005'
-    }
     const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
     const [difficulty, setDifficulty] = useState(1);
@@ -67,7 +56,7 @@ function Game() {
         try {
             const questions = await Promise.all(
                 Array(count).fill().map(() =>
-                    axios.get(`${apiEndpointWiki}/getQuestion?category=${category}`)
+                    axios.get(`${apiEndpoint}/getQuestion?category=${category}`)
                 )
             );
 
@@ -85,10 +74,6 @@ function Game() {
             setIsLoadingQuestions(false); // Desactivar loading
         }
     };
-
-    // useEffect(() => {
-    //   preloadQuestions();
-    //}, []);
 
     useEffect(() => {
         if (questionData && questionData.image) {
@@ -110,10 +95,9 @@ function Game() {
         }, 300);
     };
 
-
     const addMatch = async (diffLevel) => {
         try {
-            const response = await axios.post(`${apiEndpointGame}/addMatch`, {
+            const response = await axios.post(`${apiEndpoint}/addMatch`, {
                 username: localStorage.getItem("username"),
                 difficulty: diffLevel,
             });
@@ -173,7 +157,7 @@ function Game() {
 
         const isAnswerCorrect = selectedOption === questionData.correctAnswer;
 
-        const apiRequest = axios.post(`${apiEndpointGame}/addQuestion`, {
+        const apiRequest = axios.post(`${apiEndpoint}/addQuestion`, {
             username: localStorage.getItem("username"),
             question: questionData.question,
             correctAnswer: questionData.choices.indexOf(questionData.correctAnswer),
@@ -217,7 +201,7 @@ function Game() {
         }
 
         try {
-            const response = await axios.get(`${apiEndpointWiki}/getQuestion?category=${category}`);
+            const response = await axios.get(`${apiEndpoint}/getQuestion?category=${category}`);
 
             setQuestionData({
                 question: response.data.question,
@@ -275,7 +259,7 @@ function Game() {
             }
             setTimeOut(true);
             setShowTimeOutModal(true);
-            axios.post(`${apiEndpointGame}/endMatch`, {
+            axios.post(`${apiEndpoint}/endMatch`, {
                 username: localStorage.getItem("username"),
                 time: gameTime,
             })

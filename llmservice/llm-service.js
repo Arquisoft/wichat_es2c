@@ -1,7 +1,7 @@
 const axios = require('axios');
 const express = require('express');
 
-//para acceeder a los env
+//to access env variables
 require("dotenv").config();
 
 const app = express();
