@@ -353,14 +353,13 @@ app.get('/getQuestion', async (req, res) => {
                 await addQuestionsSports();
             } else if (category === 'cartoons') {
                 await addQuestionsCartoons();
-            } else {
+            } else if (category === 'capitals'){
                 await addQuestionsCapital();
             }
 
-
             // Hacer la consulta a la base de datos nuevamente para obtener las preguntas recién generadas
             questions = await Question.find({ category: category });
-
+            
             if (questions.length === 0) {
                 return res.status(404).json({ error: `No questions found for category: ${category}` });
             }
