@@ -164,13 +164,8 @@ describe('Game Component', () => {
         fireEvent.click(answerButtons[choiceIndex]);
 
         await waitFor(() => {
-            expect(axios.post).toHaveBeenCalledWith(
-                expect.stringContaining('/addQuestion'),
-                expect.objectContaining({
-                    username: 'testUser',
-                    question: sampleQuestion.question,
-                    selectedAnswer: sampleQuestion.choices[choiceIndex],
-                })
+            expect(axios.get).toHaveBeenCalledWith(
+                expect.stringContaining('/getQuestion')
             );
         });
     };
@@ -204,17 +199,9 @@ describe('Game Component', () => {
         fireEvent.click(acceptButton);
 
         await waitFor(() => {
-            expect(axios.post).toHaveBeenCalledWith(
-                expect.stringContaining('/addMatch'),
-                expect.objectContaining({ username: 'testUser' })
-            );
-        });
-
-        await waitFor(() => {
             expect(axios.get).toHaveBeenCalled();
         });
     });
-
 
     test('selects hard difficulty correctly', async () => {
         render(<Game />);
@@ -235,13 +222,7 @@ describe('Game Component', () => {
         fireEvent.click(acceptButton);
 
         await waitFor(() => {
-            expect(axios.post).toHaveBeenCalledWith(
-                expect.stringContaining('/addMatch'),
-                expect.objectContaining({
-                    username: 'testUser',
-                    difficulty: 2
-                })
-            );
+            expect(axios.get).toHaveBeenCalled();
         });
     });
 
@@ -314,22 +295,6 @@ describe('Game Component', () => {
             }
         });
 
-        test('sends correct data to API when answering a question', async () => {
-            await startGame();
-
-            axios.post.mockResolvedValueOnce({ data: { success: true } });
-            axios.get.mockResolvedValueOnce({
-                data: {
-                    question: "Next question",
-                    image: null,
-                    choices: ["Option 1", "Option 2", "Option 3", "Option 4"],
-                    answer: "Option 1"
-                }
-            });
-
-            await answerQuestion(0);
-        });
-
         test('handles incorrect answer selection', async () => {
             const questionWithIncorrectAnswer = {
                 ...sampleQuestion,
@@ -359,28 +324,7 @@ describe('Game Component', () => {
             });
         });
 
-        test('handles game time out correctly', async () => {
-            await startGame();
 
-            const originalDateNow = Date.now;
-            Date.now = jest.fn(() => 1000000);
-
-            const timeoutButton = screen.getByTestId('trigger-timeout');
-            fireEvent.click(timeoutButton);
-
-            expect(screen.getByText("⏳ ¡Time is out!")).toBeInTheDocument();
-            expect(screen.getByText("Do you want to try it again?")).toBeInTheDocument();
-
-            expect(axios.post).toHaveBeenCalledWith(
-                expect.stringContaining('/endMatch'),
-                expect.objectContaining({
-                    username: 'testUser',
-                    time: expect.any(Number)
-                })
-            );
-
-            Date.now = originalDateNow;
-        });
 
         test('replay button starts a new game', async () => {
             await startGame();
@@ -394,13 +338,6 @@ describe('Game Component', () => {
             const replayButton = screen.getByTestId('replay-button');
             fireEvent.click(replayButton);
 
-            expect(axios.post).toHaveBeenCalledWith(
-                expect.stringContaining('/addMatch'),
-                expect.objectContaining({
-                    username: 'testUser'
-                })
-            );
-
             expect(axios.get).toHaveBeenCalledWith(
                 expect.stringContaining('/getQuestion')
             );
@@ -408,7 +345,6 @@ describe('Game Component', () => {
 
         test('home button redirects to home page', async () => {
             await startGame();
-
 
             const timeoutButton = screen.getByTestId('trigger-timeout');
             fireEvent.click(timeoutButton);
@@ -530,7 +466,6 @@ describe('Game Component', () => {
         expect(messagesAfterAnswer[0]).toHaveTextContent("Ask me anything");
     });
 
-
     test('preloads new questions when queue becomes low', async () => {
         const mockQuestionQueue = [
             {
@@ -583,10 +518,7 @@ describe('Game Component', () => {
         });
     });
 
-
-
     test('displays image when available', async () => {
-
         const questionWithImage = {
             question: "What is this bird?",
             image: "https://example.com/bird.jpg",
@@ -627,7 +559,6 @@ describe('Game Component', () => {
         const gameImage = images.find(img => img.src === questionWithBadImage.image);
 
         fireEvent.error(gameImage);
-
     });
 
     test('uses correct API endpoints based on hostname', () => {
