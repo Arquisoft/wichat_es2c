@@ -48,16 +48,6 @@ app.post('/adduser', async (req, res) => {
   }
 });
 
-app.post('/addQuestion', async (req, res) => {
-  try {
-    const userResponse = await axios.post(gameServiceUrl+'/addQuestion', req.body);
-    res.json(userResponse.data);
-  } catch (error) {
-    res.status(error.response.status).json({ error: error.response.data.error });
-  }
-});
-
-
 app.post('/addMatch', async (req, res) => {
   try {
     const userResponse = await axios.post(gameServiceUrl+'/addMatch', req.body);
@@ -68,24 +58,6 @@ app.post('/addMatch', async (req, res) => {
 });
 
 
-app.post('/endMatch', async (req, res) => {
-  try {
-    const userResponse = await axios.post(gameServiceUrl+'/endMatch', req.body);
-    res.json(userResponse.data);
-  } catch (error) {
-    res.status(error.response.status).json({ error: error.response.data.error });
-  }
-});
-
-
-app.post('/addQuestions', async (req, res) => {
-  try {
-    const userResponse = await axios.post(wikidataServiceUrl+'/addQuestions', req.body);
-    res.json(userResponse.data);
-  } catch (error) {
-    res.status(error.response.status).json({ error: error.response.data.error });
-  }
-});
 
 app.get('/getQuestion', async (req, res) => {
   try {
@@ -97,17 +69,6 @@ app.get('/getQuestion', async (req, res) => {
 });
 
 
-/*
-app.post('/askllm', async (req, res) => {
-  try {
-    // Forward the add user request to the user service
-    const llmResponse = await axios.post(llmServiceUrl+'/ask', req.body);
-    res.json(llmResponse.data);
-  } catch (error) {
-    res.status(error.response.status).json({ error: error.response.data.error });
-  }
-});
-*/
 app.post('/askllm', async (req, res) => {
   try {
     // Verificamos que estén presentes todos los campos necesarios

@@ -18,10 +18,15 @@ const questionCache = {
     birds: { data: null, lastUpdate: null },
 };
 
+const recentlyUsedQuestions = {
+    capitals: new Set(),
+    sports: new Set(),
+    cartoons: new Set(),
+    birds: new Set()
+};
 async function addQuestionsCapital() {
     const CACHE_DURATION = 1000 * 60 * 60;
     const cache = questionCache.capitals;
-
     if (!cache.data || (Date.now() - cache.lastUpdate > CACHE_DURATION)) {
         try {
             let query = `
@@ -34,7 +39,7 @@ async function addQuestionsCapital() {
                 SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
               }       
                 GROUP BY ?countryLabel ?capitalLabel
-                LIMIT 50
+                LIMIT 150
                 `;
             const url = `https://query.wikidata.org/sparql?query=${encodeURIComponent(query)}&format=json`;
             const response = await axios.get(url);
@@ -100,7 +105,7 @@ async function addQuestionsSports() {
                     ?country wdt:P30 wd:Q46.             # País debe estar en Europa
                     SERVICE wikibase:label { bd:serviceParam wikibase:language "es". }
                 }
-                LIMIT 50
+                LIMIT 150
             `;
 
             // Realizamos la solicitud SPARQL
@@ -186,7 +191,7 @@ async function addQuestionsCartoons() {
                     # Filtra identificadores numéricos (como "Q1234")
                     FILTER (!REGEX(STR(?itemLabel), "^Q[0-9]+$"))
                 }
-                LIMIT 50
+                LIMIT 150
             `;
 
             // Usamos la query para hacer la solicitud SPARQL
@@ -274,7 +279,7 @@ async function addQuestionsBirds() {
                     # Filtra para asegurarse de que la etiqueta esté en español
                     FILTER(LANG(?animalLabel) = "es")
                 }
-                LIMIT 50
+                LIMIT 150
             `;
 
             // Usamos la query para hacer la solicitud SPARQL
@@ -339,14 +344,10 @@ async function addQuestionsBirds() {
 
 app.get('/getQuestion', async (req, res) => {
     try {
-        const category = req.query.category; // Obtiene el parámetro de la URL
+        const category = req.query.category;
 
-        // Verifica si hay preguntas en la base de datos para la categoría solicitada
         let questions = await Question.find({ category: category });
-
-        if (questions.length === 0) {
-
-            // Si no hay preguntas, generamos las preguntas correspondientes a la categoría
+        if(questions.length<150) {
             if (category === 'birds') {
                 await addQuestionsBirds();
             } else if (category === 'sports') {
@@ -357,17 +358,29 @@ app.get('/getQuestion', async (req, res) => {
                 await addQuestionsCapital();
             }
 
-
-            // Hacer la consulta a la base de datos nuevamente para obtener las preguntas recién generadas
-            questions = await Question.find({ category: category });
+            // Esperamos a que las preguntas se inserten y las volvemos a obtener
+            questions = await Question.find({category: category});
 
             if (questions.length === 0) {
-                return res.status(404).json({ error: `No questions found for category: ${category}` });
+                return res.status(404).json({error: `No questions found for category: ${category}`});
             }
         }
 
+        // Filtramos las preguntas ya usadas
+        const availableQuestions = questions.filter(q =>
+            !recentlyUsedQuestions[category].has(q._id.toString())
+        );
+
+        if (availableQuestions.length < questions.length * 0.2) {
+            recentlyUsedQuestions[category].clear();
+        }
+
         // Seleccionamos una pregunta aleatoria
-        const selectedQuestion = questions[Math.floor(Math.random() * questions.length)];
+        const selectedQuestion = availableQuestions.length > 0
+            ? availableQuestions[Math.floor(Math.random() * availableQuestions.length)]
+            : questions[Math.floor(Math.random() * questions.length)];
+
+        recentlyUsedQuestions[category].add(selectedQuestion._id.toString());
 
         const choices = selectedQuestion.answers
             .map(answer => answer.text)
@@ -376,21 +389,20 @@ app.get('/getQuestion', async (req, res) => {
         const correctAnswer = selectedQuestion.answers
             .find(answer => answer.correct)?.text;
 
-        const flagUrl = selectedQuestion.image || null;
+        const image = selectedQuestion.image || null;
 
+        // Respondemos con la pregunta seleccionada
         res.json({
             question: selectedQuestion.text,
             choices: choices,
             answer: correctAnswer,
-            image: flagUrl
+            image: image
         });
     } catch (error) {
         console.error("Error generating question:", error);
         res.status(500).json({ error: 'Failed to generate question', details: error.message });
     }
 });
-
-
 
 const server = app.listen(PORT, () => {
     console.log(`Wikidata Service listening at http://localhost:${PORT}`);
