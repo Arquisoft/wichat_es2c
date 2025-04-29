@@ -284,7 +284,7 @@ These stored questions are then served to the user dynamically throughout the ma
 
 === ADR 008: Styling Approach - CSS Modules
 :status: Accepted
-:date: 2025-04-28
+:date: 
 
 ==== Context
 
@@ -305,48 +305,71 @@ Use CSS Modules for styling, with partial hybridization where needed.
 
 
 
-=== ADR 009: Choice of Empathy LLM   ******************************************************************************
+=== ADR 009: Choice of Empathy LLM
 :status: Accepted
 :date: 2025-04-28
 
 ==== Context
 
-A suitable LLM (Large Language Model) was required for project needs.
+To implement the chatbot system that provides hints during gameplay, the project required integration with a Large Language Model (LLM). The main criteria were accuracy, responsiveness, and a reduced tendency toward hallucination or incorrect answers, as the quality of hints directly affects user experience.
 
 ==== Decision
 
-Empathy LLM was selected as the core AI model.
+The team chose to use the Qwen2.5-Coder-7B-Instruct model provided through the Empathy LLM platform.
 
 ==== Rationale
 
-* Good balance between performance and ease of integration.
+* Empathy LLM provided an API key with access to two models:
+  ** Mistral-7B-Instruct-v0.3
+  ** Qwen2.5-Coder-7B-Instruct
+* After testing both models, Qwen was selected for:
+  ** Higher consistency in structured, instructional outputs.
+  ** Better handling of technical prompts and explanation-style hints.
+  ** More stable performance with fewer hallucinations under our prompt style.
+* The Empathy API offered fast response times and easy integration, allowing for rapid prototyping and feedback iteration.
+
+==== Alternatives considered
+
+*Mistral-7B-Instruct-v0.3*
+
+** Pros:
+  *** Well-known model with good general performance.
+  *** Slightly faster in some shorter prompts.
+** Cons:
+  *** More prone to generating vague or verbose responses in our use case.
+  *** Occasionally less precise in multi-turn or guided question scenarios.
 
 ==== Consequences
 
-* Need to monitor model updates and capabilities.
+* The chatbot feature benefits from a lightweight, instruction-tuned LLM tailored to the task.
+* Reduces hallucination risk, improving player trust in hints.
+* The choice of Qwen may require future fine-tuning or prompt engineering as feature complexity grows.
+* Integration is dependent on the continued availability and performance of the Empathy LLM platform.
+* In the future, a fallback strategy using both Qwen and Mistral could be implemented to improve resilience against outages or API failures.
+
+
 
 
 
 === ADR 010: Monitoring Strategy   ******************************************************************************
 :status: Accepted
-:date: 2025-04-28
+:date: 
 
 ==== Context
 
-Operational monitoring is essential for reliability and performance.
 
 ==== Decision
 
-Use Prometheus and Grafana, supplemented with Oracle Cloud Monitoring.
+
 
 ==== Rationale
 
-* Prometheus + Grafana is a proven, flexible, open-source monitoring stack.
-* Oracle Cloud Monitoring provides additional metrics and alerting.
+* Prometheus + Grafana
+* Oracle Cloud Monitoring
 
 ==== Consequences
 
-* Need to configure and maintain monitoring tools and alerting rules.
+
 
 
 [role="arc42help"]
