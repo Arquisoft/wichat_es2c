@@ -1,6 +1,6 @@
 const testUser = {
-    username: `testuser${Date.now()}`, //para que no se repita
-    password: 'password123',
+    username: `${Date.now()}`, //para que no se repita
+    password: '123',
     isRegistered: false
 };
 
