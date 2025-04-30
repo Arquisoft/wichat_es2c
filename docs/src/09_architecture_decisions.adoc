@@ -20,6 +20,7 @@ The following initial architectural decisions were made:
 
 * *Frontend:* React
 * *Backend:* JavaScript with Node.js  (see <<ADR-003>>)
+* *Database:* MongoDB (see <<ADR-002>>)
 * *Deployment:* Docker
 
 ==== Rationale
@@ -101,8 +102,7 @@ The project continued using JavaScript as the primary development language.
 
 * TypeScript offered significant advantages in terms of type safety, better tooling, and enhanced code quality.
 * Tailwind CSS promised faster and more consistent frontend development.
-* However, serious compatibility issues arose with the project's foundational base and its critical dependencies when integrating TypeScript.
-* JavaScript, on the other hand, ensured full compatibility with existing dependencies and leveraged the team's strong prior experience.
+* However, serious compatibility issues arose with the project's foundational base and its critical dependencies when integrating TypeScript. JavaScript, on the other hand, ensured full compatibility with existing dependencies and leveraged the team's strong prior experience.
 
 ==== Alternatives considered
 
@@ -156,26 +156,28 @@ SPARQL was adopted as the primary method for querying Wikidata.
 
 
 [[ADR-005]]
-=== ADR 005: Oracle VM for Deployment Infrastructure
+=== ADR 005: Oracle Cloud VM for Deployment Infrastructure
 :status: Accepted
 :date: 
 
 ==== Context
 
-The application required a virtualized environment to deploy backend services, the database, and monitoring tools. Initially, Microsoft Azure was considered as the deployment platform due to its popularity and enterprise-grade features.
+The application required a virtualized environment to deploy the frontend, backend services, the database, and monitoring tools. Initially, Microsoft Azure was considered as the deployment platform due to its popularity and having almost every member of the team some level of experince, thanks to having used it in other subjects.
 
-However, during early planning, one team member already had access to an Oracle VM instance that was partially configured and available for use. This presented an opportunity to streamline deployment efforts and reduce setup time and cost.
+However, during early planning, one team member already had access to an Oracle Cloud VM instance that was partially configured and available for use. This presented an opportunity to streamline deployment efforts and reduce setup time and cost.
 
 ==== Decision
 
-The team decided to use an Oracle VM instance to host the project infrastructure.
+The team decided to use an Oracle Cloud VM instance to host the project infrastructure.
 
 ==== Rationale
 
-* Immediate availability of an Oracle VM already partially configured.
+* Immediate availability of an Oracle Cloud VM already partially configured.
 * Team member already had experience managing this VM, including port configuration and service setup.
 * Avoids incurring additional cloud infrastructure costs.
 * Simplifies initial deployment and testing.
+* With Oracle Cloud VM we can have the aplicattion deployed 24/7.
+* In case anyone have to do any kind of work on the VM, giving access to it is simple because only SSH and the IP are required.
 
 ==== Alternatives considered
 
@@ -189,12 +191,13 @@ The team decided to use an Oracle VM instance to host the project infrastructure
   *** Requires account setup, configuration, and billing.
   *** Team would need time to familiarize with the environment.
   *** No immediate advantage over the already available Oracle VM at this stage.
+  *** In case we have used Azure, we would be obligated to turn on and off the application whenever it is necessary.
 
 ==== Consequences
 
 * Faster initial deployment due to use of an already prepared environment.
-* Reduced cloud infrastructure cost in early development phases.
-* May require future migration or scaling strategy if the project grows or if Oracle VM limitations become restrictive.
+* Reduced cloud infrastructure cost during the development.
+* May require future migration or scaling strategy if the project grows or if Oracle Cloud VM limitations become restrictive.
 
 
 
@@ -206,8 +209,8 @@ The team decided to use an Oracle VM instance to host the project infrastructure
 ==== Context
 
 In designing the backend system, the team considered different architectural styles to support modularity, maintainability, and scalability.
-A pure microservices architecture was initially discussed due to its popularity and alignment with distributed systems.
-However, after evaluating the complexity and actual needs of the project, a service-based architecture was chosen instead.
+A pure microservices architecture was initially discussed and followed due to its popularity and the main project was built in a microservice based architecture.
+However, during the development of the application, a service-based architecture was chosen instead.
 
 ==== Decision
 
@@ -226,19 +229,14 @@ The project adopts a service-based architecture, rather than a fully decoupled m
 
 ** Pros:
   *** Strong decoupling, allowing for independent scaling and deployment of services.
-  *** Improved fault isolation and technology diversity.
 ** Cons:
-  *** High operational complexity (e.g., service orchestration, distributed logging, network latency).
-  *** Requires significant infrastructure (service registry, message brokers, etc.).
   *** Overkill for small or medium-sized teams and projects with limited domain boundaries.
 
 ==== Consequences
 
-* Enables a modular structure where services are separated logically but may coexist within the same deployment unit.
+* Enables a modular structure where services are separated logically but may coexist within the application itself.
 * Facilitates faster development and easier testing.
 * Allows future evolution toward microservices if project requirements grow.
-* Some architectural trade-offs accepted, such as shared deployments or tighter coupling in certain areas.
-
 
 
 
@@ -254,7 +252,7 @@ However, this approach caused severe performance issues, resulting in noticeable
 
 ==== Decision
 
-To improve performance, the application now pre-generates and stores a set of questions in the database at the start of each game.
+To improve performance, the application now pre-generates and stores a set of questions cache at the start of each game.
 These stored questions are then served to the user dynamically throughout the match, minimizing latency.
 
 ==== Rationale
