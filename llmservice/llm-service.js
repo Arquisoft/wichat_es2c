@@ -55,6 +55,64 @@ function validateRequiredFields(req) {
 
 }
 
+//validacion del input puesto por el usuario
+function validateUserInput(req) {
+  
+  const result = {
+    isValid: true,
+    message: null,
+    friendlyMessage: null
+  };
+
+  const { userQuestion } = req.body;
+  
+  //no esté vacío
+  if (!userQuestion || userQuestion.trim() === '') {
+    result.isValid = false;
+    result.message = 'User question cannot be empty';
+    result.friendlyMessage = "It seems you didn't ask a specific question. Could you please rephrase your query?";
+    return result;
+  }
+
+  //longitud mínima
+  if (userQuestion.trim().length < 6) {
+    result.isValid = false;
+    result.message = 'User question is too short (minimum 3 characters)';
+    result.friendlyMessage = "Your question is a bit too short. Could you provide more details about what you'd like to know?";
+    return result;
+  }
+
+  //longitud máxima
+  if (userQuestion.length > 300) {
+    result.isValid = false;
+    result.message = 'User question is too long (maximum 300 characters)';
+    result.friendlyMessage = "Your question is quite long! Could you keep it shorter and more specific?";
+    return result;
+  }
+
+  //casos de preguntas a evitar (preguntas que piden la respuesta directamente)
+  const forbiddenPatterns = [
+    /^\s*tell\s+me\s+the\s+answer\s*$/i, 
+    /^what\s+is\s+the\s+correct\s+answer/i,
+    /^which\s+is\s+correct/i,
+    /^give\s+me\s+the\s+answer/i
+  ];
+
+  const containsForbiddenPattern = forbiddenPatterns.some(pattern => 
+    pattern.test(userQuestion)
+  );
+  
+  if (containsForbiddenPattern) {
+    result.isValid = false;
+    result.message = 'Direct answer requests are not allowed';
+    result.friendlyMessage = "I can't give you the answer directly. Try asking about the topic or concepts related to the question instead.";
+    return result;
+  }
+
+
+  return result;
+}
+
 // Generic function to send questions to LLM
 async function sendQuestionToLLM(contextPromt, question, apiKey, model = 'gemini') {
   try {
@@ -71,9 +129,22 @@ async function sendQuestionToLLM(contextPromt, question, apiKey, model = 'gemini
       ...(config.headers ? config.headers(apiKey) : {})
     };
 
-    const response = await axios.post(url, requestData, { headers });
+    //const response = await axios.post(url, requestData, { headers });
+    //return config.transformResponse(response);
 
-    return config.transformResponse(response);
+    const response = await axios.post(url, requestData, { 
+      headers,
+      timeout: 12000  // 12 segundos de timeout
+    });
+
+    const processedResponse = config.transformResponse(response);
+    
+    // Verificar que la respuesta no sea vacía
+    if (!processedResponse) {
+      throw new Error('Empty response from LLM service');
+    }
+    
+    return processedResponse;
 
   } catch (error) {
     console.error(`Error sending question to ${model}:`, error.message || error);
@@ -84,7 +155,8 @@ async function sendQuestionToLLM(contextPromt, question, apiKey, model = 'gemini
       console.error(`Response status: ${error.response.status}`);
     }
 
-    return null;
+    //return null;
+    throw error; //para luego tratarlo mejor en el post ask
   }
 }
 
@@ -135,6 +207,17 @@ app.post('/ask', async (req, res) => {
     // Check if required fields are present in the request body
     validateRequiredFields(req);
 
+
+    // Validate user input
+    const validationResult = validateUserInput(req);
+    if (!validationResult.isValid) {
+      return res.status(200).json({ 
+        answer: validationResult.friendlyMessage,
+        validationError: true
+      });
+    }
+
+
     //const { question, model, apiKey } = req.body;
     const { model = 'empathy', userQuestion, gameQuestion, answers, correctAnswer } = req.body;
 
@@ -146,10 +229,21 @@ app.post('/ask', async (req, res) => {
     // Configura el contexto con toda la información disponible
     const contextPromt = configureContextPromt(gameQuestion, answers, correctAnswer);
 
-    //const answer = await sendQuestionToLLM(question, apiKey, model);
-    const answer = await sendQuestionToLLM(contextPromt, userQuestion, apiKey, model);
+    //const answer = await sendQuestionToLLM(contextPromt, userQuestion, apiKey, model);
+    //res.json({ answer });
 
-    res.json({ answer });
+    try {
+      const answer = await sendQuestionToLLM(contextPromt, userQuestion, apiKey, model);
+
+      res.json({ answer });
+
+    } catch (llmError) {
+      
+      return res.status(200).json({ 
+        answer: "I'm currently having trouble processing questions. Try again later.",
+        serviceError: true
+      });
+    }
 
   } catch (error) {
     res.status(400).json({ error: error.message });
