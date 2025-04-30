@@ -1,0 +1,31 @@
+== Testing and Monitoring
+
+We implemented a comprehensive testing and monitoring strategy to ensure the stability and
+reliability of our project. A wide range of automated tests including unit,
+and end-to-end tests were developed to validate the
+functionality of each component and to detect potential issues early.
+These tests help safeguard the system against regressions when introducing
+new features or changes. Additionally, we established continuous
+monitoring processes to track system performance and availability in real time,
+allowing us to quickly identify and respond to any anomalies.
+This proactive approach ensures that our project remains robust, scalable,
+and consistently operational.
+
+== Types of Tests Implemented
+
+To guarantee code quality and system reliability, we implemented several types of tests aimed at different layers of the application.
+Unit tests were developed using Jest, allowing us to validate individual components and functions in isolation.
+These tests contribute significantly to our code coverage, which we continuously track using SonarQube to maintain high standards and detect untested or vulnerable areas.
+
+image:12_coverage.png["Coverage tests"]
+
+In addition to unit testing, we created end-to-end (E2E) tests to simulate
+real user interactions and verify that the application behaves correctly from the user’s perspective (for example, playing a game and then checking our stats).
+These tests help ensure that critical user flows remain functional across updates.
+
+To assess performance and scalability, we also conducted load testing,
+which allowed us to evaluate how the system handles high volumes of traffic and to identify potential bottlenecks under stress.
+
+Finally, we also used monitoring tools from oracle to help us detect any outrages in real time.
+
+By combining these different types of testing, we’ve built a strong quality assurance framework that minimizes risk and ensures long-term maintainability.
