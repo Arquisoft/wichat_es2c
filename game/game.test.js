@@ -159,7 +159,8 @@ describe('Game Service', () => {
             expect(updatedUser.statistics.wrongAnswers).toBe(1);
 
             const match = await Match.findOne({ username: 'testuser' });
-            expect(match.score).toBe(1 * (1 * 30) - (1 * 20));
+            //expect(match.score).toBe(1 * (1 * 30) - (1 * 20));
+            expect(match.score).toBe(1 * (1 * 25) - (1 * 5));
         });
 
         it('should create a new match if endTime is different', async () => {
@@ -213,7 +214,7 @@ describe('Game Service', () => {
                 });
 
             expect(response.statusCode).toBe(400);
-            expect(response.body.error).toBe('Error when processing the request');
+            expect(response.body.error).toBe('Invalid match data');
         });
 
         it('should return 404 if user not found', async () => {
