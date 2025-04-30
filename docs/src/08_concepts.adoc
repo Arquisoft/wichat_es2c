@@ -109,9 +109,6 @@ conditionally if needed. This approach also favors security as we can control wh
 sent based on its content or the context of the app.
 
 === _Safety and security concepts_
-* *Authentication*
-To keep our users' data secure an authentication mechanism has been developed with the use of JSON Web Tokens (JWT). If someone tries to access historical game records for certain users, our KaW application enforces to pass a valid token through the header of the message request.
-In this way, only authenticated users are able to consult the different data that our application enforces.
 
 * *Secure storage*
 User passwords are never stored in plain text. Instead, secure hashing algorithms and encryption techniques are employed to protect sensitive information and prevent unauthorized access.
