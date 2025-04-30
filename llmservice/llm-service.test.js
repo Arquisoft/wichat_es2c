@@ -126,7 +126,7 @@ describe('LLM Service', () => {
 
             expect(response.statusCode).toBe(200);
             expect(response.body).toHaveProperty('answer');
-            expect(response.body.answer).toBeNull();
+            expect(response.body.answer).toBe("I'm currently having trouble processing questions. Try again later.");
 
             const errorResponse = {
                 response: {
@@ -140,7 +140,7 @@ describe('LLM Service', () => {
 
             expect(response.statusCode).toBe(200);
             expect(response.body).toHaveProperty('answer');
-            expect(response.body.answer).toBeNull();
+            expect(response.body.answer).toBe("I'm currently having trouble processing questions. Try again later.");
         });
 
         test('should correctly format context prompt', async () => {
