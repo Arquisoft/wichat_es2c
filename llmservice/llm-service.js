@@ -53,6 +53,37 @@ function validateRequiredFields(req) {
     }
   }
 
+  //Validacion especifica de los campos
+  const { userQuestion, gameQuestion, answers, correctAnswer } = req.body;
+
+  if (typeof userQuestion !== 'string') {
+    throw new Error('userQuestion must be a string');
+  }
+
+  if (typeof gameQuestion !== 'string' || gameQuestion.trim() === '') {
+    throw new Error('gameQuestion must be a non-empty string');
+  }
+
+  if (!Array.isArray(answers)) {
+    throw new Error('answers must be an array');
+  }
+
+  if (answers.length < 0 || answers.length > 4) {
+    throw new Error('answers length is not valid');
+  }
+
+  for (let i = 0; i < answers.length; i++) {
+    if (typeof answers[i] !== 'string' || answers[i].trim() === '') {
+      throw new Error(`Answer at position ${i} must be a non-empty string`);
+    }
+  }
+
+  if (typeof correctAnswer === 'number') {
+    if (!Number.isInteger(correctAnswer) || correctAnswer < 0 || correctAnswer >= answers.length) {
+      throw new Error(`correctAnswer as index must be a valid integer between 0 and ${answers.length - 1}`);
+    }
+  } 
+
 }
 
 //validacion del input puesto por el usuario

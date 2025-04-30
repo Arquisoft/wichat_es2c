@@ -86,9 +86,6 @@ app.post('/addMatch', async (req, res) => {
     
     const { username, difficulty, question, correctAnswer, answers, selectedAnswer, time, endTime,isLastQuestion } = req.body;
 
-    //if (!username || !difficulty || !time || !question || !selectedAnswer || correctAnswer === undefined || !endTime || !answers) {
-    //  return res.status(400).json({ error: "Error when processing the request" });
-    //}
 
     const user = await User.findOne({ username });
     if (!user) {
@@ -135,13 +132,6 @@ app.post('/addMatch', async (req, res) => {
       const correctAnswers = questionsWithCorrectAnswers.length;
       const incorrectAnswers = lastMatch.questions.length - correctAnswers;
 
-      //lastMatch.score = (lastMatch.difficulty * (correctAnswers * 30)) - (incorrectAnswers * 20);  //Cambiado para evitar salidad negativas
-      /**********************************************************************
-       * 
-       * 
-       * 
-       * *********************************************************************
-       */
       lastMatch.score = ((lastMatch.difficulty * (correctAnswers * 25)) - (incorrectAnswers * 5)|| 0);
       await lastMatch.save();
 
