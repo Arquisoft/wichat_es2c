@@ -34,8 +34,8 @@ function AddUser() {
             return;
         }
 
-        if (password.length < 3) {
-            setError('Password must be at least 3 characters long');
+        if (password.length < 4) {
+            setError('Password must be at least 4 characters long');
             return;
         }
 
@@ -115,7 +115,7 @@ function AddUser() {
                             onChange={(e) => setPassword(e.target.value)}
                             disabled={loading || success}
                             required
-                            helperText="Password must be at least 3 characters long"
+                            helperText="Password must be at least 4 characters long"
                         />
                         {error && (
                             <Typography color="error" sx={{mt: 2}}>

@@ -24,7 +24,7 @@ describe('User Service', () => {
   it('should add a new user on POST /adduser', async () => {
     const newUser = {
       username: 'testuser', // NOSONAR
-      password: 'testpassword', // NOSONAR
+      password: 'testpassworD1?', // NOSONAR
     };
 
     const response = await request(app).post('/adduser').send(newUser);
@@ -39,7 +39,7 @@ describe('User Service', () => {
     expect(userInDb.username).toBe('testuser'); // NOSONAR
 
     // Assert that the password is encrypted
-    const isPasswordValid = await bcrypt.compare('testpassword', userInDb.password); // NOSONAR
+    const isPasswordValid = await bcrypt.compare('testpassworD1?', userInDb.password); // NOSONAR
     expect(isPasswordValid).toBe(true);
   });
 });
