@@ -73,7 +73,7 @@ image:08-domainModel.png["Concepts - Domain Model"]
 === _"Under-the-hood"_
 
 * *Backend*:  
-  The server-side logic of the application is implemented using Node.js in combination with the Express framework. The backend handles client requests, communicates with external services such as Wikidata and Gemini, manages user sessions, interacts with the database and other functionalities.
+  The server-side logic of the application is implemented using Node.js in combination with the Express framework. The backend handles client requests, communicates with external services such as Wikidata and Empathy, manages user sessions, interacts with the database and other functionalities.
 
 * *Frontend*:  
   The frontend is developed using React, a component-based JavaScript library that enables the creation of dynamic and interactive user interfaces. The frontend is responsible for rendering the game interface, managing user input, and presenting questions, hints, and scores.
@@ -82,7 +82,7 @@ image:08-domainModel.png["Concepts - Domain Model"]
   MongoDB serves as the main data store, offering a flexible document-oriented model that aligns well with the evolving structure of game data. It stores user profiles, game progress, generated questions, and historical results in JSON-like documents.
 
 * *LLM Integration*:  
-  We utilize Gemini, a Large Language Model (LLM), to enhance the gameplay experience by generating intelligent and context-aware hints for each question in real time.
+  We utilize Empathy, a Large Language Model (LLM), to enhance the gameplay experience by generating intelligent and context-aware hints for each question in real time.
 
 * *External Data Source*:  
   To keep the game content rich and dynamic, we integrate Wikidata as our primary external knowledge source. Through its public REST API, we query up-to-date and structured information about a wide range of topics. This enables automatic generation of questions based on real-world data.
