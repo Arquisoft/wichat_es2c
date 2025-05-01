@@ -12,17 +12,6 @@ import axios from "axios";
 import { CircularProgress } from "@mui/material";
 
 function Game() {
-    //Revisar si es correcto tener esto aqui (creo que de esta forma de saltan el gateway service)
-    let apiEndpointGame;
-    let apiEndpointWiki;
-
-    if (window.location.hostname === 'localhost') {
-        apiEndpointGame = 'http://localhost:8004'; // Para desarrollo
-        apiEndpointWiki =   'http://localhost:3005'
-    } else {
-        apiEndpointGame = 'http://143.47.54.63:8004'; // Para producción
-        apiEndpointWiki =   'http://143.47.54.63:3005'
-    }
     const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
     const [difficulty, setDifficulty] = useState(1);
@@ -67,7 +56,7 @@ function Game() {
         try {
             const questions = await Promise.all(
                 Array(count).fill().map(() =>
-                    axios.get(`${apiEndpointWiki}/getQuestion?category=${category}`)
+                    axios.get(`${apiEndpoint}/getQuestion?category=${category}`)
                 )
             );
 
@@ -199,7 +188,8 @@ function Game() {
         }
 
         try {
-            const response = await axios.get(`${apiEndpointWiki}/getQuestion?category=${category}`);
+            const response = await axios.get(`${apiEndpoint}/getQuestion?category=${category}`);
+
             setQuestionData({
                 question: response.data.question,
                 image: response.data.image || null,
@@ -249,7 +239,7 @@ function Game() {
             const totalQuestions = gameQuestions.length;
             for (let i = 0; i < totalQuestions; i++) {
                 const question = gameQuestions[i];
-                await axios.post(`${apiEndpointGame}/addMatch`, {
+                await axios.post(`${apiEndpoint}/addMatch`, {
                     username: localStorage.getItem("username"),
                     difficulty: difficulty,
                     question: question.text,
