@@ -226,6 +226,7 @@ const History = () => {
                     questions={game.questions}
 
                     difficulty={game.difficulty}
+                    score={game.score}
                 />
             );
           })}

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import styles from "./GameSummary.module.css";
-import QuestionModal from "./Questions"; // Importa el modal
+import QuestionModal from "./Questions";
 
-export const GameSummary = ({ date, hour, correctAnswers, wrongAnswers, time, questions, difficulty }) => {
+export const GameSummary = ({ date, hour, correctAnswers, wrongAnswers, time, questions, difficulty, score }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const openModal = () => setIsModalOpen(true);
@@ -34,6 +34,12 @@ export const GameSummary = ({ date, hour, correctAnswers, wrongAnswers, time, qu
                     {difficulty === 2 ? 'Hard' : 'Normal'}
                     </span>
                 </h3>
+            </div>
+
+
+            <div className={styles.scoreElement}>
+                <span className={styles.scoreLabel}>Score</span>
+                <h3 className={styles.scoreValue}>{score}</h3>
             </div>
 
 
