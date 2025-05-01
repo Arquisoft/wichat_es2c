@@ -523,7 +523,7 @@ function Game() {
                         >
                             <h2>⏳ ¡Time is out!</h2>
                             <h2>Your score: {score}</h2>
-                            <h2>Do you want to try it again?</h2>
+                            <h2>Do you want to try again?</h2>
                             <ButtonContainer>
                                 <HomeButton onClick={handleHomeClick}></HomeButton>
                                 <ChartButton onClick={handleChartClick}></ChartButton>
