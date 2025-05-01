@@ -53,6 +53,7 @@ function Game() {
     const [initialLoad, setInitialLoad] = useState(true);
     const timerComponent = useRef(null); // Referencia al componente del temporizador
     const [gameQuestions, setGameQuestions] = useState([]);
+    const [score,setScore] = useState(0);
 
     useEffect(() => {
         if (showDifficultyModal) {
@@ -249,6 +250,14 @@ function Game() {
             const totalQuestions = gameQuestions.length;
             for (let i = 0; i < totalQuestions; i++) {
                 const question = gameQuestions[i];
+                const correctAnswers = gameQuestions.filter(q =>
+                    q.answers.find(a => a.correct && a.selected)
+                ).length;
+                const incorrectAnswers = gameQuestions.filter(q =>
+                    q.answers.find(a => !a.correct && a.selected)
+                ).length;
+                const finalScore = (difficulty * (correctAnswers * 30)) - (incorrectAnswers * 20); //calculated in the database again to make sure users cant edit it
+                setScore(finalScore);
                 await axios.post(`${apiEndpointGame}/addMatch`, {
                     username: localStorage.getItem("username"),
                     difficulty: difficulty,
@@ -261,6 +270,7 @@ function Game() {
                     isLastQuestion: i === totalQuestions - 1
                 });
             }
+
         } catch (error) {
             console.error("Error saving game:", error);
         }
@@ -275,11 +285,12 @@ function Game() {
                 gameEndTime = Date.now();
                 gameTime = Math.floor((gameEndTime - gameStartTime) / 1000);
             }
-            setTimeOut(true);
-            setShowTimeOutModal(true);
             if (gameQuestions.length > 0) {
                 saveGame(gameTime,gameEndTime);
             }
+            setTimeOut(true);
+            setShowTimeOutModal(true);
+
         }
     };
 
@@ -514,7 +525,7 @@ function Game() {
                                 border: '2px solid #000',
                                 borderRadius: 4,
                                 boxShadow: 24,
-                                p:4,
+                                p: 4,
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -522,6 +533,7 @@ function Game() {
                             }}
                         >
                             <h2>⏳ ¡Time is out!</h2>
+                            <h2>Your score: {score}</h2>
                             <h2>Do you want to try it again?</h2>
                             <ButtonContainer>
                                 <HomeButton onClick={handleHomeClick}></HomeButton>
