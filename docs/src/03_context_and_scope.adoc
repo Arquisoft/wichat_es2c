@@ -89,6 +89,7 @@ endif::arc42help[]
 | _Empathy_ | AI help bot.
 | _Local server from https://github.com/ElPandaP[ElPandaP]_  | Web host.
 |===
+image::context-diagram.png["Overall System"]
 
 
 

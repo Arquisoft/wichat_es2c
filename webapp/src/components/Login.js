@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
 import "./LoginRegister.css";
-import Particles from "react-tsparticles";
-import { loadSlim } from "tsparticles-slim";
+import ParticlesBackground from './ParticlesBackground'; // ✅ Importa el nuevo componente
 
 function Login() {
-
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -14,10 +12,6 @@ function Login() {
     const [loading, setLoading] = useState(false);
 
     const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
-
-    const particlesInit = useCallback(async (engine) => {
-        await loadSlim(engine);
-    }, []);
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -52,70 +46,11 @@ function Login() {
         }
     };
 
-    const particlesOptions = {
-        background: {
-            color: {
-                value: "transparent"
-            }
-        },
-        fpsLimit: 60,
-        particles: {
-            color: {
-                value: "#8590AA"
-            },
-            links: {
-                color: "#8590AA",
-                distance: 150,
-                enable: true,
-                opacity: 0.7,
-                width: 2.5
-            },
-            move: {
-                enable: true,
-                direction: "none",
-                outModes: {
-                    default: "bounce"
-                },
-                random: false,
-                speed: 1,
-                straight: false
-            },
-            number: {
-                density: {
-                    enable: true,
-                    area: 800
-                },
-                value: 80
-            },
-            opacity: {
-                value: 0.8
-            },
-            shape: {
-                type: "circle"
-            },
-            size: {
-                value: { min: 3, max: 6 }
-            }
-        },
-        detectRetina: true
-    };
-
     return (
         <>
-            <Particles
-                id="tsparticles"
-                init={particlesInit}
-                style={{
-                    position: "absolute",
-                    width: "100%",
-                    height: "100%",
-                    zIndex: -1
-                }}
-                options={particlesOptions}
-            />
+            <ParticlesBackground />
 
-            <Box className="boxContainer" sx={{maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1}}>
-
+            <Box className="boxContainer" sx={{ maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1 }}>
                 <img
                     src="/wiChatLogos/LogoWichat2_512.png"
                     alt="Logo"
@@ -130,7 +65,17 @@ function Login() {
                 />
 
                 <div className="mainContent">
-                    <Typography variant="h5" component="h1" gutterBottom>
+                    <Typography
+                        variant="h5"
+                        component="h1"
+                        gutterBottom
+                        sx={{
+                            fontFamily: '"Orbitron", sans-serif',
+                            letterSpacing: '1.5px',
+                            fontWeight: 500,
+                            color: '#00bcd4'
+                        }}
+                    >
                         Login
                     </Typography>
 
@@ -159,7 +104,7 @@ function Login() {
                         />
 
                         {error && (
-                            <Typography color="error" sx={{mt: 2}}>
+                            <Typography color="error" sx={{ mt: 2 }}>
                                 {error}
                             </Typography>
                         )}
@@ -170,21 +115,21 @@ function Login() {
                             fullWidth
                             sx={{
                                 mt: 3,
-                                backgroundColor: '#00eaff', // Cambia 'green' al color que desees
-                                color: 'white', // Cambia 'white' al color del texto que desees
-                                '&:hover': { // Estilo para cuando el ratón está encima
-                                    backgroundColor: '#0056b3', // Un tono más oscuro al hacer hover
+                                backgroundColor: '#00bcd4',
+                                color: 'white',
+                                '&:hover': {
+                                    backgroundColor: '#0056b3',
                                 },
                             }}
                             disabled={loading}
                         >
-                            {loading ? <CircularProgress size={24}/> : 'Login'}
+                            {loading ? <CircularProgress size={24} /> : 'Login'}
                         </Button>
 
-                        <Box sx={{mt: 2, textAlign: 'center'}}>
+                        <Box sx={{ mt: 2, textAlign: 'center' }}>
                             <Typography variant="body2">
                                 Don't have an account?{' '}
-                                <a href="/signup" style={{textDecoration: 'none'}}>
+                                <a href="/signup" style={{ textDecoration: 'none' }}>
                                     Register here
                                 </a>
                             </Typography>

@@ -42,7 +42,7 @@ See https://docs.arc42.org/section-5/[Building Block View] in the arc42 document
 ****
 endif::arc42help[]
 
-=== Whitebox Overall System
+=== 5.1 Whitebox Overall System
 
 ifdef::arc42help[]
 [role="arc42help"]
@@ -66,5 +66,156 @@ In the best case you will get away with examples or simple signatures.
 
 ****
 endif::arc42help[]
+image::Level 1.png["Level 1"]
 
-Once we have made progress in the development of the application, the following diagrams should be created according to the chosen implementation
+At this level, Wichat is presented as a single building block (whitebox)
+that interacts with external actors and systems.
+It serves as the central unit responsible for generating trivia questions,
+managing gameplay, and assisting users with the help of an AI chatbot.
+
+Wichat communicates with the following external entities:
+
+- *User*: The player interacts with the application via a browser interface. Users receive questions, provide answers, and can request hints through the UI.
+- *Wikidata API*: Wichat sends SPARQL queries to Wikidata to get structured data used for generating trivia questions.
+- *MongoDB*: This is the application's primary database, used to persist game-related information such as generated questions, user sessions, and gameplay statistics.
+- *Empathy AI Bot*: An external AI service that receives user queries (e.g., help or hints) and returns context-aware suggestions to support the player during the game.
+
+This level provides a high-level understanding of Wichat’s role in the system landscape and lays the foundation for further decomposition in Level 2, where internal components and logic are revealed.
+
+=== 5.2 Internal funcionality
+
+image::Level2.png["Level 2"]
+
+The system consists of the following top-level components:
+
+- *User Interface (UI)*: Developed in React, it handles all user interactions and displays the game content.
+- *Game Controller*: Manages the flow of the game, user sessions, and interaction logic.
+- *Question Generator*: Gets data from Wikidata and formats it into quiz questions.
+- *Empathy Connector*: Interfaces with an AI-based hint bot to provide context assistance.
+- *DataBase Layer*: Connects with MongoDB to store and retrieve questions, user sessions, and game statistics.
+
+==== 5.3.1 Empathy Connector (LLM Service)
+image::Llmservice.png["Level 2"]
+
+The Empathy Connector encapsulates the logic for communicating with external LLM APIs (e.g., Gemini, EmpathyAI) to generate context-based hints. This module is exposed as a RESTful service and relies on a structured flow of request transformation, API communication, and response handling.
+
+
+
+===== Components:
+
+- *ExpressApp*: The main HTTP server using Express.js. It exposes the */ask* endpoint for client requests.
+- *ContextBuilder*: Constructs the full context prompt with game question and answers, including rules and examples.
+- *LLMRouter*: Core orchestrator that handles selection of the appropriate LLM (Empathy, Gemini), builds the request, and sends it to the external API.
+- *HTTPClient (Axios)*: Performs the actual HTTP POST request to the external API and handles the raw response.
+
+===== Flow:
+
+1. The client sends a *POST request* with game and user data to /ask.
+2. *ExpressApp triggers* validation and context preparation.
+3. *ContextBuilder* injects the question/answers into a prompt with behavioral rules.
+4. *LLMRouter* chooses the configured model and prepares the API request.
+5. *Axios* posts the request to the external LLM and receives a response.
+6. The response is parsed and returned to the client as a concise hint.
+
+*Models Supported*:
+- **Gemini** (Google)
+- **EmpathyAI** (Empathy.co production)
+
+==== 5.3.2 Question Generator
+
+image::Wikidata-Diagram.png["Level 2"]
+
+The Wikidata Question Service encapsulates the logic for generating trivia questions in various categories (capitals, sports, cartoons, and birds) using data obtained from Wikidata. This service is exposed as a RESTful API, and its workflow involves making SPARQL queries to Wikidata, processing the data, and returning dynamic questions.
+
+===== Components:
+
+- **ExpressApp**: The main HTTP server using Express.js, which exposes the /getQuestion endpoint for question requests.
+- **Data Model (Mongoose)**: Uses MongoDB to store the generated questions. The Question model manages the questions and answers for each category.
+- **Question Cache**: Maintains an in-memory cache for the questions by category, updating them every hour if necessary.
+- **SPARQL Queries (Axios)**: SPARQL requests are made to Wikidata to fetch the necessary data for generating questions and answers.
+- **Recently Used Questions**: Tracks questions that have been shown to the user, preventing repetition in a short time frame.
+
+===== Flow:
+
+1. The client sends an HTTP GET request to the getQuestion endpoint with the desired category (e.g., "sports", "capitals", "cartoons", "birds").
+2. **ExpressApp** handles the request and validates the category.
+3. If questions for the requested category are available in the database, one is randomly selected. If not, new questions are generated by querying Wikidata.
+4. The generated questions are stored in the database and the category's cache.
+5. A random question is selected and returned to the client, along with multiple-choice answers and an optional image.
+6. The system ensures that questions are not repeated by tracking which questions have been used recently.
+
+===== Supported Categories:
+- **Capitals**: Questions about the capitals of countries.
+- **Sports**: Questions about sports teams, specifically football.
+- **Cartoons**: Questions about cartoon characters.
+- **Birds**: Questions about bird species
+
+
+==== 5.3.3 User Management
+
+image::User management.png["Level 2"]
+
+In the user management we do everything about users data and sessions.
+
+===== Components:
+
+- **Auth Service**: It's used to manage the user's session in /login
+- **User info Api**: It storages  the users data from game in database
+- **Users service**: It manages the new users
+
+==== 5.3.4 *Game controller*
+The game controller uses all the services we mentioned before to manage everything and allow users to do whatever they want inside the web
+
+===== Components
+
+- **ExpressApp**:
+The main server using Express.js, which exposes the routes to manage user matches and statistics.
+- Exposed routes:
+- */addMatch*: Adds a match and updates the user's statistics.
+- */userStatistics*: Returns a user's statistics.
+- */userMatches*: Returns a user's matches with pagination.
+
+
+- **Match Handling**:
+- When a user adds a question, it checks whether a previous match exists and if its end date matches the current one. If not, a new match is created.
+- If it's the last question of the match, final statistics are calculated, and both the match and user statistics are updated.
+
+- **User Statistics**:
+- **Game Stats**: Statistics are calculated based on the score and time of the matches played, such as average score, best score, correct and incorrect answers, etc.
+- **Updating Stats**: When a match ends, the user's statistics are updated to reflect their performance in that match.
+
+===== Flow
+
+1. **Start Match**:
+- The client sends an HTTP POST request to /addMatch with details of the match, such as username, questions, selected answers, time, and end time.
+
+2. **Match Handling and Validation**:
+- **ExpressApp** validates the request data (e.g., username and answers).
+- It checks if the user exists in the database (via the **User** model).
+3. **Store Question and Answer**:
+- The question and selected answers are stored in the **Match** model in the database.
+- If it's the last question, final statistics are calculated, and the user's statistics are updated.
+
+4. **Update User Statistics**:
+- If it's the last question, user statistics are calculated based on the correct and incorrect answers and the time spent on the match.
+- The final score is calculated using the match's difficulty, correct and incorrect answers, and saved in the **Match** model.
+
+5. **Retrieve User Statistics and Matches**:
+- The client can make GET requests to /userStatistics and /userMatches to get the user's statistics and matches, respectively.
+- The returned matches include the score, time, and correct/incorrect answers. The statistics reflect the user's overall performance.
+
+In your application, the **Gateway** serves as the *central entry point* for all client requests. Its main purpose is to *orchestrate communication* between different microservices, simplifying and unifying access to your backend system.
+
+==== 5.3.5 Gateway
+
+**Gateway** serves as the *central entry point* for all client requests. Its main purpose is to *orchestrate communication* between different microservices, simplifying and unifying access to your backend system.
+
+- *API Aggregation*: Combines multiple services (authentication, game logic, user management, LLM, Wikidata) under a single API, so clients don't need to call each one individually.
+- *Routing*: Forwards incoming HTTP requests to the appropriate internal service (e.g., /login goes to Auth Service, /addMatch goes to Game Service).
+- *Security & Validation*: Validates request data before passing it to subservices (e.g., checking required fields for /askllm).
+- *Simplifies Client Logic*: The frontend only communicates with one service (the Gateway), instead of interacting with each backend service separately.
+- *Documentation*: Exposes API documentation via Swagger at /api-docc.
+- *Monitoring*: Integrates Prometheus metrics to monitor endpoint usage and performance.
+- *Error Handling*: Standardizes error responses from all internal services before returning them to the client.
+
+
