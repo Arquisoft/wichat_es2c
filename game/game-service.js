@@ -52,7 +52,6 @@ function validateMatchData(data) {
   if (!Array.isArray(data.answers) || data.answers.length === 0) {
     errors.push('Answers must be a non-empty array');
   } else {
-    // Verificar que correctAnswer sea un índice válido dentro del array de respuestas
     if (data.correctAnswer >= data.answers.length) {
       errors.push('Correct answer index is out of bounds');
     }
@@ -66,6 +65,12 @@ function validateMatchData(data) {
     errors.push('isLastQuestion must be a boolean value');
   }
   
+  if (typeof data.selectedAnswer === 'string' && Array.isArray(data.answers)) {
+    if (!data.answers.includes(data.selectedAnswer)) {
+      errors.push('Selected answer must be one of the provided answers');
+    }
+  }
+
   return { 
     valid: errors.length === 0,
     errors 
