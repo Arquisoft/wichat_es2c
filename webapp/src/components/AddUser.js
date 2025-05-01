@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
-import ParticlesBackground from './ParticlesBackground'; // Nuevo componente importado
 import "./LoginRegister.css";
 
 let apiEndpoint;
@@ -12,6 +11,7 @@ if (window.location.hostname === 'localhost') {
     apiEndpoint = 'http://143.47.54.63:8000'; // Producción
 }
 
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 function AddUser() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -20,11 +20,13 @@ function AddUser() {
     const [loading, setLoading] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
 
+
     useEffect(() => {
         if (isLoggedIn) {
             window.location.href = '/home';
         }
     }, [isLoggedIn]);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -67,10 +69,11 @@ function AddUser() {
         }
     };
 
+
     return (
         <>
-            <ParticlesBackground />
-            <Box className="boxContainer" sx={{ maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1 }}>
+        
+            <Box className="boxContainer" sx={{maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1}}>
                 <img
                     src="/wiChatLogos/LogoWichat2_512.png"
                     alt="Logo"
