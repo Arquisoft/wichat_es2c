@@ -239,7 +239,7 @@ function Game() {
             const totalQuestions = gameQuestions.length;
             for (let i = 0; i < totalQuestions; i++) {
                 const question = gameQuestions[i];
-                await axios.post(`${apiEndpointGame}/addMatch`, {
+                await axios.post(`${apiEndpoint}/addMatch`, {
                     username: localStorage.getItem("username"),
                     difficulty: difficulty,
                     question: question.text,
