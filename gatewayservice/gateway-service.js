@@ -48,6 +48,16 @@ app.post('/adduser', async (req, res) => {
   }
 });
 
+app.post('/addQuestion', async (req, res) => {
+  try {
+    const userResponse = await axios.post(gameServiceUrl+'/addQuestion', req.body);
+    res.json(userResponse.data);
+  } catch (error) {
+    res.status(error.response.status).json({ error: error.response.data.error });
+  }
+});
+
+
 app.post('/addMatch', async (req, res) => {
   try {
     const userResponse = await axios.post(gameServiceUrl+'/addMatch', req.body);
@@ -57,11 +67,30 @@ app.post('/addMatch', async (req, res) => {
   }
 });
 
+app.post('/endMatch', async (req, res) => {
+  try {
+    const userResponse = await axios.post(gameServiceUrl+'/endMatch', req.body);
+    res.json(userResponse.data);
+  } catch (error) {
+    res.status(error.response.status).json({ error: error.response.data.error });
+  }
+});
 
+
+app.post('/addQuestions', async (req, res) => {
+  try {
+    const userResponse = await axios.post(wikidataServiceUrl+'/addQuestions', req.body);
+    res.json(userResponse.data);
+  } catch (error) {
+    res.status(error.response.status).json({ error: error.response.data.error });
+  }
+});
 
 app.get('/getQuestion', async (req, res) => {
   try {
-    const userResponse = await axios.get(wikidataServiceUrl+'/getQuestion', req.body);
+    const userResponse = await axios.get(wikidataServiceUrl+'/getQuestion', {
+      params: req.query
+    });
     res.json(userResponse.data);
   } catch (error) {
     res.status(error.response.status).json({ error: error.response.data.error });

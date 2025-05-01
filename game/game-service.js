@@ -137,7 +137,8 @@ app.post('/addMatch', async (req, res) => {
       const correctAnswers = questionsWithCorrectAnswers.length;
       const incorrectAnswers = lastMatch.questions.length - correctAnswers;
 
-      lastMatch.score = ((lastMatch.difficulty * (correctAnswers * 25)) - (incorrectAnswers * 5)|| 0);
+      lastMatch.score = (lastMatch.difficulty * (correctAnswers * 25)) - (incorrectAnswers * 5);
+      if(lastMatch.score < 0) lastMatch.score = 0;
       await lastMatch.save();
 
       if (!user.statistics) {
@@ -254,7 +255,9 @@ app.get('/userMatches', async (req, res) => {
         score: match.score,
         correctAnswers,
         wrongAnswers,
-        questions: match.questions || []
+        questions: match.questions || [],
+
+        difficulty: match.difficulty
       };
     });
 
