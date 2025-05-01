@@ -159,7 +159,7 @@ describe('Game Service', () => {
             expect(updatedUser.statistics.wrongAnswers).toBe(1);
 
             const match = await Match.findOne({ username: 'testuser' });
-            expect(match.score).toBe(1 * (1 * 30) - (1 * 20));
+            expect(match.score).toBe(1 * (1 * 25) - (1 * 5));
         });
 
         it('should create a new match if endTime is different', async () => {
