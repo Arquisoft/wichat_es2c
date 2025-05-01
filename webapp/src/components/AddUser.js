@@ -11,7 +11,6 @@ if (window.location.hostname === 'localhost') {
     apiEndpoint = 'http://143.47.54.63:8000'; // Producción
 }
 
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 function AddUser() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
