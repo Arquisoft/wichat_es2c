@@ -57,6 +57,7 @@ app.post('/addQuestion', async (req, res) => {
   }
 });
 
+
 app.post('/addMatch', async (req, res) => {
   try {
     const userResponse = await axios.post(gameServiceUrl+'/addMatch', req.body);
@@ -74,6 +75,7 @@ app.post('/endMatch', async (req, res) => {
     res.status(error.response.status).json({ error: error.response.data.error });
   }
 });
+
 
 app.post('/addQuestions', async (req, res) => {
   try {
@@ -96,17 +98,6 @@ app.get('/getQuestion', async (req, res) => {
 });
 
 
-/*
-app.post('/askllm', async (req, res) => {
-  try {
-    // Forward the add user request to the user service
-    const llmResponse = await axios.post(llmServiceUrl+'/ask', req.body);
-    res.json(llmResponse.data);
-  } catch (error) {
-    res.status(error.response.status).json({ error: error.response.data.error });
-  }
-});
-*/
 app.post('/askllm', async (req, res) => {
   try {
     // Verificamos que estén presentes todos los campos necesarios

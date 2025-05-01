@@ -75,6 +75,18 @@ const History = () => {
       
       if (response.data) {
         if (response.data.matches) {
+
+
+          // Log para verificar los datos recibidos
+        console.log('Partidas recibidas:', response.data.matches);
+        response.data.matches.forEach((game, index) => {
+          console.log(`Partida ${index}:`, {
+            difficulty: game.difficulty,
+            tipo: typeof game.difficulty
+          });
+        });
+
+
           setGames(response.data.matches);
         }
         
@@ -212,6 +224,8 @@ const History = () => {
                     wrongAnswers={game.wrongAnswers}
                     time={game.time}
                     questions={game.questions}
+
+                    difficulty={game.difficulty}
                 />
             );
           })}

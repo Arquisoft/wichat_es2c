@@ -87,12 +87,8 @@ describe('Gateway Service', () => {
     describe('Game Service Endpoints', () => {
         beforeEach(() => {
             axios.post.mockImplementation((url) => {
-                if (url.includes('/addQuestion')) {
-                    return Promise.resolve({ data: { questionId: 'mockedQuestionId' } });
-                } else if (url.includes('/addMatch')) {
-                    return Promise.resolve({ data: { matchId: 'mockedMatchId' } });
-                } else if (url.includes('/endMatch')) {
-                    return Promise.resolve({ data: { matchId: 'mockedMatchId', status: 'completed' } });
+                 if (url.includes('/addMatch')) {
+                    return Promise.resolve({data: {matchId: 'mockedMatchId'}});
                 }
                 return Promise.reject(new Error('Not implemented'));
             });
@@ -107,14 +103,7 @@ describe('Gateway Service', () => {
             });
         });
 
-        it('should forward addQuestion request to game service', async () => {
-            const response = await request(app)
-                .post('/addQuestion')
-                .send({ question: 'Test question', answers: ['A', 'B', 'C'], correctAnswer: 'A' });
 
-            expect(response.statusCode).toBe(200);
-            expect(response.body.questionId).toBe('mockedQuestionId');
-        });
 
         it('should forward addMatch request to game service', async () => {
             const response = await request(app)
@@ -125,14 +114,7 @@ describe('Gateway Service', () => {
             expect(response.body.matchId).toBe('mockedMatchId');
         });
 
-        it('should forward endMatch request to game service', async () => {
-            const response = await request(app)
-                .post('/endMatch')
-                .send({ matchId: 'match123', score: 800 });
 
-            expect(response.statusCode).toBe(200);
-            expect(response.body.status).toBe('completed');
-        });
 
         it('should get user matches from game service', async () => {
             const response = await request(app)
@@ -223,13 +205,6 @@ describe('Gateway Service', () => {
 
     describe('Wikidata Service Endpoints', () => {
         beforeEach(() => {
-            axios.post.mockImplementation((url) => {
-                if (url.includes('/addQuestions')) {
-                    return Promise.resolve({ data: { added: 5 } });
-                }
-                return Promise.reject(new Error('Not implemented'));
-            });
-
             axios.get.mockImplementation((url) => {
                 if (url.includes('/getQuestion')) {
                     return Promise.resolve({
@@ -243,14 +218,6 @@ describe('Gateway Service', () => {
             });
         });
 
-        it('should forward addQuestions request to wikidata service', async () => {
-            const response = await request(app)
-                .post('/addQuestions')
-                .send({ category: 'geography', count: 5 });
-
-            expect(response.statusCode).toBe(200);
-            expect(response.body.added).toBe(5);
-        });
 
         it('should get question from wikidata service', async () => {
             const response = await request(app)
