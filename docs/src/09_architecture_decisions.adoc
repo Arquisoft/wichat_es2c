@@ -6,8 +6,8 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 [[ADR-001]]
 === ADR 001: Key Initial Architecture Decisions
-:status: Accepted
-:date: 
+*Status: Accepted*
+*:date: 23/02/2025* 
 
 ==== Context
 
@@ -23,7 +23,7 @@ The following initial architectural decisions were made:
 * *Database:* MongoDB (see <<ADR-002>>)
 * *Deployment:* Docker
 
-==== Rationale
+==== Reasoning
 
 * *React* provides a robust, component-based framework ideal for building dynamic and scalable user interfaces.
 * *JavaScript/Node.js* ensures full-stack JavaScript development, simplifying the technology stack and improving development efficiency.
@@ -40,8 +40,8 @@ The following initial architectural decisions were made:
 
 [[ADR-002]]
 === ADR 002: Database Choice - MongoDB
-:status: Accepted
-:date: 2025-04-28
+*Status: Accepted*
+*:date: 23/02/2025* 
 
 ==== Context
 
@@ -52,7 +52,7 @@ The project demands agility to handle evolving data structures, rapid developmen
 
 MongoDB was chosen as the primary database.
 
-==== Rationale
+==== Reasoning
 
 * Document-based model suits the dynamic nature of the data.
 * High scalability and replication features out-of-the-box.
@@ -84,8 +84,8 @@ MongoDB was chosen as the primary database.
 
 [[ADR-003]]
 === ADR 003: Adoption of TypeScript and Tailwind CSS  
-:status: Proposed and Rejected
-:date: 2025-04-28
+*Status: Proposed and Rejected*
+*:date: 16/03/2025* 
 
 ==== Context
 
@@ -98,7 +98,7 @@ Additionally, we planned to combine TypeScript with Tailwind CSS for styling fro
 Ultimately, the decision to adopt TypeScript and Tailwind was rejected.
 The project continued using JavaScript as the primary development language.
 
-==== Rationale
+==== Reasoning
 
 * TypeScript offered significant advantages in terms of type safety, better tooling, and enhanced code quality.
 * Tailwind CSS promised faster and more consistent frontend development.
@@ -126,8 +126,8 @@ The project continued using JavaScript as the primary development language.
 
 [[ADR-004]]
 === ADR 004: Wikidata SPARQL Integration
-:status: Accepted
-:date: 
+*Status: Accepted*
+*:date: 16/03/2025* 
 
 ==== Context
 
@@ -138,7 +138,7 @@ Given the complexity of the data relationships and the dynamic nature of the con
 
 SPARQL was adopted as the primary method for querying Wikidata.
 
-==== Rationale
+==== Reasoning
 
 * SPARQL is the native query language for RDF datasets like Wikidata.
 * It allows highly expressive queries involving relationships between entities, filters, and complex graph traversals.
@@ -157,8 +157,8 @@ SPARQL was adopted as the primary method for querying Wikidata.
 
 [[ADR-005]]
 === ADR 005: Oracle Cloud VM for Deployment Infrastructure
-:status: Accepted
-:date: 
+*Status: Accepted*
+*:date: 23/02/2025* 
 
 ==== Context
 
@@ -170,7 +170,7 @@ However, during early planning, one team member already had access to an Oracle 
 
 The team decided to use an Oracle Cloud VM instance to host the project infrastructure.
 
-==== Rationale
+==== Reasoning
 
 * Immediate availability of an Oracle Cloud VM already partially configured.
 * Team member already had experience managing this VM, including port configuration and service setup.
@@ -203,8 +203,8 @@ The team decided to use an Oracle Cloud VM instance to host the project infrastr
 
 [[ADR-006]]
 === ADR 006: Service-based System Architecture
-:status: Accepted
-:date: 
+*Status: Accepted*
+*:date: 23/02/2025* 
 
 ==== Context
 
@@ -216,7 +216,7 @@ However, during the development of the application, a service-based architecture
 
 The project adopts a service-based architecture, rather than a fully decoupled microservices model.
 
-==== Rationale
+==== Reasoning
 
 * Provides modularization and separation of concerns without the overhead of managing independent deployments for each service.
 * Simplifies inter-service communication by avoiding complex patterns such as service discovery, load balancing, and distributed configuration.
@@ -242,8 +242,8 @@ The project adopts a service-based architecture, rather than a fully decoupled m
 
 [[ADR-007]]
 === ADR 007: Data Storage for Wikidata Information
-:status: Accepted
-:date: 
+*Status: Accepted*
+*:date: 16/03/2025* 
 
 ==== Context
 
@@ -252,10 +252,10 @@ However, this approach caused severe performance issues, resulting in noticeable
 
 ==== Decision
 
-To improve performance, the application now pre-generates and stores a set of questions cache at the start of each game.
+To improve performance, the application now pre-generates and stores a set of questions in the database at the start of each game.
 These stored questions are then served to the user dynamically throughout the match, minimizing latency.
 
-==== Rationale
+==== Reasoning
 
 * Real-time queries to Wikidata introduced unpredictable delays and negatively impacted gameplay flow.
 * Preloading questions ensures smooth and uninterrupted user experience.
@@ -282,8 +282,8 @@ These stored questions are then served to the user dynamically throughout the ma
 
 [[ADR-008]]
 === ADR 008: Styling Approach - CSS Modules
-:status: Accepted
-:date: 
+*Status: Accepted*
+*:date: 16/03/2025* 
 
 ==== Context
 
@@ -293,7 +293,7 @@ Maintaining scoped styles without introducing unnecessary complexity.
 
 Use CSS Modules for styling, with partial hybridization where needed.
 
-==== Rationale
+==== Reasoning
 
 * Keeps styles encapsulated.
 * Allows flexibility where global styles are needed.
@@ -305,8 +305,8 @@ Use CSS Modules for styling, with partial hybridization where needed.
 
 [[ADR-009]]
 === ADR 009: Choice of Empathy LLM
-:status: Accepted
-:date: 2025-04-28
+*Status: Accepted*
+*:date: 07/04/2025* 
 
 ==== Context
 
@@ -316,7 +316,7 @@ To implement the chatbot system that provides hints during gameplay, the project
 
 The team chose to use the Qwen2.5-Coder-7B-Instruct model provided through the Empathy LLM platform.
 
-==== Rationale
+==== Reasoning
 
 * Empathy LLM provided an API key with access to two models:
   ** Mistral-7B-Instruct-v0.3
@@ -351,8 +351,8 @@ The team chose to use the Qwen2.5-Coder-7B-Instruct model provided through the E
 
 [[ADR-010]]
 === ADR 010: Monitoring Strategy   ******************************************************************************
-:status: Accepted
-:date: 
+*Status: Accepted*
+*:date: 28/04/2025* 
 
 ==== Context
 
@@ -361,7 +361,7 @@ The team chose to use the Qwen2.5-Coder-7B-Instruct model provided through the E
 
 
 
-==== Rationale
+==== Reasoning
 
 * Prometheus + Grafana
 * Oracle Cloud Monitoring
