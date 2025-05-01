@@ -68,7 +68,7 @@ function validateRequiredFields(req) {
     throw new Error('answers must be an array');
   }
 
-  if (answers.length < 0 || answers.length > 4) {
+  if (answers.length > 4) {
     throw new Error('answers length is not valid');
   }
 
