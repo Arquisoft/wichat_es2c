@@ -244,7 +244,8 @@ function Game() {
             const incorrectAnswers = gameQuestions.filter(q =>
                 q.answers.find(a => !a.correct && a.selected)
             ).length;
-            const finalScore = (difficulty * (correctAnswers * 30)) - (incorrectAnswers * 20); //calculated in the database again to make sure users cant edit it
+            let finalScore = (difficulty * (correctAnswers * 25)) - (incorrectAnswers * 5); //calculated in the database again to make sure users cant edit it
+            if(finalScore < 0) finalScore = 0;
             setScore(finalScore);
             for (let i = 0; i < totalQuestions; i++) {
                 const question = gameQuestions[i];
