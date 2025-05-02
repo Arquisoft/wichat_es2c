@@ -10,6 +10,7 @@ afterAll(() => {
     app.close();
 });
 
+
 describe('LLM Service', () => {
     const testData = {
         userQuestion: 'Can you give me a hint?',
@@ -22,55 +23,20 @@ describe('LLM Service', () => {
         jest.clearAllMocks();
     });
 
-    const makeRequest = async (model, customData = {}) => {
+    const makeRequest = async (modelOrData = {}, customData = {}) => {
+        // Si el primer parámetro es una cadena (nombre de modelo), lo ignoramos
+        // ya que ahora usamos LLM_MODELS.ACTUAL
         const requestData = {
-            model,
             ...testData,
+            ...(typeof modelOrData === 'string' ? {} : modelOrData),
             ...customData
         };
         return request(app).post('/ask').send(requestData);
     };
 
     describe('POST /ask', () => {
-        test('should return a response from Gemini model', async () => {
-            const mockResponse = 'This is a capital city in Western Europe.';
-            axios.post.mockResolvedValue({
-                data: {
-                    candidates: [
-                        {
-                            content: {
-                                parts: [{ text: mockResponse }]
-                            }
-                        }
-                    ]
-                }
-            });
-
-            const response = await makeRequest('gemini');
-
-            expect(response.statusCode).toBe(200);
-            expect(response.body).toHaveProperty('answer');
-            expect(response.body.answer).toBe(mockResponse);
-
-            expect(axios.post).toHaveBeenCalledWith(
-                expect.stringContaining('https://generativelanguage.googleapis.com'),
-                expect.objectContaining({
-                    contents: expect.arrayContaining([
-                        expect.objectContaining({
-                            parts: expect.arrayContaining([
-                                expect.objectContaining({
-                                    text: expect.stringContaining(testData.gameQuestion)
-                                })
-                            ])
-                        })
-                    ])
-                }),
-                expect.any(Object)
-            );
-        });
-
-        test('should return a response from Empathy model', async () => {
-            const mockResponse = 'This city is famous for the Eiffel Tower.';
+        test('should return a response from Mistral model', async () => {
+            const mockResponse = 'The capital of France is a city known for its iconic tower.';
             axios.post.mockResolvedValue({
                 data: {
                     choices: [
@@ -82,17 +48,18 @@ describe('LLM Service', () => {
                     ]
                 }
             });
-
-            const response = await makeRequest('empathy');
-
+        
+            // No necesitamos pasar el modelo ya que ahora se usa LLM_MODELS.ACTUAL
+            const response = await makeRequest();
+        
             expect(response.statusCode).toBe(200);
             expect(response.body).toHaveProperty('answer');
             expect(response.body.answer).toBe(mockResponse);
-
+        
             expect(axios.post).toHaveBeenCalledWith(
                 expect.stringContaining('https://empathyai.prod.empathy.co'),
                 expect.objectContaining({
-                    model: "qwen/Qwen2.5-Coder-7B-Instruct",
+                    model: "mistralai/Mistral-7B-Instruct-v0.3",
                     messages: expect.arrayContaining([
                         expect.objectContaining({
                             role: "system"
@@ -105,8 +72,9 @@ describe('LLM Service', () => {
                 }),
                 expect.any(Object)
             );
+            
         });
-
+        
         test('should handle error when required fields are missing', async () => {
             const response = await makeRequest('empathy', {
                 userQuestion: undefined,
