@@ -103,19 +103,17 @@ function Game() {
                 return "No hay una pregunta activa en este momento.";
             }
 
-            //const response = await axios.post(`${apiEndpoint}/askllm`, {
             const response = await axios.post(`${apiEndpoint}/askllm`, {
-                model: 'empathy', // O el modelo que prefieras
-                userQuestion: userMsg, // La pregunta que hace el usuario al chatbot
-                gameQuestion: questionData.question, // La pregunta actual del juego
-                answers: questionData.choices, // Las opciones disponibles
-                correctAnswer: questionData.correctAnswer // La respuesta correcta
+                userQuestion: userMsg,
+                gameQuestion: questionData.question,
+                answers: questionData.choices,
+                correctAnswer: questionData.correctAnswer
             });
 
             return response.data.answer;
         } catch (error) {
             console.error("Error al obtener respuesta del LLM:", error);
-            return "Lo siento, no puedo proporcionarte una pista en este momento.";
+            return "Sorry, I can't give you a hint right now.";
         }
     };
 
