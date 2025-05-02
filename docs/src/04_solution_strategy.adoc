@@ -36,7 +36,7 @@ The master branch contains the final version of the product, so that every accep
 * *Documentation*: it must be always updated for making our work valuable and consistent.
 * *Weekly meetings*: Weekly discussions about what has been done and what needs to be done will be key for our team success. 
 * *Github*: this control version systems not only allows us to share and collabortively write code, but also provides other resources such as issues and project management (kanban board) tools for organizing the work to be done. Also, wiki section allows us to save all of our minutes from each scheduled meeting.
-* *Whatsapp and Discord*: THey allow us to be in constant communication for helping each other out whenever needed. 
+* *Whatsapp and Discord*: Allow us to be in constant communication for helping each other out whenever needed. 
 
 ifdef::arc42help[]
 [role="arc42help"]
