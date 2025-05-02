@@ -51,6 +51,20 @@ defineFeature(feature, test => {
             if (play) await play.click();
         });
 
+        and('I interact with the chatbot asking for hints', async () => {
+            await page.waitForTimeout(3000);
+            const message = "pista";
+            const [chatButton] = await page.$x('//*[@id="chatCon"]/div[2]/p/img');
+            await chatButton.click();
+            await page.waitForTimeout(1000);
+            const [chatInput] = await page.$x('//*[@id="chatCon"]/div[1]/div[3]/input');
+            await chatInput.focus();
+            await chatInput.type(message);
+            await page.keyboard.press('Enter');
+            await page.waitForXPath('//*[@id="chatCon"]/div[1]/div[2]/div[1]/div/p[3]', { timeout: 5000 });
+        });
+
+
         and('I answer 5 questions by clicking on the first option each time', async () => {
             for (let i = 0; i < 6; i++) {
                 const [button] = await page.$x('//*[@id="root"]/div/div[2]/div[2]/button[1]/span/span');

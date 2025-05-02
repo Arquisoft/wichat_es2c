@@ -7,6 +7,7 @@ Feature: Game Functionality
     Given A registered user
     When I click on Play button
     And I select the Hard difficulty
+    And I interact with the chatbot asking for hints
     And I answer 5 questions by clicking on the first option each time
     Then The game over modal appears
 
