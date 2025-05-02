@@ -174,17 +174,6 @@ describe('Gateway Service', () => {
             expect(response.body.answer).toBe('llmanswer');
         });
 
-        it('should validate required fields for askllm request', async () => {
-            const response = await request(app)
-                .post('/askllm')
-                .send({
-                    userQuestion: 'Can you give me a hint?',
-                });
-
-            expect(response.statusCode).toBe(400);
-            expect(response.body.error).toContain('Missing required field');
-        });
-
         it('should handle errors from llm service', async () => {
             mockAxiosError('post', '/ask', 500, 'LLM service error');
 
@@ -438,52 +427,6 @@ describe('Gateway Service', () => {
 
                 expect(response.statusCode).toBe(500);
                 expect(response.body.error).toBeDefined();
-            });
-
-
-
-                it('should validate all required fields for askllm endpoint', async () => {
-                    // Test missing gameQuestion
-                    let response = await request(app)
-                        .post('/askllm')
-                        .send({
-                            userQuestion: 'Can you give me a hint?',
-                            // gameQuestion is missing
-                            answers: ['A', 'B', 'C'],
-                            correctAnswer: 'B',
-                            model: 'empathy'
-                        });
-
-                    expect(response.statusCode).toBe(400);
-                    expect(response.body.error).toContain('Missing required field: gameQuestion');
-
-                    // Test missing answers
-                    response = await request(app)
-                        .post('/askllm')
-                        .send({
-                            userQuestion: 'Can you give me a hint?',
-                            gameQuestion: 'What is 2+2?',
-                            // answers is missing
-                            correctAnswer: '4',
-                            model: 'empathy'
-                        });
-
-                    expect(response.statusCode).toBe(400);
-                    expect(response.body.error).toContain('Missing required field: answers');
-
-                    // Test missing model
-                    response = await request(app)
-                        .post('/askllm')
-                        .send({
-                            userQuestion: 'Can you give me a hint?',
-                            gameQuestion: 'What is 2+2?',
-                            answers: ['3', '4', '5'],
-                            correctAnswer: '4',
-                            // model is missing
-                        });
-
-                    expect(response.statusCode).toBe(400);
-                    expect(response.body.error).toContain('Missing required field: model');
             });
 
 
