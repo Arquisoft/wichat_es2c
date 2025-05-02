@@ -58,4 +58,4 @@ image:06-leaderboardAndSearch.png["Runtime view - Leaderboard and match search"]
 
 &nbsp;
 
-The user accesses the Leaderboard, and on the one hand, data related to rankings and users is loaded, and on the other, the user can search for games by typing the name in the search input.
+When the user accesses the Leaderboard, the system loads ranking and user data, while also allowing the user to search for specific user's games by entering its name in the search bar.
