@@ -108,7 +108,9 @@ const Leaderboard = () => {
           score: match.score,
           correctAnswers: match.correctAnswers,
           wrongAnswers: match.wrongAnswers,
-          questions: match.questions
+          questions: match.questions,
+
+          difficulty: match.difficulty
         }));
         
         setGames(formattedMatches);
@@ -227,6 +229,8 @@ const Leaderboard = () => {
                             wrongAnswers={game.wrongAnswers}
                             time={game.time}
                             questions={game.questions}
+                            difficulty={game.difficulty}
+                            score={game.score}
                         />
                       </div>
                     ))

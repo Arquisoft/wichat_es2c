@@ -354,7 +354,7 @@ app.get('/getQuestion', async (req, res) => {
                 await addQuestionsSports();
             } else if (category === 'cartoons') {
                 await addQuestionsCartoons();
-            } else {
+            } else if (category === 'capitals'){
                 await addQuestionsCapital();
             }
 

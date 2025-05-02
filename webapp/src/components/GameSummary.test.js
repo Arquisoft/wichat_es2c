@@ -22,6 +22,10 @@ describe('GameSummary Component', () => {
         correctAnswers: 7,
         wrongAnswers: 3,
         time: 120,
+
+        difficulty: 1,
+        score: 80,
+
         questions: [
             {
                 answers: [
@@ -45,6 +49,10 @@ describe('GameSummary Component', () => {
         expect(screen.getByText('Time per question: 12.00')).toBeInTheDocument();
 
         expect(screen.getByText('Check questions')).toBeInTheDocument();
+
+        expect(screen.getByText('Normal')).toBeInTheDocument();
+        expect(screen.getByText('Score')).toBeInTheDocument();
+        expect(screen.getByText('80')).toBeInTheDocument();
     });
 
     test('calculates time per question correctly', () => {

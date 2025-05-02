@@ -21,39 +21,56 @@ function validateRequiredFields(req, requiredFields) {
         throw new Error(`Missing required field: ${field}`);
       }
     }
+
+    
+    const { username, password } = req.body;
+
+    if(typeof username !== 'string') {
+        throw new Error(`Username must be a valid string`);
+    }
+
+    if(typeof password !== 'string') {
+        throw new Error(`Password must be a valid string`);
+    }
+    
+    if (username.length < 3 || username.trim() === '') {
+        throw new Error(`Username length must be at least 3`);
+    }
+
+    if (password.length < 4 || password.trim() === '') {
+      throw new Error(`Password length must be at least 4`);
+    }
+    
 }
 
 // Route for user login
-app.post('/login',  [
-  check('username').isLength({ min: 3 }).trim().escape(),
-  check('password').isLength({ min: 3 }).trim().escape()
-],async (req, res) => {
+app.post('/login', async (req, res) => {
   try {
     // Check if required fields are present in the request body
-  
-  validateRequiredFields(req, ['username', 'password']);
-  
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ error: errors.array().toString()});
-  }
-    let username =req.body.username.toString();
-    let password =req.body.password.toString();
-    // Find the user by username in the database
-    const user = await User.findOne({ username });
+    validateRequiredFields(req, ['username', 'password']);
     
-
-    // Check if the user exists and verify the password
-    if (user && await bcrypt.compare(password, user.password)) {
-      // Generate a JWT token
-      const token = jwt.sign({ userId: user._id }, 'your-secret-key', { expiresIn: '1h' });
-      // Respond with the token and user information
-      res.json({ token: token, username: username, createdAt: user.createdAt });
-    } else {
-      res.status(401).json({ error: 'Invalid credentials' });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: errors.array().toString()});
     }
+      let username =req.body.username.toString();
+      let password =req.body.password.toString();
+      // Find the user by username in the database
+      const user = await User.findOne({ username });
+      
+
+      // Check if the user exists and verify the password
+      if (user && await bcrypt.compare(password, user.password)) {
+        // Generate a JWT token
+        const token = jwt.sign({ userId: user._id }, 'your-secret-key', { expiresIn: '1h' });
+        // Respond with the token and user information
+        res.json({ token: token, username: username, createdAt: user.createdAt });
+      } else {
+        res.status(401).json({ error: 'Invalid credentials' });
+      }
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    //res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: error.message });
   }
 });
 

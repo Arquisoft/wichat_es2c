@@ -3,13 +3,7 @@ import { TextField, Button, Typography, Box, CircularProgress, Alert } from '@mu
 import axios from 'axios';
 import "./LoginRegister.css";
 
-let apiEndpoint;
-
-if (window.location.hostname === 'localhost') {
-    apiEndpoint = 'http://localhost:8000'; // Para desarrollo
-} else {
-    apiEndpoint = 'http://143.47.54.63:8000'; // Para producción
-}
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 function AddUser() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -34,8 +28,8 @@ function AddUser() {
             return;
         }
 
-        if (password.length < 3) {
-            setError('Password must be at least 3 characters long');
+        if (password.length < 4) {
+            setError('Password must be at least 4 characters long');
             return;
         }
 
@@ -115,7 +109,7 @@ function AddUser() {
                             onChange={(e) => setPassword(e.target.value)}
                             disabled={loading || success}
                             required
-                            helperText="Password must be at least 3 characters long"
+                            helperText="Password must be at least 4 characters long"
                         />
                         {error && (
                             <Typography color="error" sx={{mt: 2}}>
