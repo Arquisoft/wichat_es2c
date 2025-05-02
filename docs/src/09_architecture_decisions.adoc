@@ -58,6 +58,7 @@ MongoDB was chosen as the primary database.
 * High scalability and replication features out-of-the-box.
 * Wide developer familiarity and strong community support.
 * Flexible schema design allows for rapid iteration and prototyping.
+* Better integration with JSON than other alternatives like SQL.
 
 ==== Alternatives considered
 
@@ -71,6 +72,8 @@ MongoDB was chosen as the primary database.
   ** Rigid schemas could slow down development during early, rapidly changing phases.
   ** Higher initial overhead in schema design and migrations.
   ** Potential impedance mismatch when handling unstructured or flexible data.
+  ** Wasn't integrated on the initial project.
+
 
 ==== Consequences
 
@@ -177,7 +180,7 @@ The team decided to use an Oracle Cloud VM instance to host the project infrastr
 * Avoids incurring additional cloud infrastructure costs.
 * Simplifies initial deployment and testing.
 * With Oracle Cloud VM we can have the aplicattion deployed 24/7.
-* In case anyone have to do any kind of work on the VM, giving access to it is simple because only SSH and the IP are required.
+* In case anyone have to do any kind of work on the VM, giving access to it is simple because only SSH key and the IP are required.
 
 ==== Alternatives considered
 
@@ -235,7 +238,7 @@ The project adopts a service-based architecture, rather than a fully decoupled m
 ==== Consequences
 
 * Enables a modular structure where services are separated logically but may coexist within the application itself.
-* Facilitates faster development and easier testing.
+* Facilitates faster development and easier testing given its monolithichal nature with less enviroment complexity.
 * Allows future evolution toward microservices if project requirements grow.
 
 
@@ -349,25 +352,87 @@ The team chose to use the Qwen2.5-Coder-7B-Instruct model provided through the E
 
 
 
-[[ADR-010]]
-=== ADR 010: Monitoring Strategy   ******************************************************************************
+=== ADR 010: Monitoring Strategy
 *Status: Accepted*
-*:date: 28/04/2025* 
+*:date: 07/04/2025* 
 
 ==== Context
 
+The application required a monitoring solution to track performance metrics, usage, and system health. Since the deployment is hosted on Oracle Cloud VM, Oracle Cloud Monitoring was initially considered as a natural choice due to existing familiarity and integration.
+
+However, Prometheus and Grafana were already configured in the environment, and their open-source flexibility and ecosystem made them a strong alternative.
 
 ==== Decision
 
-
+The team chose to implement application monitoring using Prometheus for data collection and Grafana for visualization.
 
 ==== Reasoning
 
-* Prometheus + Grafana
-* Oracle Cloud Monitoring
+* Prometheus and Grafana were already partially configured and tested.
+* Broad community support and extensive documentation.
+* Easier to integrate with a variety of services and custom metrics.
+* Enables flexible dashboards and alerting rules tailored to the application’s needs.
+
+==== Alternatives considered
+
+*Oracle Cloud Monitoring*
+
+** Pros:
+  *** Native to Oracle Cloud VM.
+  *** Familiar interface for some team members.
+  *** Integrated with Oracle’s infrastructure metrics and logging.
+** Cons:
+  *** Less customizable for application-specific metrics.
+  *** More limited in community resources and ecosystem tools.
+  *** Requires additional setup to match the flexibility offered by Prometheus/Grafana.
 
 ==== Consequences
 
+* Monitoring is decoupled from Oracle Cloud, making it more portable.
+* Dashboards and alerts can be easily customized and extended.
+
+
+=== ADR 011: DNS and Reverse Proxy Setup
+*Status: Accepted*
+*:date: 30/04/2025* 
+
+==== Context
+
+To allow users and services to access the deployed application on Oracle Cloud VM via a friendly domain and standard HTTP port, a DNS and reverse proxy solution was needed. The goal was to expose the service at a clean URL (`http://wic2c.duckdns.org`) instead of a raw IP address with a non-standard port.
+
+==== Decision
+
+The team chose to use **DuckDNS** as a free DNS provider and **Nginx** as a reverse proxy.
+
+==== Reasoning
+
+* **DuckDNS**:
+  ** Free and simple dynamic DNS service.
+  ** Allows mapping a custom subdomain (`wic2c.duckdns.org`) to the public IP address of the Oracle VM.
+  ** No cost, no registration complexity.
+* **Nginx**:
+  ** Acts as a reverse proxy, listening on port `80`.
+  ** Redirects traffic internally to port `3000`, where the application or monitoring stack is hosted.
+  ** Enables clean, production-like access to services without exposing internal port numbers.
+
+==== Alternatives considered
+
+*Using only raw IP and ports*
+
+** Pros:
+  *** No need to configure DNS or proxy layers.
+  *** Slightly faster setup.
+** Cons:
+  *** Users would need to remember IP addresses and ports (e.g., `http://123.45.67.89:3000`).
+  *** Less professional appearance.
+  *** Harder to manage and scale in future.
+
+==== Consequences
+
+* Users and developers can access the application at `http://wic2c.duckdns.org` using standard web protocols.
+* Internal routing and ports remain abstracted, improving security and maintainability.
+* Future enhancements (e.g., HTTPS, load balancing) can be layered onto the Nginx configuration.
+* Reliance on DuckDNS introduces a small risk of service availability tied to a free third-party provider.
 
 
 
