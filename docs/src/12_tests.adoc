@@ -20,12 +20,17 @@ These tests contribute significantly to our code coverage, which we continuously
 image:12_coverage.png["Coverage tests"]
 
 In addition to unit testing, we created end-to-end (E2E) tests to simulate
-real user interactions and verify that the application behaves correctly from the user’s perspective (for example, playing a game and then checking our stats).
+real user interactions and verify that the application behaves correctly from the user’s perspective.
 These tests help ensure that critical user flows remain functional across updates.
+
+Their functionality consists of registering a new user, logging in as them, playing a game, asking the chatbot
+for hints, then, after the game is done, it checks the user's match history and makes sure the match has been added,
+after that it looks at the leaderboard, makes sure its not empty, looks up its own username in it and makes sure the
+match also shows up there.
 
 To assess performance and scalability, we also conducted load testing,
 which allowed us to evaluate how the system handles high volumes of traffic and to identify potential bottlenecks under stress.
 
-Finally, we also used monitoring tools from oracle to help us detect any outrages in real time.
+Finally, we used Grafana and Promotheus as monitoring tools to help us detect any outrages in real time.
 
 By combining these different types of testing, we’ve built a strong quality assurance framework that minimizes risk and ensures long-term maintainability.
