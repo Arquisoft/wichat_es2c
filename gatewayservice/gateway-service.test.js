@@ -465,6 +465,50 @@ describe('Gateway Service', () => {
             });
 
             
+            describe('Timeout Handling', () => {
+                it('should handle timeout from downstream services', async () => {
+                  axios.post.mockImplementationOnce(() => {
+                    // Simular timeout
+                    return Promise.reject({
+                      code: 'ECONNABORTED',
+                      message: 'timeout of 1000ms exceeded'
+                    });
+                  });
+              
+                  const response = await request(app)
+                    .post('/askllm')
+                    .send({
+                      userQuestion: 'hint?',
+                      gameQuestion: 'test',
+                      answers: ['A', 'B'],
+                      correctAnswer: 'A'
+                    });
+              
+                  expect(response.statusCode).toBe(500);
+                  expect(response.body.error).toBe('Internal error');
+                });
+            });
+
+            describe('Query Parameter Handling', () => {
+                it('should correctly pass query parameters to downstream services', async () => {
+                  axios.get.mockImplementationOnce((url, options) => {
+                    if (url.includes('/getQuestion')) {
+                      // Verificar que los parámetros de consulta se pasan correctamente
+                      expect(options.params).toEqual({ difficulty: 'hard', category: 'history' });
+                      return Promise.resolve({
+                        data: { question: 'Test question', answers: ['A', 'B', 'C'] }
+                      });
+                    }
+                  });
+              
+                  const response = await request(app)
+                    .get('/getQuestion')
+                    .query({ difficulty: 'hard', category: 'history' });
+              
+                  expect(response.statusCode).toBe(200);
+                });
+              });
+
 
 function returnNotDuplicated(status, error){
     return Promise.reject({
