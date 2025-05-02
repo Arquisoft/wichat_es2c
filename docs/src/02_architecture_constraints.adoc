@@ -31,15 +31,21 @@ endif::arc42help[]
 
 [options="header", cols="1,1"]
 |====
-| Restriction | Explanation
+| Constraint | Explanation
 
-| Wikidata API | We will use Wikidata as the database for the places where the player can be found.
+| Deployed Web application | The application must be deployed on a server and accessible from a browser. In this case, we will use Docker to deploy it.
 
-| Deploy the application | The application must be deployed on a server and accessible from a browser. In this case, we will use Docker to deploy it.
+| Wikidata | The application will use Wikidata as it will serve as the source of the information displayed in a match's questions.
+
+| LLM | The user will be able to obtain hints via a LLM Chatbot. 
+
+| Documented API | Alongside with the application, a public API will be provided, with its extensive documentation, which will provide access to users information.
+
+| Data management | In order to store and manage the information regarding users and matches, it will be kept in a MongoDB database.
+
+| Tests | The application must pass a series of tests in order to ensure its functionality; failure of any test will block deployment.
 
 | GitHub | We will use GitHub for version control and collaboration on the project.
-
-| Tests | The application must pass these tests to ensure its functionality; failure of any test will block deployment.
 
 | Documentation | The documentation of the entire project will be done following the Arc42 template for better clarity in its details and explanations.
 
@@ -49,7 +55,7 @@ endif::arc42help[]
 
 [options="header", cols="1,1"]
 |====
-| Restriction | Explanation
+| Constraint | Explanation
 
 | Team of 4 people | The work will be distributed among the 4 members of the group.
 
@@ -57,6 +63,17 @@ endif::arc42help[]
 
 | Issues | The work assigned to each member will be reflected as issues in GitHub, so that everything is recorded and everyone knows what they have to do.
 
+| Pull requests | In order to improve the workflow and our code consistency, every time a member is about to integrate their work into the main one, another member will review its changes via a Pull Request, requesting changes if seen as necesary.
+
 | Mid-term evaluations | Every 3 weeks the project will be checked, and corrections that need to be made for the upcoming days will be noted.
 
 |====
+
+=== Conventions
+|===
+| Constraint | Explanation
+| Arc42 | The team will follow the Arc42 template in order to structure the project documentation in a consistent and efficient way.
+| Use of English | English will be used throughout the project, including documentation, coding, and the GitHub repository, as it is the most widely accepted and understood language in the software development community.
+| Good coding practices | The team will adhere to clean code principles such as meaningful naming, modularity, simplicity, and comprehensive documentation. 
+| Branchs usage | The team will adopt a branching strategy, keeping every issue in its own branch until it is brought to master via a Pull Request.
+|===
