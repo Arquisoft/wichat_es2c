@@ -100,6 +100,13 @@ merge them and make a release.
 * *Testings*
 One of the most important aspects is testing our application, and to achieve this, we will conduct different types of tests. On one hand, we will perform tests such as unit testing and usability testing. On the other hand, we will implement a continuous testing system using GitHub Actions, ensuring that all commits pass the required tests.
 
+* *Docker*
+Docker is used to ensure consistent environments across development, testing, and deployment. By containerizing the application, we can avoid issues related to local setup differences and dependency mismatches.
+
+* *GitHub Actions*
+GitHub Actions is integrated into our repository to automate key parts of the development lifecycle. We use it for continuous integration (CI), running automated tests on every push or pull request, and checking code quality with SonarCloud. Additionally, it supports continuous deployment workflows by enabling the automatic building and deployment of Docker containers when changes are merged into the main branch.
+
+
 === _Operational concepts_
 * *Gateway service routing*
 We will use a speciallized service that will route the requests to the corresponding service, acting as 
@@ -112,4 +119,7 @@ sent based on its content or the context of the app.
 
 * *Secure storage*
 User passwords are never stored in plain text. Instead, secure hashing algorithms and encryption techniques are employed to protect sensitive information and prevent unauthorized access.
+
+*Security redirections* 
+The app redirects you to the login page if you try to access features that requires you to be logged while you are not.
 
