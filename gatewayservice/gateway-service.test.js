@@ -464,6 +464,8 @@ describe('Gateway Service', () => {
 
             });
 
+            
+
 function returnNotDuplicated(status, error){
     return Promise.reject({
         response: {

@@ -144,6 +144,43 @@ describe('LLM Service', () => {
             expect(systemPrompt).toContain('Paris (This is the correct answer)');
         });
 
+        test('should handle empty response from LLM', async () => {
+          
+          axios.post.mockResolvedValue({
+            data: {
+              choices: [
+                {
+                  message: {
+                    content: null
+                  }
+                }
+              ]
+            }
+          });
+          
+          const response = await makeRequest();
+          
+          expect(response.statusCode).toBe(200);
+          expect(response.body).toHaveProperty('serviceError', true);
+          expect(response.body.answer).toBe("I'm currently having trouble processing questions. Try again later.");
+        });
+        
+        test('should handle malformed response structure', async () => {
+          // Simular una respuesta con estructura incorrecta
+          axios.post.mockResolvedValue({
+            data: {
+              response: 'malformed'
+            }
+          });
+          
+          const response = await makeRequest();
+          
+          expect(response.statusCode).toBe(200);
+          expect(response.body).toHaveProperty('serviceError', true);
+        });
+
+        
+
 
         describe('Input Validation', () => {
             test('should validate userQuestion is a string', async () => {
@@ -261,6 +298,28 @@ describe('LLM Service', () => {
                   expect(response.body).toHaveProperty('validationError', true);
                   expect(response.body.answer).toContain("can't give you the answer directly");
                 }
+              });
+
+              test('should format multiline user questions correctly', async () => {
+                axios.post.mockResolvedValue({
+                  data: {
+                    choices: [
+                      {
+                        message: {
+                          content: 'Test response'
+                        }
+                      }
+                    ]
+                  }
+                });
+                
+                await makeRequest({
+                  userQuestion: 'This is a\nmultiline\nquestion?'
+                });
+                
+                // Verificar que el formato es correcto en la solicitud a la API
+                const userQuestionSent = axios.post.mock.calls[0][1].messages[1].content;
+                expect(userQuestionSent).toBe('This is a\nmultiline\nquestion?');
               });
         });
     });
