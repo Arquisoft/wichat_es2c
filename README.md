@@ -4,7 +4,9 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_wichat_es2c&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Arquisoft_wichat_es2c)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_wichat_es2c&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Arquisoft_wichat_es2c)
 
-![Logo](/webapp/public/wiChatLogos/LogoWichat192.png)
+[![Logo](/webapp/public/wiChatLogos/LogoWichat192.png)](http://wic2c.duckdns.org/)
+
+Link to the website -> http://wic2c.duckdns.org/
 
 WiChat is an application focused on allowing its users to play a quiz-style game on various topics, in which they can achieve their best results with the help of a chatbot powered by an Artificial Intelligence model. This data is then stored and can be accessed at any time, including both the user’s own data and global data from other players.
 
