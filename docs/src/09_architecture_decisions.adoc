@@ -307,47 +307,43 @@ Use CSS Modules for styling, with partial hybridization where needed.
 
 
 [[ADR-009]]
-=== ADR 009: Choice of Empathy LLM
+=== ADR 009: Choice and Strategy for Empathy LLM Models
 *Status: Accepted*
 *:date: 07/04/2025* 
 
 ==== Context
 
-To implement the chatbot system that provides hints during gameplay, the project required integration with a Large Language Model (LLM). The main criteria were accuracy, responsiveness, and a reduced tendency toward hallucination or incorrect answers, as the quality of hints directly affects user experience.
+To implement the chatbot system that provides hints during gameplay, the project required integration with a Large Language Model (LLM). The goal was to offer accurate, responsive, and trustworthy hints, as this directly affects the player's experience and engagement.
+
+Initially, the team selected the **Qwen2.5-Coder-7B-Instruct** model from the Empathy LLM platform given he had access thanks to the API Key provided to us. However, as development progressed, it became apparent that system outages or instability in the LLM provider could render the chatbot feature temporarily unusable — severely impacting reliability.
 
 ==== Decision
 
-The team chose to use the Qwen2.5-Coder-7B-Instruct model provided through the Empathy LLM platform.
+We implemented a dual-model system using both **Qwen2.5-Coder-7B-Instruct** and **Mistral-7B-Instruct-v0.3**, both available through Empathy LLM. The application now automatically switches between the two models depending on their availability, ensuring continued service during partial outages.
 
 ==== Reasoning
 
-* Empathy LLM provided an API key with access to two models:
-  ** Mistral-7B-Instruct-v0.3
-  ** Qwen2.5-Coder-7B-Instruct
-* After testing both models, Qwen was selected for:
-  ** Higher consistency in structured, instructional outputs.
-  ** Better handling of technical prompts and explanation-style hints.
-  ** More stable performance with fewer hallucinations under our prompt style.
-* The Empathy API offered fast response times and easy integration, allowing for rapid prototyping and feedback iteration.
+* Qwen2.5-Coder-7B-Instruct was initially chosen as it shown less tendency to cause hallucinations.
+* However, Qwen showed higher sensitivity to downtime and occasional availability issues during use.
+* Mistral-7B-Instruct-v0.3, while slightly more verbose, provided reliable backup behavior and acceptable quality.
+* The switch-over mechanism improves fault tolerance without significantly degrading response quality.
 
 ==== Alternatives considered
 
-*Mistral-7B-Instruct-v0.3*
+*Switch entirely to Mistral*
 
 ** Pros:
-  *** Well-known model with good general performance.
-  *** Slightly faster in some shorter prompts.
+  *** More stable availability during testing.
 ** Cons:
-  *** More prone to generating vague or verbose responses in our use case.
-  *** Occasionally less precise in multi-turn or guided question scenarios.
+  *** Lower quality in guided, instructional prompts; less aligned with user needs.
+  *** Returning to a single-model setup would reintroduce the same availability risks — if Mistral fails, the chatbot would again become unusable.
 
 ==== Consequences
 
-* The chatbot feature benefits from a lightweight, instruction-tuned LLM tailored to the task.
-* Reduces hallucination risk, improving player trust in hints.
-* The choice of Qwen may require future fine-tuning or prompt engineering as feature complexity grows.
-* Integration is dependent on the continued availability and performance of the Empathy LLM platform.
-* In the future, a fallback strategy using both Qwen and Mistral could be implemented to improve resilience against outages or API failures.
+* Improved resilience and availability of the chatbot feature.
+* Slight variability in hint style depending on the model currently active.
+* Additional complexity added to the backend logic to monitor model health and manage fallback behavior.
+* Future work could include evaluating additional models or services to further enhance reliability and output quality.
 
 
 
