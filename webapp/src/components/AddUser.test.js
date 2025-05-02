@@ -90,7 +90,7 @@ describe('AddUser component', () => {
     fillAndSubmitForm('testUser', 'pw');
 
     await waitFor(() => {
-      const errorElements = screen.getAllByText('Password must be at least 3 characters long');
+      const errorElements = screen.getAllByText('Password must be at least 4 characters long');
       expect(errorElements.length).toBeGreaterThan(0);
     });
   });

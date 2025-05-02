@@ -14,13 +14,83 @@ if (mongoose.connection.readyState === 0) {
 }
 
 
+function validateMatchData(data) {
+  const errors = [];
+  
+  const requiredFields = ['username', 'difficulty', 'question', 'selectedAnswer', 'correctAnswer', 'time', 'endTime', 'answers'];
+  requiredFields.forEach(field => {
+    if (data[field] === undefined || data[field] === null) {
+      errors.push(`Missing required field: ${field}`);
+    }
+  });
+  //Si faltan campos, devolver errores temprano (tipo de error mas basica y debe identificarse antes de validar los tipos de datos)
+  if (errors.length > 0) {
+    return { valid: false, errors };
+  }
+  
+
+  // Validación de tipos de datos
+  if (typeof data.username !== 'string' || data.username.trim() === '') {
+    errors.push('Username must be a non-empty string');
+  }
+  if (!Number.isInteger(data.difficulty) || ![1, 2].includes(data.difficulty)) {
+    errors.push('Difficulty must be either 1 (normal) or 2 (hard)');
+  }
+  if (typeof data.question !== 'string' || data.question.trim() === '') {
+    errors.push('Question must be a non-empty string');
+  }
+  if (typeof data.selectedAnswer !== 'string' || data.selectedAnswer.trim() === '') {
+    errors.push('Selected answer must be a non-empty string');
+  }
+  if (!Number.isFinite(data.time) || data.time <= 0) {
+    errors.push('Time must be a positive number');
+  }
+  if (!Number.isInteger(data.correctAnswer) || data.correctAnswer < 0 || data.correctAnswer > 3) {
+    errors.push('Correct answer must be a non-negative integer and less than 4');
+  }
+  
+  if (!Array.isArray(data.answers) || data.answers.length === 0) {
+    errors.push('Answers must be a non-empty array');
+  } else {
+    if (data.correctAnswer >= data.answers.length) {
+      errors.push('Correct answer index is out of bounds');
+    }
+    
+    if (data.answers.some(answer => typeof answer !== 'string' || answer.trim() === '')) {
+      errors.push('Each answer must be a non-empty string');
+    }
+  }
+  
+  if ('isLastQuestion' in data && typeof data.isLastQuestion !== 'boolean') {
+    errors.push('isLastQuestion must be a boolean value');
+  }
+  
+  if (typeof data.selectedAnswer === 'string' && Array.isArray(data.answers)) {
+    if (!data.answers.includes(data.selectedAnswer)) {
+      errors.push('Selected answer must be one of the provided answers');
+    }
+  }
+
+  return { 
+    valid: errors.length === 0,
+    errors 
+  };
+}
+
 app.post('/addMatch', async (req, res) => {
   try {
+    
+    //Validacion general sobre el match
+    const validationResult = validateMatchData(req.body);
+    if (!validationResult.valid) {
+      return res.status(400).json({ 
+        error: "Invalid match data", 
+        details: validationResult.errors 
+      });
+    }
+    
     const { username, difficulty, question, correctAnswer, answers, selectedAnswer, time, endTime,isLastQuestion } = req.body;
 
-    if (!username || !difficulty || !time || !question || !selectedAnswer || correctAnswer === undefined || !endTime || !answers) {
-      return res.status(400).json({ error: "Error when processing the request" });
-    }
 
     const user = await User.findOne({ username });
     if (!user) {

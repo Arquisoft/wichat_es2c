@@ -213,7 +213,7 @@ describe('Game Service', () => {
                 });
 
             expect(response.statusCode).toBe(400);
-            expect(response.body.error).toBe('Error when processing the request');
+            expect(response.body.error).toBe('Invalid match data');
         });
 
         it('should return 404 if user not found', async () => {
@@ -236,6 +236,188 @@ describe('Game Service', () => {
             expect(response.statusCode).toBe(404);
             expect(response.body.error).toBe('User not found');
         });
+
+
+        describe('Input Validation', () => {
+            beforeEach(async () => {
+            await createTestUser();
+            });
+            
+            it('should validate difficulty field', async () => {
+            const response = await request(app)
+                .post('/addMatch')
+                .send({
+                username: 'testuser',
+                difficulty: 3, // Valor inválido, debe ser 1 o 2
+                question: '¿Cuál es la capital de Francia?',
+                correctAnswer: 2,
+                answers: ['Madrid', 'Londres', 'París', 'Berlín'],
+                selectedAnswer: 'París',
+                time: 60,
+                endTime: new Date(),
+                isLastQuestion: false
+                });
+            
+            expect(response.statusCode).toBe(400);
+            expect(response.body.error).toBe('Invalid match data');
+            expect(response.body.details).toContain('Difficulty must be either 1 (normal) or 2 (hard)');
+            });
+            
+            it('should validate correctAnswer is within bounds', async () => {
+            const response = await request(app)
+                .post('/addMatch')
+                .send({
+                username: 'testuser',
+                difficulty: 1,
+                question: '¿Cuál es la capital de Francia?',
+                correctAnswer: 5, // Fuera del rango válido
+                answers: ['Madrid', 'Londres', 'París', 'Berlín'],
+                selectedAnswer: 'París',
+                time: 60,
+                endTime: new Date(),
+                isLastQuestion: false
+                });
+            
+            expect(response.statusCode).toBe(400);
+            expect(response.body.error).toBe('Invalid match data');
+            expect(response.body.details).toContain('Correct answer must be a non-negative integer and less than 4');
+            });
+            
+            it('should validate selectedAnswer matches an answer in the answers array', async () => {
+            const response = await request(app)
+                .post('/addMatch')
+                .send({
+                username: 'testuser',
+                difficulty: 1,
+                question: '¿Cuál es la capital de Francia?',
+                correctAnswer: 2,
+                answers: ['Madrid', 'Londres', 'París', 'Berlín'],
+                selectedAnswer: 'Roma', // No está en el array de respuestas
+                time: 60,
+                endTime: new Date(),
+                isLastQuestion: false
+                });
+            
+            expect(response.statusCode).toBe(400);
+            expect(response.body.error).toBe('Invalid match data');
+            expect(response.body.details).toContain('Selected answer must be one of the provided answers');
+            });
+            
+            it('should validate time is a positive number', async () => {
+            const response = await request(app)
+                .post('/addMatch')
+                .send({
+                username: 'testuser',
+                difficulty: 1,
+                question: '¿Cuál es la capital de Francia?',
+                correctAnswer: 2,
+                answers: ['Madrid', 'Londres', 'París', 'Berlín'],
+                selectedAnswer: 'París',
+                time: -10,
+                endTime: new Date(),
+                isLastQuestion: false
+                });
+            
+            expect(response.statusCode).toBe(400);
+            expect(response.body.error).toBe('Invalid match data');
+            expect(response.body.details).toContain('Time must be a positive number');
+            });
+            
+            it('should validate answers array has valid content', async () => {
+            const response = await request(app)
+                .post('/addMatch')
+                .send({
+                username: 'testuser',
+                difficulty: 1,
+                question: '¿Cuál es la capital de Francia?',
+                correctAnswer: 2,
+                answers: ['Madrid', '', 'París', 'Berlín'],
+                selectedAnswer: 'París',
+                time: 60,
+                endTime: new Date(),
+                isLastQuestion: false
+                });
+            
+            expect(response.statusCode).toBe(400);
+            expect(response.body.error).toBe('Invalid match data');
+            expect(response.body.details).toContain('Each answer must be a non-empty string');
+            });
+            
+            it('should validate isLastQuestion is a boolean', async () => {
+            const response = await request(app)
+                .post('/addMatch')
+                .send({
+                username: 'testuser',
+                difficulty: 1,
+                question: '¿Cuál es la capital de Francia?',
+                correctAnswer: 2,
+                answers: ['Madrid', 'Londres', 'París', 'Berlín'],
+                selectedAnswer: 'París',
+                time: 60,
+                endTime: new Date(),
+                isLastQuestion: 'yes' // String en lugar de boolean
+                });
+            
+            expect(response.statusCode).toBe(400);
+            expect(response.body.error).toBe('Invalid match data');
+            expect(response.body.details).toContain('isLastQuestion must be a boolean value');
+            });
+            
+            it('should validate all required fields are present', async () => {
+            
+            const response = await request(app)
+                .post('/addMatch')
+                .send({
+                username: 'testuser',
+                difficulty: 1,
+                // Faltan question, correctAnswer, answers, selectedAnswer, time, endTime
+                });
+            
+            expect(response.statusCode).toBe(400);
+            expect(response.body.error).toBe('Invalid match data');
+            expect(response.body.details).toContain('Missing required field: question');
+            });
+            
+            it('should validate data types of all fields', async () => {
+            const response = await request(app)
+                .post('/addMatch')
+                .send({
+                username: 123,
+                difficulty: '1',
+                question: true,
+                correctAnswer: '2',
+                answers: 'Madrid, Londres, París, Berlín',
+                selectedAnswer: true,
+                time: '60',
+                endTime: 123456789,
+                isLastQuestion: 1 
+                });
+            
+            expect(response.statusCode).toBe(400);
+            expect(response.body.error).toBe('Invalid match data');
+            });
+            
+            it('should work with valid data at boundary conditions', async () => {
+            // Test con valores límite pero válidos
+            const response = await request(app)
+                .post('/addMatch')
+                .send({
+                username: 'testuser',
+                difficulty: 1,
+                question: 'A', // Cadena muy corta pero no vacía
+                correctAnswer: 0, // Valor mínimo válido
+                answers: ['A', 'B', 'C', 'D'],
+                selectedAnswer: 'A',
+                time: 0.1, // Valor positivo mínimo
+                endTime: new Date(0), // Fecha mínima válida
+                isLastQuestion: false
+                });
+            
+            expect(response.statusCode).toBe(201);
+            expect(response.body.message).toBe('Question added to match');
+            });
+        });
+
     });
 
     describe('GET /userStatistics', () => {

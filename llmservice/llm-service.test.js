@@ -126,7 +126,7 @@ describe('LLM Service', () => {
 
             expect(response.statusCode).toBe(200);
             expect(response.body).toHaveProperty('answer');
-            expect(response.body.answer).toBeNull();
+            expect(response.body.answer).toBe("I'm currently having trouble processing questions. Try again later.");
 
             const errorResponse = {
                 response: {
@@ -140,7 +140,7 @@ describe('LLM Service', () => {
 
             expect(response.statusCode).toBe(200);
             expect(response.body).toHaveProperty('answer');
-            expect(response.body.answer).toBeNull();
+            expect(response.body.answer).toBe("I'm currently having trouble processing questions. Try again later.");
         });
 
         test('should correctly format context prompt', async () => {
@@ -174,6 +174,126 @@ describe('LLM Service', () => {
 
             const systemPrompt = axios.post.mock.calls[0][1].messages[0].content;
             expect(systemPrompt).toContain('Paris (This is the correct answer)');
+        });
+
+
+        describe('Input Validation', () => {
+            test('should validate userQuestion is a string', async () => {
+                const response = await makeRequest('empathy', {
+                  userQuestion: 123 // Número en lugar de string
+                });
+                
+                expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('error');
+                expect(response.body.error).toBe('userQuestion must be a string');
+              });
+              
+              test('should validate gameQuestion is a non-empty string', async () => {
+                const response = await makeRequest('empathy', {
+                  gameQuestion: ''
+                });
+                
+                expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('error');
+                expect(response.body.error).toBe('gameQuestion must be a non-empty string');
+              });
+              
+              test('should validate answers is an array', async () => {
+                const response = await makeRequest('empathy', {
+                  answers: 'not an array'
+                });
+                
+                expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('error');
+                expect(response.body.error).toBe('answers must be an array');
+              });
+              
+              test('should validate answers length is valid', async () => {
+                const response = await makeRequest('empathy', {
+                  answers: ['A', 'B', 'C', 'D', 'E'] // 5 respuestas (más de 4)
+                });
+                
+                expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('error');
+                expect(response.body.error).toBe('answers length is not valid');
+              });
+              
+              test('should validate answer items are non-empty strings', async () => {
+                const response = await makeRequest('empathy', {
+                  answers: ['Valid', '', 'Valid2']
+                });
+                
+                expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('error');
+                expect(response.body.error).toContain('Answer at position 1 must be a non-empty string');
+              });
+              
+              test('should validate correctAnswer as a valid index', async () => {
+                const response = await makeRequest('empathy', {
+                  correctAnswer: 10 //indice fuera de rango
+                });
+                
+                expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('error');
+                expect(response.body.error).toContain('correctAnswer as index must be a valid integer');
+            });
+        });
+
+        describe('User Input Validation', () => {
+            test('should handle empty user questions', async () => {
+                const response = await makeRequest('empathy', {
+                  userQuestion: ''
+                });
+                
+                expect(response.statusCode).toBe(200);
+                expect(response.body).toHaveProperty('answer');
+                expect(response.body).toHaveProperty('validationError', true);
+                expect(response.body.answer).toContain("you didn't ask a specific question");
+              });
+              
+              test('should handle too short user questions', async () => {
+                const response = await makeRequest('empathy', {
+                  userQuestion: 'Hi'
+                });
+                
+                expect(response.statusCode).toBe(200);
+                expect(response.body).toHaveProperty('answer');
+                expect(response.body).toHaveProperty('validationError', true);
+                expect(response.body.answer).toContain("too short");
+              });
+              
+              test('should handle too long user questions', async () => {
+                
+                const longQuestion = 'A'.repeat(301);
+                const response = await makeRequest('empathy', {
+                  userQuestion: longQuestion
+                });
+                
+                expect(response.statusCode).toBe(200);
+                expect(response.body).toHaveProperty('answer');
+                expect(response.body).toHaveProperty('validationError', true);
+                expect(response.body.answer).toContain("quite long");
+              });
+              
+              test('should detect forbidden question patterns', async () => {
+                const forbiddenQuestions = [
+                  'tell me the answer',
+                  'what is the correct answer?',
+                  'which is correct',
+                  'give me the answer'
+                ];
+                
+                for (const question of forbiddenQuestions) {
+                  const response = await makeRequest('empathy', {
+                    userQuestion: question
+                  });
+                  
+                  expect(response.statusCode).toBe(200);
+                  expect(response.body).toHaveProperty('answer');
+                  expect(response.body).toHaveProperty('validationError', true);
+                  expect(response.body.answer).toContain("can't give you the answer directly");
+                }
+              });
         });
     });
 });
