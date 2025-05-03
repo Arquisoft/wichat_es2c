@@ -114,17 +114,9 @@ app.get('/getQuestion', async (req, res) => {
 
 app.post('/askllm', async (req, res) => {
   try {
-    // Verificamos que estén presentes todos los campos necesarios
-    const requiredFields = ['model', 'userQuestion', 'gameQuestion', 'answers', 'correctAnswer'];
-    for (const field of requiredFields) {
-      if (!(field in req.body)) {
-        return res.status(400).json({ error: `Missing required field: ${field}` });
-      }
-    }
-
+    
     // Forward the request to the llm service
     const llmResponse = await axios.post(llmServiceUrl+'/ask', {
-      model: req.body.model,
       userQuestion: req.body.userQuestion,
       gameQuestion: req.body.gameQuestion,
       answers: req.body.answers,

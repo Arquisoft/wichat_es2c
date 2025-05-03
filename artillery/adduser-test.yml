@@ -1,0 +1,13 @@
+config:
+  #target: 'http://wic2c.duckdns.org:8000'
+  target: 'http://localhost:8000'
+  phases:
+    - duration: 60
+      arrivalRate: 10 # 10 users per second
+scenarios:
+  - flow:
+      - post:
+          url: "/adduser"
+          json:
+            username: "testuser_{{ $randomString(5) }}" # Generate a unique username
+            password: "Aa_1" # Password meets complexity requirements

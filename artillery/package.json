@@ -1,0 +1,13 @@
+{
+    "name": "artillery-project",
+    "version": "1.0.0",
+    "description": "Load testing project with Artillery",
+    "scripts": {
+        "test": "artillery run config.yml",
+        "test:adduser": "artillery run adduser-test.yml",
+        "test:addmatch": "artillery run addmatch-test.yml"
+    },
+    "devDependencies": {
+        "artillery": "^2.0.0"
+    }
+}

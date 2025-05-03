@@ -14,7 +14,7 @@ jobs:
         node-version: 22
     - run: npm --prefix users/authservice ci
     - run: npm --prefix users/userservice ci
-    - run: npm --prefix users/usersinfoapi ci
+    - run: npm --prefix users/userinfoapi ci
     - run: npm --prefix llmservice ci
     - run: npm --prefix gatewayservice ci
     - run: npm --prefix game ci
@@ -47,7 +47,7 @@ jobs:
     - run: npm --prefix game install
     - run: npm --prefix wikidata install
     - run: npm --prefix webapp install
-    - run: npm --prefix webapp run build
+    - run: CI='' npm --prefix webapp run build
     - run: npm --prefix webapp run test:e2e
   docker-push-webapp:
     name: Push webapp Docker Image to GitHub Packages

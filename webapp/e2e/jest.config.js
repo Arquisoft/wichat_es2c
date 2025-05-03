@@ -5,5 +5,6 @@ module.exports = {
         "**/?(*.)+(spec|test).[tj]s?(x)"
     ],
     testTimeout: 450000,
-    setupFilesAfterEnv: ["expect-puppeteer"],
+    setupFilesAfterEnv: ["expect-puppeteer", "./setup.js"],
+    testEnvironment: "./puppeteer-environment.js"
 };
