@@ -60,7 +60,7 @@ For multiple environments or alternative deployments please copy and adapt this 
 ****
 endif::arc42help[]
 
-image::07-deploymentDiagram.png[Deployment View]
+image::07-Diagram.png[Deployment View]
 
 = Motivation
 

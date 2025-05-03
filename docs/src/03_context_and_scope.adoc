@@ -2,7 +2,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 Wichat is a trivia-like game that retrieves information from Wikimedia and uses it to ask users questions accompanied by images. It also features its own trained AI chatbot to assist users by providing hints.
 [[section-context-and-scope]]
 == Context and Scope
-image::scope.png["Overall System"]
+image::03-scope.png["Overall System"]
 
 ifdef::arc42help[]
 [role="arc42help"]
@@ -89,7 +89,7 @@ endif::arc42help[]
 | _Empathy_ | AI help bot.
 | _Local server from https://github.com/ElPandaP[ElPandaP]_  | Web host.
 |===
-image::context-diagram.png["Overall System"]
+image::03-context-diagram.png["Overall System"]
 
 
 
