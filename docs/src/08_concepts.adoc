@@ -57,47 +57,69 @@ See https://docs.arc42.org/section-8/[Concepts] in the arc42 documentation.
 ****
 endif::arc42help[]
 
-=== _Continuous integration and development_
+=== _Domain concepts_
 
+|===
+| *Class* | *Explanation*
+| User | The people using the application, playing matches and generating statistics of their own.
+| Statistics | Given the performance of the player in its matches, relevant information is stored.
+| Match | Created when the user starts a game and includes its general information and generated questions.
+| Question | Questions spawned in a match, storing all its answers.
+| Answer | Every answer associated to a match's question, saving if it was the correct option and if was selected by the player.
+|===
+image:08-domainModel.png["Concepts - Domain Model"]
+
+
+=== _"Under-the-hood"_
+
+* *Backend*:  
+  The server-side logic of the application is implemented using Node.js in combination with the Express framework. The backend handles client requests, communicates with external services such as Wikidata and Empathy, manages user sessions, interacts with the database and other functionalities.
+
+* *Frontend*:  
+  The frontend is developed using React, a component-based JavaScript library that enables the creation of dynamic and interactive user interfaces. The frontend is responsible for rendering the game interface, managing user input, and presenting questions, hints, and scores.
+
+* *Database and persistence*:  
+  MongoDB serves as the main data store, offering a flexible document-oriented model that aligns well with the evolving structure of game data. It stores user profiles, game progress, generated questions, and historical results in JSON-like documents.
+
+* *LLM Integration*:  
+  We utilize Empathy, a Large Language Model (LLM), to enhance the gameplay experience by generating intelligent and context-aware hints for each question in real time.
+
+* *External Data Source*:  
+  To keep the game content rich and dynamic, we integrate Wikidata as our primary external knowledge source. Through its public REST API, we query up-to-date and structured information about a wide range of topics. This enables automatic generation of questions based on real-world data.
+
+
+
+=== _Development concepts_
+* *Continuous integration and development*
 Our way of working with github is having one developing branch towards which all pull requests are done 
 and have to be reviewed by at least one team member. 
 Sonar Cloud is set up so we know the testing coverage and whether we pass the quality gate with every pull request.
 Once there is enough change in the develop branch with respect to the main one and it has enough quality we can 
 merge them and make a release.
 
+* *Testings*
+One of the most important aspects is testing our application, and to achieve this, we will conduct different types of tests. On one hand, we will perform tests such as unit testing and usability testing. On the other hand, we will implement a continuous testing system using GitHub Actions, ensuring that all commits pass the required tests.
 
-=== _Microservice based system_
+* *Docker*
+Docker is used to ensure consistent environments across development, testing, and deployment. By containerizing the application, we can avoid issues related to local setup differences and dependency mismatches.
 
-Different business functionallities will be developed in different independent services.
-This will ensure that if one of them fails, the rest are still working (For example,
-if the rankings go down that will not affect the main game) as they have their own deployment
-as well. 
-Other benefits are increased maintainability due to separation in small, more readable modules
-and the possibillity of using different languages or technologies for each module if needed/prefered 
-without colliding with the rest.
+* *GitHub Actions*
+GitHub Actions is integrated into our repository to automate key parts of the development lifecycle. We use it for continuous integration (CI), running automated tests on every push or pull request, and checking code quality with SonarCloud. Additionally, it supports continuous deployment workflows by enabling the automatic building and deployment of Docker containers when changes are merged into the main branch.
 
 
-=== _Gateway service routing_
-
+=== _Operational concepts_
+* *Gateway service routing*
 We will use a speciallized service that will route the requests to the corresponding service, acting as 
 a single entry point for the application. Requests to the services are much simpler as only the api base 
 endpoint and the action needs to be known and the gateway can also act as a filter to manage requests 
 conditionally if needed. This approach also favors security as we can control which requests are actually 
 sent based on its content or the context of the app.
 
-=== _Authentication_
+=== _Safety and security concepts_
 
-To keep our users' data secure an authentication mechanism has been developed with the use of JSON Web Tokens (JWT). If someone tries to access historical game records for certain users, our KaW application enforces to pass a valid token through the header of the message request.
-In this way, only authenticated users are able to consult the different data that our application enforces.
+* *Secure storage*
+User passwords are never stored in plain text. Instead, secure hashing algorithms and encryption techniques are employed to protect sensitive information and prevent unauthorized access.
 
-=== _Internationalization_ 
+*Security redirections* 
+The app redirects you to the login page if you try to access features that requires you to be logged while you are not.
 
-One of the things to increase accessibility is giving our application the capability of being in various languages so people around the world can play our game. Obviously, internationalization is more than just changing the language of the Application but due to time constraints we will just offer Spanish, English, Ukrainian and French languages ( although, our API can generate questions in other languages different from described, to see the whole list, refer to our API documentation ).
-
-The library used for language translation in our KaW game is called react-i18next. For simplicity (and due to just only having three languages), all of the translations of messages are stored locally in properties files. Eventually, if the Application grows and we wanted to have more than 4 languages the best approach is to store those properties in a server and let the application to request those on the fly. Again, for simplicity the option of having all bundle together in the Frontend just fits.
-
-The translation of questions is a bit different from the frontend part since it is done "on the fly" by using the Microsoft translation API . This change has been done since the questions are not fully known until they are generated so storing the translation locally does not provide any benefit. Also, one advantage of it, is its simplicity and ease to use. To meet the restrictions impose by the Free version of this API a series of formatting rules are carried out into the question generation phase to minimize the usage of it and avoid getting suspended.
-
-=== _Tests_
-
-One of the most important aspects is testing our application, and to achieve this, we will conduct different types of tests. On one hand, we will perform tests such as unit testing and usability testing. On the other hand, we will implement a continuous testing system using GitHub Actions, ensuring that all commits pass the required tests.
