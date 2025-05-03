@@ -1,3 +1,6 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+[[section-tests]]
 == Testing and Monitoring
 
 We implemented a comprehensive testing and monitoring strategy to ensure the stability and
