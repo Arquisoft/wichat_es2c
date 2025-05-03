@@ -31,6 +31,17 @@ match also shows up there.
 To assess performance and scalability, we also conducted load testing,
 which allowed us to evaluate how the system handles high volumes of traffic and to identify potential bottlenecks under stress.
 
-Finally, we used Grafana and Promotheus as monitoring tools to help us detect any outrages in real time.
+Finally, we used Grafana and Prometheus as monitoring tools to help us detect any outrages in real time.
+
+image:12_grafana.jpg["Grafana load tests"]
+
+Where we can see the average time to process a request for really high numbers of requests per minute.
+
+In addition, we also used oracle monitoring services inside our virtual machine for extra monitoring. (Keep in mind Grafana uses UTC+2 as a timezone, while oracle uses UTC)
+
+image:12_oracle.jpg["Oracle laod tests"]
+
+Which shows the use % of the different components of our server, such as its CPU and memory.
+
 
 By combining these different types of testing, we’ve built a strong quality assurance framework that minimizes risk and ensures long-term maintainability.
