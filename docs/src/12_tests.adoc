@@ -39,7 +39,7 @@ Where we can see the average time to process a request for really high numbers o
 
 In addition, we also used oracle monitoring services inside our virtual machine for extra monitoring. (Keep in mind Grafana uses UTC+2 as a timezone, while oracle uses UTC)
 
-image:12_oracle.jpg["Oracle laod tests"]
+image:12_oracle.jpg["Oracle load tests"]
 
 Which shows the use % of the different components of our server, such as its CPU and memory.
 
