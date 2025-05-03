@@ -12,7 +12,10 @@ const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 defineFeature(feature, test => {
     beforeAll(async () => {
-        browser = await puppeteer.launch({ headless: false, slowMo: 100 });
+        browser = await puppeteer.launch(global.puppeteerConfig?.launch || {
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+            headless: "new"
+        });
         page = await browser.newPage();
         setDefaultOptions({ timeout: 10000 });
 

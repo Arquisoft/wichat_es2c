@@ -49,9 +49,18 @@ jobs:
     - run: npm --prefix webapp install
     - run: CI='' npm --prefix webapp run build
     - run: npm --prefix webapp run test:e2e
-    env:
-      PUPPETEER_DISABLE_SANDBOX_WARNING: 'true'
-      PUPPETEER_ARGS: '--no-sandbox --disable-setuid-sandbox'
+    - name: Install Puppeteer dependencies
+      run: |
+        sudo apt-get update
+          sudo apt-get install -y libgbm-dev libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6
+          - name: Run E2E tests
+            run: npm --prefix webapp run test:e2e
+            env:
+              PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'false'
+              PUPPETEER_DISABLE_SANDBOX_WARNING: 'true'
+              PUPPETEER_SKIP_DOWNLOAD: 'false'
+              PUPPETEER_EXECUTABLE_PATH: ''
+              NODE_OPTIONS: '--max_old_space_size=4096'
   docker-push-webapp:
     name: Push webapp Docker Image to GitHub Packages
     runs-on: ubuntu-latest
