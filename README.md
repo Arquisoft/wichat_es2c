@@ -4,7 +4,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_wichat_es2c&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Arquisoft_wichat_es2c)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Arquisoft_wichat_es2c&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Arquisoft_wichat_es2c)
 
-[![Logo](/webapp/public/wiChatLogos/LogoWichat192.png)](http://wic2c.duckdns.org/)
+[![Logo](/webapp/public/wiChatLogos/LogoWichat2_192.png)](http://wic2c.duckdns.org/)
 
 Link to the website -> http://wic2c.duckdns.org/
 
