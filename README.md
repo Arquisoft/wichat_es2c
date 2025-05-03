@@ -6,8 +6,6 @@
 
 [![Logo](/webapp/public/wiChatLogos/LogoWichat2_192.png)](http://wic2c.duckdns.org/)
 
-Link to the website -> http://wic2c.duckdns.org/
-
 This is a base project for the Software Architecture course in 2024/2025.
 WiChat is an application focused on allowing its users to play a quiz-style game on various topics, in which they can achieve their best results with the help of a chatbot powered by an Artificial Intelligence model. This data is then stored and can be accessed at any time, including both the user’s own data and global data from other players.
 
@@ -68,3 +66,4 @@ Both the user and auth service share a Mongo database that is accessed with mong
 
 
 ## Useful links
+Link to the website -> http://wic2c.duckdns.org/
