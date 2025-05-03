@@ -461,6 +461,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_technical_constraints">3.1. Technical Constraints</a></li>
 <li><a href="#_organizational_constraints">3.2. Organizational Constraints</a></li>
+<li><a href="#_conventions">3.3. Conventions</a></li>
 </ul>
 </li>
 <li><a href="#section-context-and-scope">4. Context and Scope</a>
@@ -471,10 +472,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#section-solution-strategy">5. Solution Strategy</a>
 <ul class="sectlevel2">
-<li><a href="#_technologies">5.1. Technologies</a></li>
-<li><a href="#_technological_decisions">5.2. Technological decisions</a></li>
-<li><a href="#_architecture_design">5.3. Architecture &amp; Design</a></li>
-<li><a href="#_team_organization">5.4. Team Organization</a></li>
+<li><a href="#_technological_decisions">5.1. Technological decisions</a></li>
+<li><a href="#_architecture_design">5.2. Architecture &amp; Design</a></li>
+<li><a href="#_team_organization">5.3. Team Organization</a></li>
 </ul>
 </li>
 <li><a href="#section-building-block-view">6. Building Block View</a>
@@ -482,7 +482,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_whitebox_overall_system">6.1. Whitebox Overall System</a></li>
 <li><a href="#_registering_an_user">6.2. Registering an user</a></li>
 <li><a href="#_logging_in">6.3. Logging in</a></li>
-<li><a href="#_future_diagrams">6.4. Future diagrams</a></li>
+<li><a href="#_questions_generation">6.4. Questions generation</a></li>
+<li><a href="#_wichat_quiz_game">6.5. WiChat quiz game</a></li>
+<li><a href="#_obtaining_hints_via_chatbot">6.6. Obtaining hints via Chatbot</a></li>
+<li><a href="#_leaderboard_and_match_search">6.7. Leaderboard and match search</a></li>
 </ul>
 </li>
 <li><a href="#section-deployment-view">7. Deployment View</a>
@@ -492,15 +495,28 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#section-concepts">8. Cross-cutting Concepts</a>
 <ul class="sectlevel2">
-<li><a href="#_continuous_integration_and_development">8.1. <em>Continuous integration and development</em></a></li>
-<li><a href="#_microservice_based_system">8.2. <em>Microservice based system</em></a></li>
-<li><a href="#_gateway_service_routing">8.3. <em>Gateway service routing</em></a></li>
-<li><a href="#_authentication">8.4. <em>Authentication</em></a></li>
-<li><a href="#_internationalization">8.5. <em>Internationalization</em></a></li>
-<li><a href="#_tests">8.6. <em>Tests</em></a></li>
+<li><a href="#_domain_concepts">8.1. <em>Domain concepts</em></a></li>
+<li><a href="#_under_the_hood">8.2. <em>"Under-the-hood"</em></a></li>
+<li><a href="#_development_concepts">8.3. <em>Development concepts</em></a></li>
+<li><a href="#_operational_concepts">8.4. <em>Operational concepts</em></a></li>
+<li><a href="#_safety_and_security_concepts">8.5. <em>Safety and security concepts</em></a></li>
 </ul>
 </li>
-<li><a href="#section-design-decisions">9. Architecture Decisions</a></li>
+<li><a href="#section-design-decisions">9. Architecture Decisions</a>
+<ul class="sectlevel2">
+<li><a href="#ADR-001">9.1. ADR 001: Key Initial Architecture Decisions</a></li>
+<li><a href="#ADR-002">9.2. ADR 002: Database Choice - MongoDB</a></li>
+<li><a href="#ADR-003">9.3. ADR 003: Adoption of TypeScript and Tailwind CSS</a></li>
+<li><a href="#ADR-004">9.4. ADR 004: Wikidata SPARQL Integration</a></li>
+<li><a href="#ADR-005">9.5. ADR 005: Oracle Cloud VM for Deployment Infrastructure</a></li>
+<li><a href="#ADR-006">9.6. ADR 006: Service-based System Architecture</a></li>
+<li><a href="#ADR-007">9.7. ADR 007: Data Storage for Wikidata Information</a></li>
+<li><a href="#ADR-008">9.8. ADR 008: Styling Approach - CSS Modules</a></li>
+<li><a href="#ADR-009">9.9. ADR 009: Choice and Strategy for Empathy LLM Models</a></li>
+<li><a href="#_adr_010_monitoring_strategy">9.10. ADR 010: Monitoring Strategy</a></li>
+<li><a href="#_adr_011_dns_and_reverse_proxy_setup">9.11. ADR 011: DNS and Reverse Proxy Setup</a></li>
+</ul>
+</li>
 <li><a href="#section-quality-scenarios">10. Quality Requirements</a>
 <ul class="sectlevel2">
 <li><a href="#_quality_tree">10.1. Quality Tree</a></li>
@@ -871,26 +887,38 @@ conventions (e.g. programming or versioning guidelines, documentation or naming 
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Restriction</th>
+<th class="tableblock halign-left valign-top">Constraint</th>
 <th class="tableblock halign-left valign-top">Explanation</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Wikidata API</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">We will use Wikidata as the database for the places where the player can be found.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deployed Web application</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The application must be deployed on a server and accessible from a browser. In this case, we will use Docker to deploy it.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Deploy the application</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The application must be deployed on a server and accessible from a browser. In this case, we will use Docker to deploy it.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Wikidata</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The application will use Wikidata as it will serve as the source of the information displayed in a match&#8217;s questions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">LLM</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The user will be able to obtain hints via a LLM Chatbot.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Documented API</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alongside with the application, a public API will be provided, with its extensive documentation, which will provide access to users information.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Data management</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">In order to store and manage the information regarding users and matches, it will be kept in a MongoDB database.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tests</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The application must pass a series of tests in order to ensure its functionality; failure of any test will block deployment.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">GitHub</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">We will use GitHub for version control and collaboration on the project.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Tests</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The application must pass these tests to ensure its functionality; failure of any test will block deployment.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Documentation</p></td>
@@ -908,7 +936,7 @@ conventions (e.g. programming or versioning guidelines, documentation or naming 
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Restriction</th>
+<th class="tableblock halign-left valign-top">Constraint</th>
 <th class="tableblock halign-left valign-top">Explanation</th>
 </tr>
 </thead>
@@ -926,8 +954,43 @@ conventions (e.g. programming or versioning guidelines, documentation or naming 
 <td class="tableblock halign-left valign-top"><p class="tableblock">The work assigned to each member will be reflected as issues in GitHub, so that everything is recorded and everyone knows what they have to do.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pull requests</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">In order to improve the workflow and our code consistency, every time a member is about to integrate their work into the main one, another member will review its changes via a Pull Request, requesting changes if seen as necesary.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Mid-term evaluations</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Every 3 weeks the project will be checked, and corrections that need to be made for the upcoming days will be noted.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_conventions">3.3. Conventions</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Constraint</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Explanation</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Arc42</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The team will follow the Arc42 template in order to structure the project documentation in a consistent and efficient way.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use of English</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">English will be used throughout the project, including documentation, coding, and the GitHub repository, as it is the most widely accepted and understood language in the software development community.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Good coding practices</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The team will adhere to clean code principles such as meaningful naming, modularity, simplicity, and comprehensive documentation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Branchs usage</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The team will adopt a branching strategy, keeping every issue in its own branch until it is brought to master via a Pull Request.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1109,9 +1172,12 @@ together with a mapping table showing the relationships between channels and inp
 <h2 id="section-solution-strategy">5. Solution Strategy</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_technologies">5.1. Technologies</h3>
+<h3 id="_technological_decisions">5.1. Technological decisions</h3>
 <div class="ulist">
 <ul>
+<li>
+<p><strong>JavaScript</strong>: Primary programming language for both frontend and backend development in our project. Fit for full-stack development using a single language, reducing context switching.</p>
+</li>
 <li>
 <p><strong>React</strong>: JavaScript library for web and native user interfaces. It allows developers to create interactive web applications by breaking down the UI into reusable components. React uses a declarative approach to efficiently update and render components, resulting in faster and more maintainable code. It&#8217;s widely adopted in the industry due to its simplicity, performance, and robustness.</p>
 </li>
@@ -1119,16 +1185,28 @@ together with a mapping table showing the relationships between channels and inp
 <p><strong>Node.js</strong>: JavaScript runtime that enables running JavaScript code outside of web browsers. It&#8217;s renowned for its event-driven architecture and extensive collection of packages, making it ideal for building scalable server-side applications.</p>
 </li>
 <li>
-<p><strong>Wikidata</strong>: Wikidata provides a REST API for retrieving information related to any topic. It helps us to dynamically generate questions for our game using it from any programming language.</p>
+<p><strong>Express</strong>: Lightweight framework for Node.js used to build RESTful webs and APIs. Especially useful for the backend development and routing.</p>
 </li>
 <li>
 <p><strong>MongoDB</strong>: popular NoSQL database known for its flexibility and scalability. It stores data in flexible JSON-like documents and is widely used in modern web development for its simplicity and ability to handle large volumes of data.</p>
 </li>
 <li>
+<p><strong>Wikidata</strong>: Wikidata provides a REST API for retrieving information related to any topic. It helps us to dynamically generate questions for our game using it from any programming language.</p>
+</li>
+<li>
+<p><strong>LLM Empathy</strong>: LLM model chosen because, in addition to already having an API key for it, it is especially easy to integrate into the application and works more than correctly to meet the needs of the Chatbot.</p>
+</li>
+<li>
 <p><strong>Arc42</strong>: framework (template) used for documenting and communicating software architectures. It provides a template for describing the architecture of a software system, covering aspects such as stakeholders, requirements, architecture decisions, components, interfaces, and quality attributes. arc42 helps teams create consistent and comprehensible architecture documentation, enabling better communication, understanding, and maintenance of software systems throughout their lifecycle.</p>
 </li>
 <li>
+<p><strong>Swagger:</strong> toolset for designing, building, documenting, and consuming RESTful web services. It allows us to automatically generate interactive API documentation, making it easier for developers to understand and test API endpoints. Swagger improves the transparency, usability, and maintenance of our backend services by ensuring clear and standardized API definitions.</p>
+</li>
+<li>
 <p><strong>npm</strong>: default package manager for Node.js, providing a command-line interface to install, manage, and publish JavaScript packages. With over a million packages available in its registry, npm simplifies adding functionality to Node.js projects by handling dependencies and providing tools for versioning and publishing packages.</p>
+</li>
+<li>
+<p><strong>Oracle server</strong>: Cloud platform used for deploying our application. The team chose Oracle Cloud Infrastructure due to prior experience with its services, which allowed for a smoother and more efficient setup. It provides a reliable environment for hosting our backend, database, and other infrastructure components, supporting scalability and high availability for the game.</p>
 </li>
 <li>
 <p><strong>Docker</strong>: platform that will be used for deploying our services inside containers. Containers are lightweight, portable, and self-sufficient units that contain everything needed to run an application, including the code, runtime, system tools, libraries, and settings. Docker enables developers to package their applications along with all dependencies into containers, ensuring consistency across different environments, such as development, testing, and production.</p>
@@ -1143,32 +1221,23 @@ together with a mapping table showing the relationships between channels and inp
 </div>
 </div>
 <div class="sect2">
-<h3 id="_technological_decisions">5.2. Technological decisions</h3>
-<div class="paragraph">
-<p>We have decided to develop the Wikidata API in TypeScript because it is similar to JavaScript but also has static type checking.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_architecture_design">5.3. Architecture &amp; Design</h3>
+<h3 id="_architecture_design">5.2. Architecture &amp; Design</h3>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Microservices</strong>: Our game is built using a microservices architecture, which structures the application as a collection of loosely coupled services. Each service encapsulates a specific functionality or business capability, allowing for independent development, deployment, and scaling. By adopting microservices, we promote modularity and flexibility, enabling rapid iteration and innovation.</p>
+<p><strong>Services based project</strong>: Although not a full microservices architecture, our project is designed in a modular and service-oriented way. Each major functionality is isolated into separate logical units or services that can be developed and maintained independently. This enhances flexibility and maintainability without the complexity of full microservice infrastructure.</p>
 </li>
 <li>
-<p><strong>Containerization with Docker</strong>: We leverage Docker containerization to package each microservice and its dependencies into lightweight, portable containers. Docker provides a consistent environment across different stages of the development lifecycle, ensuring seamless deployment and scalability. With Docker, we can easily spin up new instances of services, manage dependencies, and streamline our development and deployment workflows.</p>
+<p><strong>Containerization with Docker</strong>: We leverage Docker containerization to package each service and its dependencies into lightweight, portable containers. Docker provides a consistent environment across different stages of the development lifecycle, ensuring seamless deployment and scalability. With Docker, we can easily spin up new instances of services, manage dependencies, and streamline our development and deployment workflows.</p>
 </li>
 <li>
-<p><strong>API Gateway</strong>: We employ an API gateway as a centralized entry point for all client requests to our microservices. The API gateway serves as a reverse proxy, routing incoming requests to the appropriate microservice based on predefined rules and policies. It provides a unified interface for clients to interact with our system, abstracting away the complexities of the underlying microservices architecture. By consolidating access through the API gateway, we enhance security, governance, and performance while simplifying client interactions.</p>
-</li>
-<li>
-<p><strong>Scalability and Elasticity</strong>: With our microservices architecture orchestrated with Docker, we achieve horizontal scalability and elasticity to handle fluctuations in traffic and workload. Docker&#8217;s container-based approach enables us to dynamically scale individual services based on demand, ensuring optimal resource utilization and cost efficiency. Combined with automated scaling policies and monitoring, we maintain responsiveness and availability during peak usage periods.</p>
+<p><strong>API Gateway</strong>: We employ an API gateway as a centralized entry point for all client requests to our services. The API gateway serves as a reverse proxy, routing incoming requests to the appropriate service based on predefined rules and policies. It provides a unified interface for clients, abstracting the complexity of the underlying system and improving performance, scalability, and security.</p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_team_organization">5.4. Team Organization</h3>
+<h3 id="_team_organization">5.3. Team Organization</h3>
 <div class="paragraph">
 <p>For developing this project we are using Github as the control version systems.
 The master branch contains the final version of the product, so that every accepted pull request to master branch will be considered as a new release.</p>
@@ -1185,7 +1254,7 @@ The master branch contains the final version of the product, so that every accep
 <p><strong>Github</strong>: this control version systems not only allows us to share and collabortively write code, but also provides other resources such as issues and project management (kanban board) tools for organizing the work to be done. Also, wiki section allows us to save all of our minutes from each scheduled meeting.</p>
 </li>
 <li>
-<p><strong>Whatsapp and Discord</strong>: will allow us to be in constant communication for helping each other out whenever needed.</p>
+<p><strong>Whatsapp and Discord</strong>: Allow us to be in constant communication for helping each other out whenever needed.</p>
 </li>
 </ul>
 </div>
@@ -1359,22 +1428,65 @@ In the best case you will get away with examples or simple signatures.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_future_diagrams">6.4. Future diagrams</h3>
+<h3 id="_questions_generation">6.4. Questions generation</h3>
 <div class="paragraph">
-<p>Once we have made progress in the development of the application, the following diagrams should be created according to the chosen implementation:</p>
+<p>&nbsp;</p>
 </div>
-<div class="sect3">
-<h4 id="_questions_generation">6.4.1. Questions generation</h4>
-
+<div class="paragraph">
+<p><span class="image"><img src="./images/06-questionGeneration.png" alt="Runtime view - Question generation"></span></p>
 </div>
-<div class="sect3">
-<h4 id="_wichat_quiz_game">6.4.2. WiChat quiz game</h4>
-
+<div class="paragraph">
+<p>&nbsp;</p>
 </div>
-<div class="sect3">
-<h4 id="_obtaining_hints_via_chatbot">6.4.3. Obtaining hints via Chatbot</h4>
+<div class="paragraph">
+<p>The user accesses the game, selects its mode and difficulty, and the call is made. The backend is responsible for obtaining the questions (along with their images and answers) and transmitting them to the frontend.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_wichat_quiz_game">6.5. WiChat quiz game</h3>
+<div class="paragraph">
+<p>&nbsp;</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="./images/06-gameCycle.png" alt="Runtime view - Game cycle"></span></p>
+</div>
+<div class="paragraph">
+<p>&nbsp;</p>
+</div>
+<div class="paragraph">
+<p>The user enters the game, selects the mode and difficulty, and once the question is answered, the user begins the game, answering each question until the timer runs out, ending the game. After the game ends, and after the information has been saved, the user can replay the game or access other views.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_obtaining_hints_via_chatbot">6.6. Obtaining hints via Chatbot</h3>
+<div class="paragraph">
+<p>&nbsp;</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="./images/06-chatBotFunctionality.png" alt="Runtime view - Hints by chatbot"></span></p>
+</div>
+<div class="paragraph">
+<p>&nbsp;</p>
+</div>
+<div class="paragraph">
+<p>In the Game view, the user types their questions into the Chatbot component, which are then sent to the LLM, where the prompt to be passed to the AI ​​is configured and the response is generated, which is then returned to the frontend for the user to view.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_leaderboard_and_match_search">6.7. Leaderboard and match search</h3>
+<div class="paragraph">
+<p>&nbsp;</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="./images/06-leaderboardAndSearch.png" alt="Runtime view - Leaderboard and match search"></span></p>
+</div>
+<div class="paragraph">
+<p>&nbsp;</p>
+</div>
+<div class="paragraph">
+<p>When the user accesses the Leaderboard, the system loads ranking and user data, while also allowing the user to search for specific user&#8217;s games by entering its name in the search bar.</p>
+</div>
 <div style="page-break-after: always;"></div>
-</div>
 </div>
 </div>
 </div>
@@ -1596,60 +1708,125 @@ on this list.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_continuous_integration_and_development">8.1. <em>Continuous integration and development</em></h3>
+<h3 id="_domain_concepts">8.1. <em>Domain concepts</em></h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Class</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Explanation</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The people using the application, playing matches and generating statistics of their own.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Statistics</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Given the performance of the player in its matches, relevant information is stored.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Created when the user starts a game and includes its general information and generated questions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Question</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Questions spawned in a match, storing all its answers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Answer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Every answer associated to a match&#8217;s question, saving if it was the correct option and if was selected by the player.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
-<p>Our way of working with github is having one developing branch towards which all pull requests are done
+<p><span class="image"><img src="./images/08-domainModel.png" alt="Concepts - Domain Model"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_under_the_hood">8.2. <em>"Under-the-hood"</em></h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Backend</strong>:
+The server-side logic of the application is implemented using Node.js in combination with the Express framework. The backend handles client requests, communicates with external services such as Wikidata and Empathy, manages user sessions, interacts with the database and other functionalities.</p>
+</li>
+<li>
+<p><strong>Frontend</strong>:
+The frontend is developed using React, a component-based JavaScript library that enables the creation of dynamic and interactive user interfaces. The frontend is responsible for rendering the game interface, managing user input, and presenting questions, hints, and scores.</p>
+</li>
+<li>
+<p><strong>Database and persistence</strong>:
+MongoDB serves as the main data store, offering a flexible document-oriented model that aligns well with the evolving structure of game data. It stores user profiles, game progress, generated questions, and historical results in JSON-like documents.</p>
+</li>
+<li>
+<p><strong>LLM Integration</strong>:
+We utilize Empathy, a Large Language Model (LLM), to enhance the gameplay experience by generating intelligent and context-aware hints for each question in real time.</p>
+</li>
+<li>
+<p><strong>External Data Source</strong>:
+To keep the game content rich and dynamic, we integrate Wikidata as our primary external knowledge source. Through its public REST API, we query up-to-date and structured information about a wide range of topics. This enables automatic generation of questions based on real-world data.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_development_concepts">8.3. <em>Development concepts</em></h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Continuous integration and development</strong>
+Our way of working with github is having one developing branch towards which all pull requests are done
 and have to be reviewed by at least one team member.
 Sonar Cloud is set up so we know the testing coverage and whether we pass the quality gate with every pull request.
 Once there is enough change in the develop branch with respect to the main one and it has enough quality we can
 merge them and make a release.</p>
+</li>
+<li>
+<p><strong>Testings</strong>
+One of the most important aspects is testing our application, and to achieve this, we will conduct different types of tests. On one hand, we will perform tests such as unit testing and usability testing. On the other hand, we will implement a continuous testing system using GitHub Actions, ensuring that all commits pass the required tests.</p>
+</li>
+<li>
+<p><strong>Docker</strong>
+Docker is used to ensure consistent environments across development, testing, and deployment. By containerizing the application, we can avoid issues related to local setup differences and dependency mismatches.</p>
+</li>
+<li>
+<p><strong>GitHub Actions</strong>
+GitHub Actions is integrated into our repository to automate key parts of the development lifecycle. We use it for continuous integration (CI), running automated tests on every push or pull request, and checking code quality with SonarCloud. Additionally, it supports continuous deployment workflows by enabling the automatic building and deployment of Docker containers when changes are merged into the main branch.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_microservice_based_system">8.2. <em>Microservice based system</em></h3>
-<div class="paragraph">
-<p>Different business functionallities will be developed in different independent services.
-This will ensure that if one of them fails, the rest are still working (For example,
-if the rankings go down that will not affect the main game) as they have their own deployment
-as well.
-Other benefits are increased maintainability due to separation in small, more readable modules
-and the possibillity of using different languages or technologies for each module if needed/prefered
-without colliding with the rest.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_gateway_service_routing">8.3. <em>Gateway service routing</em></h3>
-<div class="paragraph">
-<p>We will use a speciallized service that will route the requests to the corresponding service, acting as
+<h3 id="_operational_concepts">8.4. <em>Operational concepts</em></h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Gateway service routing</strong>
+We will use a speciallized service that will route the requests to the corresponding service, acting as
 a single entry point for the application. Requests to the services are much simpler as only the api base
 endpoint and the action needs to be known and the gateway can also act as a filter to manage requests
 conditionally if needed. This approach also favors security as we can control which requests are actually
 sent based on its content or the context of the app.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_authentication">8.4. <em>Authentication</em></h3>
-<div class="paragraph">
-<p>To keep our users' data secure an authentication mechanism has been developed with the use of JSON Web Tokens (JWT). If someone tries to access historical game records for certain users, our KaW application enforces to pass a valid token through the header of the message request.
-In this way, only authenticated users are able to consult the different data that our application enforces.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_internationalization">8.5. <em>Internationalization</em></h3>
-<div class="paragraph">
-<p>One of the things to increase accessibility is giving our application the capability of being in various languages so people around the world can play our game. Obviously, internationalization is more than just changing the language of the Application but due to time constraints we will just offer Spanish, English, Ukrainian and French languages ( although, our API can generate questions in other languages different from described, to see the whole list, refer to our API documentation ).</p>
+<h3 id="_safety_and_security_concepts">8.5. <em>Safety and security concepts</em></h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Secure storage</strong>
+User passwords are never stored in plain text. Instead, secure hashing algorithms and encryption techniques are employed to protect sensitive information and prevent unauthorized access.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>The library used for language translation in our KaW game is called react-i18next. For simplicity (and due to just only having three languages), all of the translations of messages are stored locally in properties files. Eventually, if the Application grows and we wanted to have more than 4 languages the best approach is to store those properties in a server and let the application to request those on the fly. Again, for simplicity the option of having all bundle together in the Frontend just fits.</p>
-</div>
-<div class="paragraph">
-<p>The translation of questions is a bit different from the frontend part since it is done "on the fly" by using the Microsoft translation API . This change has been done since the questions are not fully known until they are generated so storing the translation locally does not provide any benefit. Also, one advantage of it, is its simplicity and ease to use. To meet the restrictions impose by the Free version of this API a series of formatting rules are carried out into the question generation phase to minimize the usage of it and avoid getting suspended.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_tests">8.6. <em>Tests</em></h3>
-<div class="paragraph">
-<p>One of the most important aspects is testing our application, and to achieve this, we will conduct different types of tests. On one hand, we will perform tests such as unit testing and usability testing. On the other hand, we will implement a continuous testing system using GitHub Actions, ensuring that all commits pass the required tests.</p>
+<p><strong>Security redirections</strong>
+The app redirects you to the login page if you try to access features that requires you to be logged while you are not.</p>
 </div>
 <div style="page-break-after: always;"></div>
 </div>
@@ -1658,55 +1835,962 @@ In this way, only authenticated users are able to consult the different data tha
 <div class="sect1">
 <h2 id="section-design-decisions">9. Architecture Decisions</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="ADR-001">9.1. ADR 001: Key Initial Architecture Decisions</h3>
 <div class="paragraph">
-<p>The application will be carried out following a Microservices architecture.<br></p>
+<p><strong>Status: Accepted</strong>
+<strong>:date: 23/02/2025</strong></p>
+</div>
+<div class="sect3">
+<h4 id="_context">9.1.1. Context</h4>
+<div class="paragraph">
+<p>At the very beginning of the project, it was necessary to establish a strong technological foundation.
+These initial decisions were made based on team expertise, project requirements, and the need for scalability, maintainability, and efficient development practices.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_decision">9.1.2. Decision</h4>
+<div class="paragraph">
+<p>The following initial architectural decisions were made:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Frontend:</strong> React</p>
+</li>
+<li>
+<p><strong>Backend:</strong> JavaScript with Node.js  (see <a href="#ADR-003">ADR 003: Adoption of TypeScript and Tailwind CSS</a>)</p>
+</li>
+<li>
+<p><strong>Database:</strong> MongoDB (see <a href="#ADR-002">ADR 002: Database Choice - MongoDB</a>)</p>
+</li>
+<li>
+<p><strong>Deployment:</strong> Docker</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reasoning">9.1.3. Reasoning</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>React</strong> provides a robust, component-based framework ideal for building dynamic and scalable user interfaces.</p>
+</li>
+<li>
+<p><strong>JavaScript/Node.js</strong> ensures full-stack JavaScript development, simplifying the technology stack and improving development efficiency.</p>
+</li>
+<li>
+<p><strong>Docker</strong> offers containerization, enabling consistent deployment across different environments and simplifying the CI/CD process.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consequences">9.1.4. Consequences</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Unified technology stack using JavaScript for both frontend and backend.</p>
+</li>
+<li>
+<p>Simplified developer onboarding and cross-functional collaboration.</p>
+</li>
+<li>
+<p>Easier scaling and deployment of applications thanks to containerization.</p>
+</li>
+<li>
+<p>Requires team members to be familiar with Docker and container management best practices.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ADR-002">9.2. ADR 002: Database Choice - MongoDB</h3>
+<div class="paragraph">
+<p><strong>Status: Accepted</strong>
+<strong>:date: 23/02/2025</strong></p>
+</div>
+<div class="sect3">
+<h4 id="_context_2">9.2.1. Context</h4>
+<div class="paragraph">
+<p>A flexible, scalable database was needed to manage our data efficiently.
+The project demands agility to handle evolving data structures, rapid development, and scalability.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_decision_2">9.2.2. Decision</h4>
+<div class="paragraph">
+<p>MongoDB was chosen as the primary database.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reasoning_2">9.2.3. Reasoning</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Document-based model suits the dynamic nature of the data.</p>
+</li>
+<li>
+<p>High scalability and replication features out-of-the-box.</p>
+</li>
+<li>
+<p>Wide developer familiarity and strong community support.</p>
+</li>
+<li>
+<p>Flexible schema design allows for rapid iteration and prototyping.</p>
+</li>
+<li>
+<p>Better integration with JSON than other alternatives like SQL.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_alternatives_considered">9.2.4. Alternatives considered</h4>
+<div class="paragraph">
+<p><strong>Relational Databases (e.g., PostgreSQL, MySQL)</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Strong data integrity with ACID transactions.</p>
+</li>
+<li>
+<p>Mature ecosystem, rich tooling, and widespread knowledge.</p>
+</li>
+<li>
+<p>Powerful querying capabilities with SQL.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Cons:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Rigid schemas could slow down development during early, rapidly changing phases.</p>
+</li>
+<li>
+<p>Higher initial overhead in schema design and migrations.</p>
+</li>
+<li>
+<p>Potential impedance mismatch when handling unstructured or flexible data.</p>
+</li>
+<li>
+<p>Wasn&#8217;t integrated on the initial project.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consequences_2">9.2.5. Consequences</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Simplified data modeling suited for flexible and evolving requirements.</p>
+</li>
+<li>
+<p>Need for developers to understand and handle eventual consistency patterns.</p>
+</li>
+<li>
+<p>Potential trade-offs in transactional guarantees compared to traditional relational databases.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ADR-003">9.3. ADR 003: Adoption of TypeScript and Tailwind CSS</h3>
+<div class="paragraph">
+<p><strong>Status: Proposed and Rejected</strong>
+<strong>:date: 16/03/2025</strong></p>
+</div>
+<div class="sect3">
+<h4 id="_context_3">9.3.1. Context</h4>
+<div class="paragraph">
+<p>At the beginning of the project, we considered adopting TypeScript as the main programming language.
+The integration with JavaScript would allow us to leverage static typing, improve code readability, and enhance maintainability.
+Additionally, we planned to combine TypeScript with Tailwind CSS for styling frontend components, aiming for a consistent and rapid UI development process.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_decision_3">9.3.2. Decision</h4>
+<div class="paragraph">
+<p>Ultimately, the decision to adopt TypeScript and Tailwind was rejected.
+The project continued using JavaScript as the primary development language.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reasoning_3">9.3.3. Reasoning</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>TypeScript offered significant advantages in terms of type safety, better tooling, and enhanced code quality.</p>
+</li>
+<li>
+<p>Tailwind CSS promised faster and more consistent frontend development.</p>
+</li>
+<li>
+<p>However, serious compatibility issues arose with the project&#8217;s foundational base and its critical dependencies when integrating TypeScript. JavaScript, on the other hand, ensured full compatibility with existing dependencies and leveraged the team&#8217;s strong prior experience.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_alternatives_considered_2">9.3.4. Alternatives considered</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Continue using <strong>JavaScript</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Full compatibility with existing project dependencies.</p>
+</li>
+<li>
+<p>Immediate development without additional configuration overhead.</p>
+</li>
+<li>
+<p>Team proficiency already high.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Cons:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Lack of static typing, increasing potential runtime errors.</p>
+</li>
+<li>
+<p>Slightly lower long-term maintainability compared to TypeScript.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consequences_3">9.3.5. Consequences</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Development continued smoothly without facing critical integration issues.</p>
+</li>
+<li>
+<p>Future migration to TypeScript remains a possibility, but would require significant planning and dependency refactoring.</p>
+</li>
+<li>
+<p>Styling strategies were adjusted, favoring traditional CSS Modules instead of Tailwind CSS for frontend components.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ADR-004">9.4. ADR 004: Wikidata SPARQL Integration</h3>
+<div class="paragraph">
+<p><strong>Status: Accepted</strong>
+<strong>:date: 16/03/2025</strong></p>
+</div>
+<div class="sect3">
+<h4 id="_context_4">9.4.1. Context</h4>
+<div class="paragraph">
+<p>The application requires retrieving rich, structured information from Wikidata to answer user questions and enrich the user experience with semantic data.
+Given the complexity of the data relationships and the dynamic nature of the content, a robust and standardized query mechanism was needed.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_decision_4">9.4.2. Decision</h4>
+<div class="paragraph">
+<p>SPARQL was adopted as the primary method for querying Wikidata.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reasoning_4">9.4.3. Reasoning</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>SPARQL is the native query language for RDF datasets like Wikidata.</p>
+</li>
+<li>
+<p>It allows highly expressive queries involving relationships between entities, filters, and complex graph traversals.</p>
+</li>
+<li>
+<p>Wikidata provides a public SPARQL endpoint (Wikidata Query Service), eliminating the need to host or maintain a local copy of the dataset.</p>
+</li>
+<li>
+<p>Supports real-time access to the most up-to-date knowledge base.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consequences_4">9.4.4. Consequences</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Enables powerful and flexible data retrieval directly from Wikidata.</p>
+</li>
+<li>
+<p>Introduces a dependency on the availability and performance of the public SPARQL endpoint.</p>
+</li>
+<li>
+<p>Requires developers to learn and work with SPARQL syntax and semantic web concepts.</p>
+</li>
+<li>
+<p>May necessitate caching strategies or fallback plans to mitigate latency or downtime.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ADR-005">9.5. ADR 005: Oracle Cloud VM for Deployment Infrastructure</h3>
+<div class="paragraph">
+<p><strong>Status: Accepted</strong>
+<strong>:date: 23/02/2025</strong></p>
+</div>
+<div class="sect3">
+<h4 id="_context_5">9.5.1. Context</h4>
+<div class="paragraph">
+<p>The application required a virtualized environment to deploy the frontend, backend services, the database, and monitoring tools. Initially, Microsoft Azure was considered as the deployment platform due to its popularity and having almost every member of the team some level of experince, thanks to having used it in other subjects.</p>
 </div>
 <div class="paragraph">
-<p>The service in charge of comunicating with WikiData will be coded using TypeSript.
-As the generation of questions is a huge part of our application we will play it safe by using TypeSript, a language that is similar to JavaSript but with static type checking.</p>
+<p>However, during early planning, one team member already had access to an Oracle Cloud VM instance that was partially configured and available for use. This presented an opportunity to streamline deployment efforts and reduce setup time and cost.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_decision_5">9.5.2. Decision</h4>
+<div class="paragraph">
+<p>The team decided to use an Oracle Cloud VM instance to host the project infrastructure.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reasoning_5">9.5.3. Reasoning</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Immediate availability of an Oracle Cloud VM already partially configured.</p>
+</li>
+<li>
+<p>Team member already had experience managing this VM, including port configuration and service setup.</p>
+</li>
+<li>
+<p>Avoids incurring additional cloud infrastructure costs.</p>
+</li>
+<li>
+<p>Simplifies initial deployment and testing.</p>
+</li>
+<li>
+<p>With Oracle Cloud VM we can have the aplicattion deployed 24/7.</p>
+</li>
+<li>
+<p>In case anyone have to do any kind of work on the VM, giving access to it is simple because only SSH key and the IP are required.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_alternatives_considered_3">9.5.4. Alternatives considered</h4>
+<div class="paragraph">
+<p><strong>Azure Virtual Machines (Microsoft Azure)</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Well-documented and widely adopted cloud platform.</p>
+</li>
+<li>
+<p>Integrated monitoring, CI/CD tools, and scalability features.</p>
+</li>
+<li>
+<p>Easier to integrate with enterprise authentication or other Azure-based services.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Cons:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Requires account setup, configuration, and billing.</p>
+</li>
+<li>
+<p>Team would need time to familiarize with the environment.</p>
+</li>
+<li>
+<p>No immediate advantage over the already available Oracle VM at this stage.</p>
+</li>
+<li>
+<p>In case we have used Azure, we would be obligated to turn on and off the application whenever it is necessary.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consequences_5">9.5.5. Consequences</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Faster initial deployment due to use of an already prepared environment.</p>
+</li>
+<li>
+<p>Reduced cloud infrastructure cost during the development.</p>
+</li>
+<li>
+<p>May require future migration or scaling strategy if the project grows or if Oracle Cloud VM limitations become restrictive.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ADR-006">9.6. ADR 006: Service-based System Architecture</h3>
+<div class="paragraph">
+<p><strong>Status: Accepted</strong>
+<strong>:date: 23/02/2025</strong></p>
+</div>
+<div class="sect3">
+<h4 id="_context_6">9.6.1. Context</h4>
+<div class="paragraph">
+<p>In designing the backend system, the team considered different architectural styles to support modularity, maintainability, and scalability.
+A pure microservices architecture was initially discussed and followed due to its popularity and the main project was built in a microservice based architecture.
+However, during the development of the application, a service-based architecture was chosen instead.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_decision_6">9.6.2. Decision</h4>
+<div class="paragraph">
+<p>The project adopts a service-based architecture, rather than a fully decoupled microservices model.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reasoning_6">9.6.3. Reasoning</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Provides modularization and separation of concerns without the overhead of managing independent deployments for each service.</p>
+</li>
+<li>
+<p>Simplifies inter-service communication by avoiding complex patterns such as service discovery, load balancing, and distributed configuration.</p>
+</li>
+<li>
+<p>Better aligns with the existing project base and team size, facilitating easier maintenance and deployment.</p>
+</li>
+<li>
+<p>Reduces initial development and operational complexity.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_alternatives_considered_4">9.6.4. Alternatives considered</h4>
+<div class="paragraph">
+<p><strong>Pure Microservices Architecture</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Strong decoupling, allowing for independent scaling and deployment of services.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Cons:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Overkill for small or medium-sized teams and projects with limited domain boundaries.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consequences_6">9.6.5. Consequences</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Enables a modular structure where services are separated logically but may coexist within the application itself.</p>
+</li>
+<li>
+<p>Facilitates faster development and easier testing given its monolithichal nature with less enviroment complexity.</p>
+</li>
+<li>
+<p>Allows future evolution toward microservices if project requirements grow.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ADR-007">9.7. ADR 007: Data Storage for Wikidata Information</h3>
+<div class="paragraph">
+<p><strong>Status: Accepted</strong>
+<strong>:date: 16/03/2025</strong></p>
+</div>
+<div class="sect3">
+<h4 id="_context_7">9.7.1. Context</h4>
+<div class="paragraph">
+<p>Initially, the application fetched data from Wikidata in real time during gameplay to generate questions dynamically.
+However, this approach caused severe performance issues, resulting in noticeable delays that degraded the user experience during matches.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_decision_7">9.7.2. Decision</h4>
+<div class="paragraph">
+<p>To improve performance, the application now pre-generates and stores a set of questions in the database at the start of each game.
+These stored questions are then served to the user dynamically throughout the match, minimizing latency.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reasoning_7">9.7.3. Reasoning</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Real-time queries to Wikidata introduced unpredictable delays and negatively impacted gameplay flow.</p>
+</li>
+<li>
+<p>Preloading questions ensures smooth and uninterrupted user experience.</p>
+</li>
+<li>
+<p>Reduces dependency on external services during active sessions, making the game more stable and reliable.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_alternatives_considered_5">9.7.4. Alternatives considered</h4>
+<div class="paragraph">
+<p><strong>Inserting loading screens between questions</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Would allow real-time querying to continue without significant architectural changes.</p>
+</li>
+<li>
+<p>Could be visually appealing with the right UI/UX design.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Cons:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Did not solve the root performance issue — only masked it.</p>
+</li>
+<li>
+<p>Introduced unwanted pauses that disrupted the game&#8217;s pacing and fluidity.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consequences_7">9.7.5. Consequences</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Game sessions begin with a brief setup phase where questions are fetched and stored.</p>
+</li>
+<li>
+<p>Once the session starts, question delivery is fast and reliable, improving overall experience.</p>
+</li>
+<li>
+<p>The system is now more resilient to outages or slowdowns in the Wikidata SPARQL endpoint.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ADR-008">9.8. ADR 008: Styling Approach - CSS Modules</h3>
+<div class="paragraph">
+<p><strong>Status: Accepted</strong>
+<strong>:date: 16/03/2025</strong></p>
+</div>
+<div class="sect3">
+<h4 id="_context_8">9.8.1. Context</h4>
+<div class="paragraph">
+<p>Maintaining scoped styles without introducing unnecessary complexity.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_decision_8">9.8.2. Decision</h4>
+<div class="paragraph">
+<p>Use CSS Modules for styling, with partial hybridization where needed.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reasoning_8">9.8.3. Reasoning</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Keeps styles encapsulated.</p>
+</li>
+<li>
+<p>Allows flexibility where global styles are needed.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consequences_8">9.8.4. Consequences</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Mixed styling approach may introduce slight overhead.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="ADR-009">9.9. ADR 009: Choice and Strategy for Empathy LLM Models</h3>
+<div class="paragraph">
+<p><strong>Status: Accepted</strong>
+<strong>:date: 07/04/2025</strong></p>
+</div>
+<div class="sect3">
+<h4 id="_context_9">9.9.1. Context</h4>
+<div class="paragraph">
+<p>To implement the chatbot system that provides hints during gameplay, the project required integration with a Large Language Model (LLM). The goal was to offer accurate, responsive, and trustworthy hints, as this directly affects the player&#8217;s experience and engagement.</p>
 </div>
 <div class="paragraph">
-<p><strong>03/02/2025</strong></p>
+<p>Initially, the team selected the <strong>Qwen2.5-Coder-7B-Instruct</strong> model from the Empathy LLM platform given he had access thanks to the API Key provided to us. However, as development progressed, it became apparent that system outages or instability in the LLM provider could render the chatbot feature temporarily unusable — severely impacting reliability.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_decision_9">9.9.2. Decision</h4>
+<div class="paragraph">
+<p>We implemented a dual-model system using both <strong>Qwen2.5-Coder-7B-Instruct</strong> and <strong>Mistral-7B-Instruct-v0.3</strong>, both available through Empathy LLM. The application now automatically switches between the two models depending on their availability, ensuring continued service during partial outages.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reasoning_9">9.9.3. Reasoning</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Qwen2.5-Coder-7B-Instruct was initially chosen as it shown less tendency to cause hallucinations.</p>
+</li>
+<li>
+<p>However, Qwen showed higher sensitivity to downtime and occasional availability issues during use.</p>
+</li>
+<li>
+<p>Mistral-7B-Instruct-v0.3, while slightly more verbose, provided reliable backup behavior and acceptable quality.</p>
+</li>
+<li>
+<p>The switch-over mechanism improves fault tolerance without significantly degrading response quality.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_alternatives_considered_6">9.9.4. Alternatives considered</h4>
+<div class="paragraph">
+<p><strong>Switch entirely to Mistral</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>More stable availability during testing.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Cons:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Lower quality in guided, instructional prompts; less aligned with user needs.</p>
+</li>
+<li>
+<p>Returning to a single-model setup would reintroduce the same availability risks — if Mistral fails, the chatbot would again become unusable.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consequences_9">9.9.5. Consequences</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Improved resilience and availability of the chatbot feature.</p>
+</li>
+<li>
+<p>Slight variability in hint style depending on the model currently active.</p>
+</li>
+<li>
+<p>Additional complexity added to the backend logic to monitor model health and manage fallback behavior.</p>
+</li>
+<li>
+<p>Future work could include evaluating additional models or services to further enhance reliability and output quality.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_adr_010_monitoring_strategy">9.10. ADR 010: Monitoring Strategy</h3>
+<div class="paragraph">
+<p><strong>Status: Accepted</strong>
+<strong>:date: 07/04/2025</strong></p>
+</div>
+<div class="sect3">
+<h4 id="_context_10">9.10.1. Context</h4>
+<div class="paragraph">
+<p>The application required a monitoring solution to track performance metrics, usage, and system health. Since the deployment is hosted on Oracle Cloud VM, Oracle Cloud Monitoring was initially considered as a natural choice due to existing familiarity and integration.</p>
 </div>
 <div class="paragraph">
-<p>Microservices Architecture:
-The application will follow a Microservices architecture to ensure scalability, flexibility, and easier maintenance. This approach allows different services to be developed, deployed, and scaled independently, improving fault tolerance and facilitating continuous deployment.</p>
+<p>However, Prometheus and Grafana were already configured in the environment, and their open-source flexibility and ecosystem made them a strong alternative.</p>
 </div>
-<div class="paragraph">
-<p>WikiData Service - TypeScript:
-The service responsible for communicating with WikiData will be developed using TypeScript. Since generating questions is a critical part of our application, we decided to use TypeScript due to its static type checking, which helps prevent runtime errors and makes the codebase more maintainable. Additionally, TypeScript provides better tooling support and improves developer productivity by reducing debugging time.</p>
 </div>
+<div class="sect3">
+<h4 id="_decision_10">9.10.2. Decision</h4>
 <div class="paragraph">
-<p>Backend &amp; Frontend Technologies:
-The backend will be built using Node.js, as it is efficient for handling asynchronous operations and provides a vast ecosystem of libraries.
-The frontend will be developed with React, a popular JavaScript library known for its component-based structure, performance optimizations, and reusability. React&#8217;s virtual DOM improves rendering efficiency, making it a great choice for dynamic applications.</p>
+<p>The team chose to implement application monitoring using Prometheus for data collection and Grafana for visualization.</p>
 </div>
-<div class="paragraph">
-<p>Database - MongoDB:
-We have chosen MongoDB, a NoSQL database, because it provides flexibility in handling unstructured data, horizontal scalability, and high availability. Given that our data structure may evolve over time, MongoDB’s schema-less nature allows us to adapt without complex migrations.</p>
 </div>
-<div class="paragraph">
-<p>Deployment Strategy:
-The application will be deployed on a server owned by one of the team members. This decision allows us to have full control over the deployment environment, reduce costs, and customize configurations based on our needs.</p>
+<div class="sect3">
+<h4 id="_reasoning_10">9.10.3. Reasoning</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Prometheus and Grafana were already partially configured and tested.</p>
+</li>
+<li>
+<p>Broad community support and extensive documentation.</p>
+</li>
+<li>
+<p>Easier to integrate with a variety of services and custom metrics.</p>
+</li>
+<li>
+<p>Enables flexible dashboards and alerting rules tailored to the application’s needs.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p><strong>03/03/2025</strong></p>
 </div>
+<div class="sect3">
+<h4 id="_alternatives_considered_7">9.10.4. Alternatives considered</h4>
 <div class="paragraph">
-<p>Switching from TypeScript to JavaScript:
-We initially opted for TypeScript to improve code quality through static typing. However, after encountering integration issues, increased complexity, and longer development time, we decided to switch to JavaScript. JavaScript allows for faster iteration, broader community support, and reduced setup overhead, making it more practical for our project timeline.</p>
+<p><strong>Oracle Cloud Monitoring</strong></p>
 </div>
-<div class="paragraph">
-<p>CSS Modules for Styling:
-We have chosen to use CSS Modules for styling because it:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Native to Oracle Cloud VM.</p>
+</li>
+<li>
+<p>Familiar interface for some team members.</p>
+</li>
+<li>
+<p>Integrated with Oracle’s infrastructure metrics and logging.</p>
+</li>
+</ul>
 </div>
-<div class="paragraph">
-<p>Prevents style conflicts by scoping styles to individual components.
-Improves maintainability by keeping styles modular and easy to manage.
-Enhances reusability as styles are encapsulated within their respective components, reducing the risk of unintended global overrides.</p>
+</li>
+<li>
+<p>Cons:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Less customizable for application-specific metrics.</p>
+</li>
+<li>
+<p>More limited in community resources and ecosystem tools.</p>
+</li>
+<li>
+<p>Requires additional setup to match the flexibility offered by Prometheus/Grafana.</p>
+</li>
+</ul>
 </div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consequences_10">9.10.5. Consequences</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Monitoring is decoupled from Oracle Cloud, making it more portable.</p>
+</li>
+<li>
+<p>Dashboards and alerts can be easily customized and extended.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_adr_011_dns_and_reverse_proxy_setup">9.11. ADR 011: DNS and Reverse Proxy Setup</h3>
 <div class="paragraph">
-<p>These decisions were made to optimize performance, maintainability, and scalability while ensuring smooth development and deployment of our application.</p>
+<p><strong>Status: Accepted</strong>
+<strong>:date: 30/04/2025</strong></p>
+</div>
+<div class="sect3">
+<h4 id="_context_11">9.11.1. Context</h4>
+<div class="paragraph">
+<p>To allow users and services to access the deployed application on Oracle Cloud VM via a friendly domain and standard HTTP port, a DNS and reverse proxy solution was needed. The goal was to expose the service at a clean URL (<code><a href="http://wic2c.duckdns.org" class="bare">http://wic2c.duckdns.org</a></code>) instead of a raw IP address with a non-standard port.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_decision_11">9.11.2. Decision</h4>
+<div class="paragraph">
+<p>The team chose to use <strong>DuckDNS</strong> as a free DNS provider and <strong>Nginx</strong> as a reverse proxy.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reasoning_11">9.11.3. Reasoning</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>DuckDNS</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Free and simple dynamic DNS service.</p>
+</li>
+<li>
+<p>Allows mapping a custom subdomain (<code>wic2c.duckdns.org</code>) to the public IP address of the Oracle VM.</p>
+</li>
+<li>
+<p>No cost, no registration complexity.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Nginx</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Acts as a reverse proxy, listening on port <code>80</code>.</p>
+</li>
+<li>
+<p>Redirects traffic internally to port <code>3000</code>, where the application or monitoring stack is hosted.</p>
+</li>
+<li>
+<p>Enables clean, production-like access to services without exposing internal port numbers.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_alternatives_considered_8">9.11.4. Alternatives considered</h4>
+<div class="paragraph">
+<p><strong>Using only raw IP and ports</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>No need to configure DNS or proxy layers.</p>
+</li>
+<li>
+<p>Slightly faster setup.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Cons:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Users would need to remember IP addresses and ports (e.g., <code><a href="http://123.45.67.89:3000" class="bare">http://123.45.67.89:3000</a></code>).</p>
+</li>
+<li>
+<p>Less professional appearance.</p>
+</li>
+<li>
+<p>Harder to manage and scale in future.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_consequences_11">9.11.5. Consequences</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Users and developers can access the application at <code><a href="http://wic2c.duckdns.org" class="bare">http://wic2c.duckdns.org</a></code> using standard web protocols.</p>
+</li>
+<li>
+<p>Internal routing and ports remain abstracted, improving security and maintainability.</p>
+</li>
+<li>
+<p>Future enhancements (e.g., HTTPS, load balancing) can be layered onto the Nginx configuration.</p>
+</li>
+<li>
+<p>Reliance on DuckDNS introduces a small risk of service availability tied to a free third-party provider.</p>
+</li>
+</ul>
 </div>
 <div class="sidebarblock arc42help">
 <div class="content">
@@ -1753,6 +2837,8 @@ There you will find links and examples about ADR.</p>
 </div>
 </div>
 <div style="page-break-after: always;"></div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
