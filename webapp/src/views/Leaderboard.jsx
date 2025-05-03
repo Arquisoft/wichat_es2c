@@ -10,15 +10,8 @@ import { FaTrophy, FaSearch  } from 'react-icons/fa';
 import axios from "axios";
 
 const Leaderboard = () => {
-  let apiEndpoint;
+  const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
-  if (window.location.hostname === 'localhost') {
-    apiEndpoint = 'http://localhost:8000'; // Para desarrollo
-  } else {
-    apiEndpoint = 'http://143.47.54.63:8000'; // Para producción
-  }
-
-  ////////////////////////////////////////////////////////////
   const [scoreRanking, setScoreRanking] = React.useState([]);
   const [nMatchesRanking, setNMatchesRanking] = React.useState([]);
   const [users, setUsers] = React.useState([]);
@@ -28,9 +21,6 @@ const Leaderboard = () => {
   const [games, setGames] = React.useState([]);
 
   const scrollRef = useRef(null);
-
-  //TODO
-  //Get los cinco usuarios con mejores Score
 
   const fetchScoreRanking = useCallback(async () => {
     try {
