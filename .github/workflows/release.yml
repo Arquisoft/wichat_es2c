@@ -49,6 +49,9 @@ jobs:
     - run: npm --prefix webapp install
     - run: CI='' npm --prefix webapp run build
     - run: npm --prefix webapp run test:e2e
+    env:
+      PUPPETEER_DISABLE_SANDBOX_WARNING: 'true'
+      PUPPETEER_ARGS: '--no-sandbox --disable-setuid-sandbox'
   docker-push-webapp:
     name: Push webapp Docker Image to GitHub Packages
     runs-on: ubuntu-latest
