@@ -40,8 +40,6 @@ Héctor Hernández Iglesias | <a href="https://github.com/HernandezIglesiasHecto
 
 - **User match ranking and search tool**. Any user can access the Leaderboard page, where the top scoring users and those with the most matches are displayed. There is also a search tool to find matches played by a specific user.
 
-- **Game session system**. Users can play matches, and the mechanics of these sessions are explained in the following section.
-
 
 ### Video
 
