@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const promBundle = require('express-prom-bundle');
+const client = require('prom-client');
 //libraries required for OpenAPI-Swagger
 const swaggerUi = require('swagger-ui-express'); 
 const fs = require("fs")
@@ -23,6 +24,18 @@ app.use(express.json());
 const metricsMiddleware = promBundle({includeMethod: true});
 app.use(metricsMiddleware);
 
+// Counter for addMatch endpoint
+const addMatchCounter = new client.Counter({
+  name: 'gateway_add_match_requests_total',
+  help: 'Total number of requests to the /addMatch endpoint',
+});
+
+// Counter for adduser endpoint
+const addUserCounter = new client.Counter({
+  name: 'gateway_add_user_requests_total',
+  help: 'Total number of requests to the /adduser endpoint',
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'OK' });
@@ -40,7 +53,7 @@ app.post('/login', async (req, res) => {
 
 app.post('/adduser', async (req, res) => {
   try {
-    // Forward the add user request to the user service
+    addUserCounter.inc();
     const userResponse = await axios.post(userServiceUrl+'/adduser', req.body);
     res.json(userResponse.data);
   } catch (error) {
@@ -60,6 +73,7 @@ app.post('/addQuestion', async (req, res) => {
 
 app.post('/addMatch', async (req, res) => {
   try {
+    addMatchCounter.inc();
     const userResponse = await axios.post(gameServiceUrl+'/addMatch', req.body);
     res.json(userResponse.data);
   } catch (error) {
@@ -100,37 +114,14 @@ app.get('/getQuestion', async (req, res) => {
 
 app.post('/askllm', async (req, res) => {
   try {
-    // Verificamos que estén presentes todos los campos necesarios
-    const requiredFields = ['model', 'userQuestion', 'gameQuestion', 'answers', 'correctAnswer'];
-    for (const field of requiredFields) {
-      if (!(field in req.body)) {
-        return res.status(400).json({ error: `Missing required field: ${field}` });
-      }
-    }
-
-
-    ////////////// Log para depuración
-    /*
-    console.log("Gateway recibió solicitud a /askllm:", {
-      model: req.body.model,
-      userQuestion: req.body.userQuestion.substring(0, 30) + "...",
-      gameQuestion: req.body.gameQuestion.substring(0, 30) + "..."
-    });
-    */
-    ///////////////
-
+    
     // Forward the request to the llm service
     const llmResponse = await axios.post(llmServiceUrl+'/ask', {
-      model: req.body.model,
       userQuestion: req.body.userQuestion,
       gameQuestion: req.body.gameQuestion,
       answers: req.body.answers,
       correctAnswer: req.body.correctAnswer
     });
-    
-    /////////////////
-    //console.log("LLM Service respondió con éxito");
-    ///////////////
 
     res.json(llmResponse.data);
   } catch (error) {
@@ -245,9 +236,6 @@ app.get('/nMatchesRanking', async (req, res) => {
     }
   }
 });
-
-
-
 
 // Read the OpenAPI YAML file synchronously
 openapiPath='./openapi.yaml'

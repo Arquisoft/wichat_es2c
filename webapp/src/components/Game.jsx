@@ -42,6 +42,7 @@ function Game() {
     const [initialLoad, setInitialLoad] = useState(true);
     const timerComponent = useRef(null); // Referencia al componente del temporizador
     const [gameQuestions, setGameQuestions] = useState([]);
+    const [score,setScore] = useState(0);
 
     useEffect(() => {
         if (showDifficultyModal) {
@@ -102,19 +103,17 @@ function Game() {
                 return "No hay una pregunta activa en este momento.";
             }
 
-            //const response = await axios.post(`${apiEndpoint}/askllm`, {
             const response = await axios.post(`${apiEndpoint}/askllm`, {
-                model: 'empathy', // O el modelo que prefieras
-                userQuestion: userMsg, // La pregunta que hace el usuario al chatbot
-                gameQuestion: questionData.question, // La pregunta actual del juego
-                answers: questionData.choices, // Las opciones disponibles
-                correctAnswer: questionData.correctAnswer // La respuesta correcta
+                userQuestion: userMsg,
+                gameQuestion: questionData.question,
+                answers: questionData.choices,
+                correctAnswer: questionData.correctAnswer
             });
 
             return response.data.answer;
         } catch (error) {
             console.error("Error al obtener respuesta del LLM:", error);
-            return "Lo siento, no puedo proporcionarte una pista en este momento.";
+            return "Sorry, I can't give you a hint right now.";
         }
     };
 
@@ -237,6 +236,15 @@ function Game() {
     const saveGame = async (gameTime,gameEndTime) => {
         try {
             const totalQuestions = gameQuestions.length;
+            const correctAnswers = gameQuestions.filter(q =>
+                q.answers.find(a => a.correct && a.selected)
+            ).length;
+            const incorrectAnswers = gameQuestions.filter(q =>
+                q.answers.find(a => !a.correct && a.selected)
+            ).length;
+            let finalScore = (difficulty * (correctAnswers * 25)) - (incorrectAnswers * 5); //calculated in the database again to make sure users cant edit it
+            if(finalScore < 0) finalScore = 0;
+            setScore(finalScore);
             for (let i = 0; i < totalQuestions; i++) {
                 const question = gameQuestions[i];
                 await axios.post(`${apiEndpoint}/addMatch`, {
@@ -265,11 +273,11 @@ function Game() {
                 gameEndTime = Date.now();
                 gameTime = Math.floor((gameEndTime - gameStartTime) / 1000);
             }
-            setTimeOut(true);
-            setShowTimeOutModal(true);
             if (gameQuestions.length > 0) {
                 saveGame(gameTime,gameEndTime);
             }
+            setTimeOut(true);
+            setShowTimeOutModal(true);
         }
     };
 
@@ -504,7 +512,7 @@ function Game() {
                                 border: '2px solid #000',
                                 borderRadius: 4,
                                 boxShadow: 24,
-                                p:4,
+                                p: 4,
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -512,7 +520,8 @@ function Game() {
                             }}
                         >
                             <h2>⏳ ¡Time is out!</h2>
-                            <h2>Do you want to try it again?</h2>
+                            <h2>Your score: {score}</h2>
+                            <h2>Do you want to try again?</h2>
                             <ButtonContainer>
                                 <HomeButton onClick={handleHomeClick}></HomeButton>
                                 <ChartButton onClick={handleChartClick}></ChartButton>

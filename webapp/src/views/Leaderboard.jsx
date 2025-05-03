@@ -229,6 +229,8 @@ const Leaderboard = () => {
                             wrongAnswers={game.wrongAnswers}
                             time={game.time}
                             questions={game.questions}
+                            difficulty={game.difficulty}
+                            score={game.score}
                         />
                       </div>
                     ))

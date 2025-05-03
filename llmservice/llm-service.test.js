@@ -10,6 +10,7 @@ afterAll(() => {
     app.close();
 });
 
+
 describe('LLM Service', () => {
     const testData = {
         userQuestion: 'Can you give me a hint?',
@@ -22,55 +23,20 @@ describe('LLM Service', () => {
         jest.clearAllMocks();
     });
 
-    const makeRequest = async (model, customData = {}) => {
+    const makeRequest = async (modelOrData = {}, customData = {}) => {
+        // Si el primer parámetro es una cadena (nombre de modelo), lo ignoramos
+        // ya que ahora usamos LLM_MODELS.ACTUAL
         const requestData = {
-            model,
             ...testData,
+            ...(typeof modelOrData === 'string' ? {} : modelOrData),
             ...customData
         };
         return request(app).post('/ask').send(requestData);
     };
 
     describe('POST /ask', () => {
-        test('should return a response from Gemini model', async () => {
-            const mockResponse = 'This is a capital city in Western Europe.';
-            axios.post.mockResolvedValue({
-                data: {
-                    candidates: [
-                        {
-                            content: {
-                                parts: [{ text: mockResponse }]
-                            }
-                        }
-                    ]
-                }
-            });
-
-            const response = await makeRequest('gemini');
-
-            expect(response.statusCode).toBe(200);
-            expect(response.body).toHaveProperty('answer');
-            expect(response.body.answer).toBe(mockResponse);
-
-            expect(axios.post).toHaveBeenCalledWith(
-                expect.stringContaining('https://generativelanguage.googleapis.com'),
-                expect.objectContaining({
-                    contents: expect.arrayContaining([
-                        expect.objectContaining({
-                            parts: expect.arrayContaining([
-                                expect.objectContaining({
-                                    text: expect.stringContaining(testData.gameQuestion)
-                                })
-                            ])
-                        })
-                    ])
-                }),
-                expect.any(Object)
-            );
-        });
-
-        test('should return a response from Empathy model', async () => {
-            const mockResponse = 'This city is famous for the Eiffel Tower.';
+        test('should return a response from Mistral model', async () => {
+            const mockResponse = 'The capital of France is a city known for its iconic tower.';
             axios.post.mockResolvedValue({
                 data: {
                     choices: [
@@ -82,17 +48,18 @@ describe('LLM Service', () => {
                     ]
                 }
             });
-
-            const response = await makeRequest('empathy');
-
+        
+            // No necesitamos pasar el modelo ya que ahora se usa LLM_MODELS.ACTUAL
+            const response = await makeRequest();
+        
             expect(response.statusCode).toBe(200);
             expect(response.body).toHaveProperty('answer');
             expect(response.body.answer).toBe(mockResponse);
-
+        
             expect(axios.post).toHaveBeenCalledWith(
                 expect.stringContaining('https://empathyai.prod.empathy.co'),
                 expect.objectContaining({
-                    model: "qwen/Qwen2.5-Coder-7B-Instruct",
+                    model: "mistralai/Mistral-7B-Instruct-v0.3",
                     messages: expect.arrayContaining([
                         expect.objectContaining({
                             role: "system"
@@ -105,8 +72,9 @@ describe('LLM Service', () => {
                 }),
                 expect.any(Object)
             );
+            
         });
-
+        
         test('should handle error when required fields are missing', async () => {
             const response = await makeRequest('empathy', {
                 userQuestion: undefined,
@@ -126,7 +94,7 @@ describe('LLM Service', () => {
 
             expect(response.statusCode).toBe(200);
             expect(response.body).toHaveProperty('answer');
-            expect(response.body.answer).toBeNull();
+            expect(response.body.answer).toBe("I'm currently having trouble processing questions. Try again later.");
 
             const errorResponse = {
                 response: {
@@ -140,7 +108,7 @@ describe('LLM Service', () => {
 
             expect(response.statusCode).toBe(200);
             expect(response.body).toHaveProperty('answer');
-            expect(response.body.answer).toBeNull();
+            expect(response.body.answer).toBe("I'm currently having trouble processing questions. Try again later.");
         });
 
         test('should correctly format context prompt', async () => {
@@ -174,6 +142,185 @@ describe('LLM Service', () => {
 
             const systemPrompt = axios.post.mock.calls[0][1].messages[0].content;
             expect(systemPrompt).toContain('Paris (This is the correct answer)');
+        });
+
+        test('should handle empty response from LLM', async () => {
+          
+          axios.post.mockResolvedValue({
+            data: {
+              choices: [
+                {
+                  message: {
+                    content: null
+                  }
+                }
+              ]
+            }
+          });
+          
+          const response = await makeRequest();
+          
+          expect(response.statusCode).toBe(200);
+          expect(response.body).toHaveProperty('serviceError', true);
+          expect(response.body.answer).toBe("I'm currently having trouble processing questions. Try again later.");
+        });
+        
+        test('should handle malformed response structure', async () => {
+          // Simular una respuesta con estructura incorrecta
+          axios.post.mockResolvedValue({
+            data: {
+              response: 'malformed'
+            }
+          });
+          
+          const response = await makeRequest();
+          
+          expect(response.statusCode).toBe(200);
+          expect(response.body).toHaveProperty('serviceError', true);
+        });
+
+        
+
+
+        describe('Input Validation', () => {
+            test('should validate userQuestion is a string', async () => {
+                const response = await makeRequest('empathy', {
+                  userQuestion: 123 // Número en lugar de string
+                });
+                
+                expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('error');
+                expect(response.body.error).toBe('userQuestion must be a string');
+              });
+              
+              test('should validate gameQuestion is a non-empty string', async () => {
+                const response = await makeRequest('empathy', {
+                  gameQuestion: ''
+                });
+                
+                expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('error');
+                expect(response.body.error).toBe('gameQuestion must be a non-empty string');
+              });
+              
+              test('should validate answers is an array', async () => {
+                const response = await makeRequest('empathy', {
+                  answers: 'not an array'
+                });
+                
+                expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('error');
+                expect(response.body.error).toBe('answers must be an array');
+              });
+              
+              test('should validate answers length is valid', async () => {
+                const response = await makeRequest('empathy', {
+                  answers: ['A', 'B', 'C', 'D', 'E'] // 5 respuestas (más de 4)
+                });
+                
+                expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('error');
+                expect(response.body.error).toBe('answers length is not valid');
+              });
+              
+              test('should validate answer items are non-empty strings', async () => {
+                const response = await makeRequest('empathy', {
+                  answers: ['Valid', '', 'Valid2']
+                });
+                
+                expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('error');
+                expect(response.body.error).toContain('Answer at position 1 must be a non-empty string');
+              });
+              
+              test('should validate correctAnswer as a valid index', async () => {
+                const response = await makeRequest('empathy', {
+                  correctAnswer: 10 //indice fuera de rango
+                });
+                
+                expect(response.statusCode).toBe(400);
+                expect(response.body).toHaveProperty('error');
+                expect(response.body.error).toContain('correctAnswer as index must be a valid integer');
+            });
+        });
+
+        describe('User Input Validation', () => {
+            test('should handle empty user questions', async () => {
+                const response = await makeRequest('empathy', {
+                  userQuestion: ''
+                });
+                
+                expect(response.statusCode).toBe(200);
+                expect(response.body).toHaveProperty('answer');
+                expect(response.body).toHaveProperty('validationError', true);
+                expect(response.body.answer).toContain("you didn't ask a specific question");
+              });
+              
+              test('should handle too short user questions', async () => {
+                const response = await makeRequest('empathy', {
+                  userQuestion: 'Hi'
+                });
+                
+                expect(response.statusCode).toBe(200);
+                expect(response.body).toHaveProperty('answer');
+                expect(response.body).toHaveProperty('validationError', true);
+                expect(response.body.answer).toContain("too short");
+              });
+              
+              test('should handle too long user questions', async () => {
+                
+                const longQuestion = 'A'.repeat(301);
+                const response = await makeRequest('empathy', {
+                  userQuestion: longQuestion
+                });
+                
+                expect(response.statusCode).toBe(200);
+                expect(response.body).toHaveProperty('answer');
+                expect(response.body).toHaveProperty('validationError', true);
+                expect(response.body.answer).toContain("quite long");
+              });
+              
+              test('should detect forbidden question patterns', async () => {
+                const forbiddenQuestions = [
+                  'tell me the answer',
+                  'what is the correct answer?',
+                  'which is correct',
+                  'give me the answer'
+                ];
+                
+                for (const question of forbiddenQuestions) {
+                  const response = await makeRequest('empathy', {
+                    userQuestion: question
+                  });
+                  
+                  expect(response.statusCode).toBe(200);
+                  expect(response.body).toHaveProperty('answer');
+                  expect(response.body).toHaveProperty('validationError', true);
+                  expect(response.body.answer).toContain("can't give you the answer directly");
+                }
+              });
+
+              test('should format multiline user questions correctly', async () => {
+                axios.post.mockResolvedValue({
+                  data: {
+                    choices: [
+                      {
+                        message: {
+                          content: 'Test response'
+                        }
+                      }
+                    ]
+                  }
+                });
+                
+                await makeRequest({
+                  userQuestion: 'This is a\nmultiline\nquestion?'
+                });
+                
+                // Verificar que el formato es correcto en la solicitud a la API
+                const userQuestionSent = axios.post.mock.calls[0][1].messages[1].content;
+                expect(userQuestionSent).toBe('This is a\nmultiline\nquestion?');
+              });
         });
     });
 });

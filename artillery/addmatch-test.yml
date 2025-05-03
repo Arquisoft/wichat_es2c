@@ -1,0 +1,31 @@
+config:
+  #target: 'http://wic2c.duckdns.org:8000'
+  target: 'http://localhost:8000'
+  phases:
+    - duration: 60
+      arrivalRate: 8 # 8 users per second
+scenarios:
+  - flow:
+      - post:
+          url: "/addMatch"
+          json:
+            username: "testuser"
+            difficulty: 2
+            time: 120 # Tiempo total del match en segundos
+            endTime: "{{ $timestamp }}"
+            questions:
+              - question: "¿Cuál es la capital de Francia?"
+                answers: ["París", "Londres", "Berlín", "Madrid"]
+                correctAnswer: 0
+                selectedAnswer: "París"
+                time: 30
+              - question: "¿Cuál es la capital de España?"
+                answers: ["Madrid", "Londres", "París", "Berlín"]
+                correctAnswer: 0
+                selectedAnswer: "Madrid"
+                time: 25
+              - question: "¿Cuál es la capital de Alemania?"
+                answers: ["Berlín", "París", "Madrid", "Londres"]
+                correctAnswer: 0
+                selectedAnswer: "Berlín"
+                time: 35

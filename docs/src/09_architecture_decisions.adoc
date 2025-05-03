@@ -1,44 +1,435 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
 [[section-design-decisions]]
+
 == Architecture Decisions
 
-The application will be carried out following a Microservices architecture. +
+[[ADR-001]]
+=== ADR 001: Key Initial Architecture Decisions
+*Status: Accepted*
+*:date: 23/02/2025* 
 
-The service in charge of comunicating with WikiData will be coded using TypeSript. 
-As the generation of questions is a huge part of our application we will play it safe by using TypeSript, a language that is similar to JavaSript but with static type checking.
+==== Context
 
-*03/02/2025*
+At the very beginning of the project, it was necessary to establish a strong technological foundation. 
+These initial decisions were made based on team expertise, project requirements, and the need for scalability, maintainability, and efficient development practices.
 
-Microservices Architecture:
-The application will follow a Microservices architecture to ensure scalability, flexibility, and easier maintenance. This approach allows different services to be developed, deployed, and scaled independently, improving fault tolerance and facilitating continuous deployment.
+==== Decision
 
-WikiData Service - TypeScript:
-The service responsible for communicating with WikiData will be developed using TypeScript. Since generating questions is a critical part of our application, we decided to use TypeScript due to its static type checking, which helps prevent runtime errors and makes the codebase more maintainable. Additionally, TypeScript provides better tooling support and improves developer productivity by reducing debugging time.
+The following initial architectural decisions were made:
 
-Backend & Frontend Technologies:
-The backend will be built using Node.js, as it is efficient for handling asynchronous operations and provides a vast ecosystem of libraries.
-The frontend will be developed with React, a popular JavaScript library known for its component-based structure, performance optimizations, and reusability. React's virtual DOM improves rendering efficiency, making it a great choice for dynamic applications.
+* *Frontend:* React
+* *Backend:* JavaScript with Node.js  (see <<ADR-003>>)
+* *Database:* MongoDB (see <<ADR-002>>)
+* *Deployment:* Docker
 
-Database - MongoDB:
-We have chosen MongoDB, a NoSQL database, because it provides flexibility in handling unstructured data, horizontal scalability, and high availability. Given that our data structure may evolve over time, MongoDB’s schema-less nature allows us to adapt without complex migrations.
+==== Reasoning
 
-Deployment Strategy:
-The application will be deployed on a server owned by one of the team members. This decision allows us to have full control over the deployment environment, reduce costs, and customize configurations based on our needs.
+* *React* provides a robust, component-based framework ideal for building dynamic and scalable user interfaces.
+* *JavaScript/Node.js* ensures full-stack JavaScript development, simplifying the technology stack and improving development efficiency.
+* *Docker* offers containerization, enabling consistent deployment across different environments and simplifying the CI/CD process.
 
-*03/03/2025*
+==== Consequences
 
-Switching from TypeScript to JavaScript:
-We initially opted for TypeScript to improve code quality through static typing. However, after encountering integration issues, increased complexity, and longer development time, we decided to switch to JavaScript. JavaScript allows for faster iteration, broader community support, and reduced setup overhead, making it more practical for our project timeline.
+* Unified technology stack using JavaScript for both frontend and backend.
+* Simplified developer onboarding and cross-functional collaboration.
+* Easier scaling and deployment of applications thanks to containerization.
+* Requires team members to be familiar with Docker and container management best practices.
 
-CSS Modules for Styling:
-We have chosen to use CSS Modules for styling because it:
 
-Prevents style conflicts by scoping styles to individual components.
-Improves maintainability by keeping styles modular and easy to manage.
-Enhances reusability as styles are encapsulated within their respective components, reducing the risk of unintended global overrides.
 
-These decisions were made to optimize performance, maintainability, and scalability while ensuring smooth development and deployment of our application.
+[[ADR-002]]
+=== ADR 002: Database Choice - MongoDB
+*Status: Accepted*
+*:date: 23/02/2025* 
+
+==== Context
+
+A flexible, scalable database was needed to manage our data efficiently. 
+The project demands agility to handle evolving data structures, rapid development, and scalability.
+
+==== Decision
+
+MongoDB was chosen as the primary database.
+
+==== Reasoning
+
+* Document-based model suits the dynamic nature of the data.
+* High scalability and replication features out-of-the-box.
+* Wide developer familiarity and strong community support.
+* Flexible schema design allows for rapid iteration and prototyping.
+* Better integration with JSON than other alternatives like SQL.
+
+==== Alternatives considered
+
+*Relational Databases (e.g., PostgreSQL, MySQL)*
+
+* Pros:
+  ** Strong data integrity with ACID transactions.
+  ** Mature ecosystem, rich tooling, and widespread knowledge.
+  ** Powerful querying capabilities with SQL.
+* Cons:
+  ** Rigid schemas could slow down development during early, rapidly changing phases.
+  ** Higher initial overhead in schema design and migrations.
+  ** Potential impedance mismatch when handling unstructured or flexible data.
+  ** Wasn't integrated on the initial project.
+
+
+==== Consequences
+
+* Simplified data modeling suited for flexible and evolving requirements.
+* Need for developers to understand and handle eventual consistency patterns.
+* Potential trade-offs in transactional guarantees compared to traditional relational databases.
+
+
+
+
+
+[[ADR-003]]
+=== ADR 003: Adoption of TypeScript and Tailwind CSS  
+*Status: Proposed and Rejected*
+*:date: 16/03/2025* 
+
+==== Context
+
+At the beginning of the project, we considered adopting TypeScript as the main programming language. 
+The integration with JavaScript would allow us to leverage static typing, improve code readability, and enhance maintainability.
+Additionally, we planned to combine TypeScript with Tailwind CSS for styling frontend components, aiming for a consistent and rapid UI development process.
+
+==== Decision
+
+Ultimately, the decision to adopt TypeScript and Tailwind was rejected.
+The project continued using JavaScript as the primary development language.
+
+==== Reasoning
+
+* TypeScript offered significant advantages in terms of type safety, better tooling, and enhanced code quality.
+* Tailwind CSS promised faster and more consistent frontend development.
+* However, serious compatibility issues arose with the project's foundational base and its critical dependencies when integrating TypeScript. JavaScript, on the other hand, ensured full compatibility with existing dependencies and leveraged the team's strong prior experience.
+
+==== Alternatives considered
+
+* Continue using **JavaScript**:
+  ** Pros:
+     *** Full compatibility with existing project dependencies.
+     *** Immediate development without additional configuration overhead.
+     *** Team proficiency already high.
+  ** Cons:
+     *** Lack of static typing, increasing potential runtime errors.
+     *** Slightly lower long-term maintainability compared to TypeScript.
+
+==== Consequences
+
+* Development continued smoothly without facing critical integration issues.
+* Future migration to TypeScript remains a possibility, but would require significant planning and dependency refactoring.
+* Styling strategies were adjusted, favoring traditional CSS Modules instead of Tailwind CSS for frontend components.
+
+
+
+
+[[ADR-004]]
+=== ADR 004: Wikidata SPARQL Integration
+*Status: Accepted*
+*:date: 16/03/2025* 
+
+==== Context
+
+The application requires retrieving rich, structured information from Wikidata to answer user questions and enrich the user experience with semantic data.
+Given the complexity of the data relationships and the dynamic nature of the content, a robust and standardized query mechanism was needed.
+
+==== Decision
+
+SPARQL was adopted as the primary method for querying Wikidata.
+
+==== Reasoning
+
+* SPARQL is the native query language for RDF datasets like Wikidata.
+* It allows highly expressive queries involving relationships between entities, filters, and complex graph traversals.
+* Wikidata provides a public SPARQL endpoint (Wikidata Query Service), eliminating the need to host or maintain a local copy of the dataset.
+* Supports real-time access to the most up-to-date knowledge base.
+
+==== Consequences
+
+* Enables powerful and flexible data retrieval directly from Wikidata.
+* Introduces a dependency on the availability and performance of the public SPARQL endpoint.
+* Requires developers to learn and work with SPARQL syntax and semantic web concepts.
+* May necessitate caching strategies or fallback plans to mitigate latency or downtime.
+
+
+
+
+[[ADR-005]]
+=== ADR 005: Oracle Cloud VM for Deployment Infrastructure
+*Status: Accepted*
+*:date: 23/02/2025* 
+
+==== Context
+
+The application required a virtualized environment to deploy the frontend, backend services, the database, and monitoring tools. Initially, Microsoft Azure was considered as the deployment platform due to its popularity and having almost every member of the team some level of experince, thanks to having used it in other subjects.
+
+However, during early planning, one team member already had access to an Oracle Cloud VM instance that was partially configured and available for use. This presented an opportunity to streamline deployment efforts and reduce setup time and cost.
+
+==== Decision
+
+The team decided to use an Oracle Cloud VM instance to host the project infrastructure.
+
+==== Reasoning
+
+* Immediate availability of an Oracle Cloud VM already partially configured.
+* Team member already had experience managing this VM, including port configuration and service setup.
+* Avoids incurring additional cloud infrastructure costs.
+* Simplifies initial deployment and testing.
+* With Oracle Cloud VM we can have the aplicattion deployed 24/7.
+* In case anyone have to do any kind of work on the VM, giving access to it is simple because only SSH key and the IP are required.
+
+==== Alternatives considered
+
+*Azure Virtual Machines (Microsoft Azure)*
+
+** Pros:
+  *** Well-documented and widely adopted cloud platform.
+  *** Integrated monitoring, CI/CD tools, and scalability features.
+  *** Easier to integrate with enterprise authentication or other Azure-based services.
+** Cons:
+  *** Requires account setup, configuration, and billing.
+  *** Team would need time to familiarize with the environment.
+  *** No immediate advantage over the already available Oracle VM at this stage.
+  *** In case we have used Azure, we would be obligated to turn on and off the application whenever it is necessary.
+
+==== Consequences
+
+* Faster initial deployment due to use of an already prepared environment.
+* Reduced cloud infrastructure cost during the development.
+* May require future migration or scaling strategy if the project grows or if Oracle Cloud VM limitations become restrictive.
+
+
+
+[[ADR-006]]
+=== ADR 006: Service-based System Architecture
+*Status: Accepted*
+*:date: 23/02/2025* 
+
+==== Context
+
+In designing the backend system, the team considered different architectural styles to support modularity, maintainability, and scalability.
+A pure microservices architecture was initially discussed and followed due to its popularity and the main project was built in a microservice based architecture.
+However, during the development of the application, a service-based architecture was chosen instead.
+
+==== Decision
+
+The project adopts a service-based architecture, rather than a fully decoupled microservices model.
+
+==== Reasoning
+
+* Provides modularization and separation of concerns without the overhead of managing independent deployments for each service.
+* Simplifies inter-service communication by avoiding complex patterns such as service discovery, load balancing, and distributed configuration.
+* Better aligns with the existing project base and team size, facilitating easier maintenance and deployment.
+* Reduces initial development and operational complexity.
+
+==== Alternatives considered
+
+*Pure Microservices Architecture*
+
+** Pros:
+  *** Strong decoupling, allowing for independent scaling and deployment of services.
+** Cons:
+  *** Overkill for small or medium-sized teams and projects with limited domain boundaries.
+
+==== Consequences
+
+* Enables a modular structure where services are separated logically but may coexist within the application itself.
+* Facilitates faster development and easier testing given its monolithichal nature with less enviroment complexity.
+* Allows future evolution toward microservices if project requirements grow.
+
+
+
+[[ADR-007]]
+=== ADR 007: Data Storage for Wikidata Information
+*Status: Accepted*
+*:date: 16/03/2025* 
+
+==== Context
+
+Initially, the application fetched data from Wikidata in real time during gameplay to generate questions dynamically.
+However, this approach caused severe performance issues, resulting in noticeable delays that degraded the user experience during matches.
+
+==== Decision
+
+To improve performance, the application now pre-generates and stores a set of questions in the database at the start of each game.
+These stored questions are then served to the user dynamically throughout the match, minimizing latency.
+
+==== Reasoning
+
+* Real-time queries to Wikidata introduced unpredictable delays and negatively impacted gameplay flow.
+* Preloading questions ensures smooth and uninterrupted user experience.
+* Reduces dependency on external services during active sessions, making the game more stable and reliable.
+
+==== Alternatives considered
+
+*Inserting loading screens between questions*
+
+** Pros:
+  *** Would allow real-time querying to continue without significant architectural changes.
+  *** Could be visually appealing with the right UI/UX design.
+** Cons:
+  *** Did not solve the root performance issue — only masked it.
+  *** Introduced unwanted pauses that disrupted the game's pacing and fluidity.
+
+==== Consequences
+
+* Game sessions begin with a brief setup phase where questions are fetched and stored.
+* Once the session starts, question delivery is fast and reliable, improving overall experience.
+* The system is now more resilient to outages or slowdowns in the Wikidata SPARQL endpoint.
+
+
+
+[[ADR-008]]
+=== ADR 008: Styling Approach - CSS Modules
+*Status: Accepted*
+*:date: 16/03/2025* 
+
+==== Context
+
+Maintaining scoped styles without introducing unnecessary complexity.
+
+==== Decision
+
+Use CSS Modules for styling, with partial hybridization where needed.
+
+==== Reasoning
+
+* Keeps styles encapsulated.
+* Allows flexibility where global styles are needed.
+
+==== Consequences
+
+* Mixed styling approach may introduce slight overhead.
+
+
+[[ADR-009]]
+=== ADR 009: Choice and Strategy for Empathy LLM Models
+*Status: Accepted*
+*:date: 07/04/2025* 
+
+==== Context
+
+To implement the chatbot system that provides hints during gameplay, the project required integration with a Large Language Model (LLM). The goal was to offer accurate, responsive, and trustworthy hints, as this directly affects the player's experience and engagement.
+
+Initially, the team selected the **Qwen2.5-Coder-7B-Instruct** model from the Empathy LLM platform given he had access thanks to the API Key provided to us. However, as development progressed, it became apparent that system outages or instability in the LLM provider could render the chatbot feature temporarily unusable — severely impacting reliability.
+
+==== Decision
+
+We implemented a dual-model system using both **Qwen2.5-Coder-7B-Instruct** and **Mistral-7B-Instruct-v0.3**, both available through Empathy LLM. The application now automatically switches between the two models depending on their availability, ensuring continued service during partial outages.
+
+==== Reasoning
+
+* Qwen2.5-Coder-7B-Instruct was initially chosen as it shown less tendency to cause hallucinations.
+* However, Qwen showed higher sensitivity to downtime and occasional availability issues during use.
+* Mistral-7B-Instruct-v0.3, while slightly more verbose, provided reliable backup behavior and acceptable quality.
+* The switch-over mechanism improves fault tolerance without significantly degrading response quality.
+
+==== Alternatives considered
+
+*Switch entirely to Mistral*
+
+** Pros:
+  *** More stable availability during testing.
+** Cons:
+  *** Lower quality in guided, instructional prompts; less aligned with user needs.
+  *** Returning to a single-model setup would reintroduce the same availability risks — if Mistral fails, the chatbot would again become unusable.
+
+==== Consequences
+
+* Improved resilience and availability of the chatbot feature.
+* Slight variability in hint style depending on the model currently active.
+* Additional complexity added to the backend logic to monitor model health and manage fallback behavior.
+* Future work could include evaluating additional models or services to further enhance reliability and output quality.
+
+
+
+
+=== ADR 010: Monitoring Strategy
+*Status: Accepted*
+*:date: 07/04/2025* 
+
+==== Context
+
+The application required a monitoring solution to track performance metrics, usage, and system health. Since the deployment is hosted on Oracle Cloud VM, Oracle Cloud Monitoring was initially considered as a natural choice due to existing familiarity and integration.
+
+However, Prometheus and Grafana were already configured in the environment, and their open-source flexibility and ecosystem made them a strong alternative.
+
+==== Decision
+
+The team chose to implement application monitoring using Prometheus for data collection and Grafana for visualization.
+
+==== Reasoning
+
+* Prometheus and Grafana were already partially configured and tested.
+* Broad community support and extensive documentation.
+* Easier to integrate with a variety of services and custom metrics.
+* Enables flexible dashboards and alerting rules tailored to the application’s needs.
+
+==== Alternatives considered
+
+*Oracle Cloud Monitoring*
+
+** Pros:
+  *** Native to Oracle Cloud VM.
+  *** Familiar interface for some team members.
+  *** Integrated with Oracle’s infrastructure metrics and logging.
+** Cons:
+  *** Less customizable for application-specific metrics.
+  *** More limited in community resources and ecosystem tools.
+  *** Requires additional setup to match the flexibility offered by Prometheus/Grafana.
+
+==== Consequences
+
+* Monitoring is decoupled from Oracle Cloud, making it more portable.
+* Dashboards and alerts can be easily customized and extended.
+
+
+=== ADR 011: DNS and Reverse Proxy Setup
+*Status: Accepted*
+*:date: 30/04/2025* 
+
+==== Context
+
+To allow users and services to access the deployed application on Oracle Cloud VM via a friendly domain and standard HTTP port, a DNS and reverse proxy solution was needed. The goal was to expose the service at a clean URL (`http://wic2c.duckdns.org`) instead of a raw IP address with a non-standard port.
+
+==== Decision
+
+The team chose to use **DuckDNS** as a free DNS provider and **Nginx** as a reverse proxy.
+
+==== Reasoning
+
+* **DuckDNS**:
+  ** Free and simple dynamic DNS service.
+  ** Allows mapping a custom subdomain (`wic2c.duckdns.org`) to the public IP address of the Oracle VM.
+  ** No cost, no registration complexity.
+* **Nginx**:
+  ** Acts as a reverse proxy, listening on port `80`.
+  ** Redirects traffic internally to port `3000`, where the application or monitoring stack is hosted.
+  ** Enables clean, production-like access to services without exposing internal port numbers.
+
+==== Alternatives considered
+
+*Using only raw IP and ports*
+
+** Pros:
+  *** No need to configure DNS or proxy layers.
+  *** Slightly faster setup.
+** Cons:
+  *** Users would need to remember IP addresses and ports (e.g., `http://123.45.67.89:3000`).
+  *** Less professional appearance.
+  *** Harder to manage and scale in future.
+
+==== Consequences
+
+* Users and developers can access the application at `http://wic2c.duckdns.org` using standard web protocols.
+* Internal routing and ports remain abstracted, improving security and maintainability.
+* Future enhancements (e.g., HTTPS, load balancing) can be layered onto the Nginx configuration.
+* Reliance on DuckDNS introduces a small risk of service availability tied to a free third-party provider.
+
 
 
 [role="arc42help"]
