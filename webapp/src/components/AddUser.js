@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress, Alert } from '@mui/material';
 import axios from 'axios';
 import "./LoginRegister.css";
+import ParticlesBackground from "./ParticlesBackground";
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT || 'http://localhost:8000';
 
@@ -65,6 +66,7 @@ function AddUser() {
 
     return (
         <>
+            <ParticlesBackground />
         
             <Box className="boxContainer" sx={{maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1}}>
                 <img

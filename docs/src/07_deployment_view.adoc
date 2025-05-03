@@ -68,26 +68,53 @@ The deployment diagram provides a clear overview of the system's architecture, i
 
 = Quality and/or Performance Features
 
-* **Containerized deployment** ensures environment consistency across dev/staging/prod. This eliminates discrepancies between environments, facilitating testing and debugging by ensuring the system runs the same way in any environment.
+* **Containerized deployment** ensures environment consistency across development, staging, and production environments. All services—such as authservice, userservice, gatewayservice, and gameservice—run inside Docker containers, ensuring parity across all deployment stages and simplifying testing and debugging.
 
-* **Lightweight Docker containers** enable rapid scalability and **CI/CD integration**. Containers can be quickly provisioned or removed as needed, making both vertical and horizontal scaling possible with minimal manual configuration.
+* **Lightweight Docker containers** enable rapid scalability. Each service can be deployed or updated independently, allowing faster delivery cycles and horizontal scaling with minimal manual intervention.
 
-* **Decoupling of backend from external APIs** improves maintainability. By separating dependencies such as the **Wikidata** API and selected **AI APIs**, the system becomes easier to maintain. Teams can make updates or changes without affecting the rest of the infrastructure, minimizing service disruptions and enhancing system resilience.
+* **Decoupling of backend from external APIs**, such as **Wikidata** and **Empathy**, improves maintainability. Since services like questionservice and llmservice interact with these APIs via well-defined interfaces, they can be updated or replaced without impacting core infrastructure—enhancing resilience and reducing downtime risk.
 
-* **Stateless backend** facilitates horizontal scaling. This architecture ensures that additional backend instances can be added to handle increased demand. It also optimizes performance under high traffic loads and ensures better load distribution across available resources.
+* **Stateless backend services** (like authservice, llmservice`, gameservice) allow for horizontal scaling. Because user state is stored in **MongoDB**, new instances of services can be added seamlessly to manage load spikes, ensuring reliable performance under high demand.
 
 = Mapping of Building Blocks to Infrastructure
 
-The application is deployed in a **Dockerized** environment, consisting of several interconnected services and layers. The main components are:
+The application is deployed in a fully **Dockerized environment**, with each service fulfilling a specific role within the system. The infrastructure is composed of:
 
-* **Web Server**: The web server handles client requests and routes them to the appropriate services, such as the database or external APIs. The web server is designed to be **scalable**, allowing additional instances to be added as demand increases.
+* **Frontend (WebApp)**: The webapp provides the user interface and communicates with the gatewayservice. It handles user interactions and routes requests to the backend. It's designed to be scalable and decoupled from the logic layer.
 
-* **Cloud-hosted Database**: The database is hosted in the cloud, allowing the application to take advantage of the elastic scalability and flexibility offered by cloud services. The database connects to the backend server, providing persistent storage and ensuring data integrity through real-time synchronization.
+* **API Gateway**: The gatewayservice acts as the central point of entry to backend services. It handles request routing, service discovery, and authentication, forwarding requests to userservice, authservice, gameService, userinfoapi, llmservice, or wikidata as needed.
 
-* **Client-Server Communication**: The client interacts with the system via **HTTP** or **HTTPS**, ensuring secure and efficient communication between the client and the server. Requests are routed through the web server, which processes and directs them to the appropriate services.
+* **Backend Services**:
+- authservice: Handles authentication and session management.
+- userservice: Manages user registration and profile data.
+- userinfoapi: Exposes user data to external consumers.
+- llmservice: Connects to the **Empathy API** to generate empathetic hints.
+- wikidata: Interfaces with the **Wikidata API** to retrieve factual information.
+- gameService: Manages the matches data.
 
-* **Backend-API Communication**: The backend communicates with **external APIs** (such as Wikidata and AI) using standard API protocols like **REST** or **GraphQL**. These connections enable access to external data and artificial intelligence services, enriching the system’s functionality with updated information and external tools.
+* **Database Layer**: A centralized **MongoDB** instance provides persistent storage for users, sessions, and game data. All services needing storage interact through this database.
 
-* **Scalability and Resilience**: This container-based and decoupled service approach ensures that the system is scalable, flexible, and resilient. The use of containers allows for the deployment of multiple instances of any component based on demand, improving the **high availability** of the system.
+* **Client-Server Communication**: Users access the system via a browser (webapp), which communicates with the gatewayservice. From there, requests are routed to internal services depending on their nature (authentication, game interaction, user info, etc.).
 
-In summary, this design ensures the system is not only robust and easy to maintain but also adaptable to changes in traffic or market requirements, providing efficient resource management and high reliability.
+* **Backend-API Communication**: The llmservice and wikidata services interact with external APIs, enabling integration with third-party data sources and AI-based services.
+
+* **Scalability and Resilience**: The container-based approach enables scalable deployment of individual services. If load increases, instances of services can be added independently. This architecture supports high availability, rapid recovery, and efficient resource usage.
+
+In summary, the system architecture follows modern cloud-native best practices, ensuring high performance, maintainability, scalability, and fault tolerance. It is well-suited for dynamic environments where flexibility and uptime are critical.
+
+The port in which service is launched are the followings:
+[cols="1,1", options="header"]
+|===
+| Service         | Exposed Port
+
+| _mongodb_         | 27017
+| _authservice_     | 8002
+| userservice_      | 8001
+| _userinfoapi_     | 8005
+| _llmservice_      | 8003
+| _gatewayservice_  | 8000
+| _webapp_          | 3000
+
+| _gameservice_     | 8004
+| _wikidata_        | 3005
+|===
