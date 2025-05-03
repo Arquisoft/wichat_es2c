@@ -45,9 +45,6 @@ endif::arc42help[]
 |<React>
 |<React is an open-source JavaScript library used to build user interfaces.We are using it in the front-end part of the app.>
 
-|<MVC>
-|< It is a software architectural pattern commonly used for developing user interfaces. It divides an application into three interconnected components, Model, View and Controller.>
-
 |<Arc42>
 |<A set of different guidelines to follow for the documentation of a software process.>
 
@@ -62,4 +59,40 @@ endif::arc42help[]
 
 |<Wikidata>
 |<Wikidata is a free, collaborative, multilingual knowledge database that stores structured data.>
+
+|<Swagger>
+|<A set of open-source tools for designing, building, documenting, and consuming RESTful APIs.>
+
+|<Artillery>
+|<An open-source load testing toolkit for testing the performance of web applications, APIs, and services.>
+
+|<Oracle Cloud>
+|<Oracle's cloud computing service offering infrastructure as a service (IaaS), platform as a service (PaaS), and software as a service (SaaS).>
+
+|<Oracle Cloud Monitoring>
+|<A service within Oracle Cloud Infrastructure that provides metrics and alarms for resources running in Oracle Cloud.>
+
+|<Grafana>
+|<An open-source analytics and monitoring platform that allows you to visualize and analyze metrics from various data sources.>
+
+|<Prometheus>
+|<An open-source systems monitoring and alerting toolkit that collects and stores metrics as time series data.>
+
+|<LLM>
+|<Large Language Model, a type of artificial intelligence model trained on vast amounts of text data to understand and generate human-like text.>
+
+|<Empathy>
+|<In UX/UI context, the ability to understand and share the feelings of users to create more intuitive and user-friendly interfaces.>
+
+|<CSS Modules>
+|<A CSS file in which all class names and animation names are scoped locally by default, helping avoid naming conflicts in larger projects.>
+
+|<SPARQL>
+|<A query language for retrieving and manipulating data stored in RDF format, commonly used with semantic web databases like Wikidata.>
+
+|<DNS>
+|<Domain Name System, the hierarchical naming system that translates human-readable domain names to machine-readable IP addresses.>
+
+|<Reverse proxy>
+|<A server that sits in front of web servers and forwards client requests, providing additional abstraction, control, and security. It allows us to redirect the default http port>
 |===
