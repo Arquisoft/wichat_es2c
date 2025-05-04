@@ -6,10 +6,6 @@
 
 [![Logo](/webapp/public/wiChatLogos/LogoWichat2_192.png)](http://wic2c.duckdns.org/)
 
-<div align="center">
-<img src="/webapp/public/homePicture.png" height="300">
-</div>
-
 This is a base project for the Software Architecture course in 2024/2025.
 WiChat is an application focused on allowing its users to play a quiz-style game on various topics, in which they can achieve their best results with the help of a chatbot powered by an Artificial Intelligence model. This data is then stored and can be accessed at any time, including both the user’s own data and global data from other players.
 
@@ -35,6 +31,9 @@ Héctor Hernández Iglesias | <a href="https://github.com/HernandezIglesiasHecto
 
 - **Chatbot that provides hints during the game**. During the match, the user has access to a ChatBot that, upon request, will provide the most effective hints regarding the current question.
 
+<div align="center">
+<img src="/webapp/public/gamePicture.png" height="300">
+</div>
 
 ### Other Application Features
 
@@ -42,8 +41,15 @@ Héctor Hernández Iglesias | <a href="https://github.com/HernandezIglesiasHecto
 
 - **User's own game history and statistics**. A user with a registered account in the application can view their game history and the statistics generated based on it.
 
+<div align="center">
+<img src="/webapp/public/historyPicture.png" height="300">
+</div>
+
 - **User match ranking and search tool**. Any user can access the Leaderboard page, where the top scoring users and those with the most matches are displayed. There is also a search tool to find matches played by a specific user.
 
+<div align="center">
+<img src="/webapp/public/leaderboardPicture.png" height="300">
+</div>
 
 ### Video
 
