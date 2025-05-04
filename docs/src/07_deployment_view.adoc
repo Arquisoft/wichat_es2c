@@ -5,22 +5,116 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 == Deployment View
 
+ifdef::arc42help[]
+[role="arc42help"]
+****
+.Content
+The deployment view describes:
+
+ 1. technical infrastructure used to execute your system, with infrastructure elements like geographical locations, environments, computers, processors, channels and net topologies as well as other infrastructure elements and
+
+2. mapping of (software) building blocks to that infrastructure elements.
+
+Often systems are executed in different environments, e.g. development environment, test environment, production environment. In such cases you should document all relevant environments.
+
+Especially document a deployment view if your software is executed as distributed system with more than one computer, processor, server or container or when you design and construct your own hardware processors and chips.
+
+From a software perspective it is sufficient to capture only those elements of an infrastructure that are needed to show a deployment of your building blocks. Hardware architects can go beyond that and describe an infrastructure to any level of detail they need to capture.
+
+.Motivation
+Software does not run without hardware.
+This underlying infrastructure can and will influence a system and/or some
+cross-cutting concepts. Therefore, there is a need to know the infrastructure.
+
+.Form
+
+Maybe a highest level deployment diagram is already contained in section 3.2. as
+technical context with your own infrastructure as ONE black box. In this section one can
+zoom into this black box using additional deployment diagrams:
+
+* UML offers deployment diagrams to express that view. Use it, probably with nested diagrams,
+when your infrastructure is more complex.
+* When your (hardware) stakeholders prefer other kinds of diagrams rather than a deployment diagram, let them use any kind that is able to show nodes and channels of the infrastructure.
+
+
+.Further Information
+
+See https://docs.arc42.org/section-7/[Deployment View] in the arc42 documentation.
+
+****
+endif::arc42help[]
+
 === Infrastructure Level 1
 
-image::07-deploymentDiagram.png[Deployment View]
+ifdef::arc42help[]
+[role="arc42help"]
+****
+Describe (usually in a combination of diagrams, tables, and text):
 
-Motivation::
+* distribution of a system to multiple locations, environments, computers, processors, .., as well as physical connections between them
+* important justifications or motivations for this deployment structure
+* quality and/or performance features of this infrastructure
+* mapping of software artifacts to elements of this infrastructure
 
-The deployment diagram provides a clear overview of the system's architecture, illustrating how its components interact and are distributed. 
-It helps visualize the structure within Docker, showing the connections between the web server, database, apis and client.
+For multiple environments or alternative deployments please copy and adapt this section of arc42 for all relevant environments.
+****
+endif::arc42help[]
 
-Quality and/or Performance Features::
+image::03-context-diagram.PNG[Deployment View]
 
-By deploying the application in Docker, we achieve a consistent and portable environment, reducing compatibility issues across different infrastructures.
-To enhance performance, the system leverages cloud services, optimizing resource usage and ensuring availability.
-The architecture is designed to handle multiple requests efficiently, maintaining low latency and high responsiveness for users.
+= Motivation
 
-Mapping of Building Blocks to Infrastructure::
-The application is deployed in a Dockerized environment, running on a web server that connects to a cloud-hosted database. 
-The client-side interacts with the server via HTTP, while the backend communicates with the wikidata and the selected AI using their respective APIs and manages the database.
-This setup ensures scalability, reliability, and efficient resource management.
+The deployment diagram provides a clear overview of the system's architecture, illustrating how its components interact and are distributed. It helps visualize the structure within a **Dockerized** environment, showing the connections between the web server, database, external APIs, and client. This diagram makes it easier to understand how services are organized and integrated, providing an accessible overview for development, operations, and management teams.
+
+= Quality and/or Performance Features
+
+* **Containerized deployment** ensures environment consistency across development, staging, and production environments. All services—such as authservice, userservice, gatewayservice, and gameservice—run inside Docker containers, ensuring parity across all deployment stages and simplifying testing and debugging.
+
+* **Lightweight Docker containers** enable rapid scalability. Each service can be deployed or updated independently, allowing faster delivery cycles and horizontal scaling with minimal manual intervention.
+
+* **Decoupling of backend from external APIs**, such as **Wikidata** and **Empathy**, improves maintainability. Since services like questionservice and llmservice interact with these APIs via well-defined interfaces, they can be updated or replaced without impacting core infrastructure—enhancing resilience and reducing downtime risk.
+
+* **Stateless backend services** (like authservice, llmservice`, gameservice) allow for horizontal scaling. Because user state is stored in **MongoDB**, new instances of services can be added seamlessly to manage load spikes, ensuring reliable performance under high demand.
+
+= Mapping of Building Blocks to Infrastructure
+
+The application is deployed in a fully **Dockerized environment**, with each service fulfilling a specific role within the system. The infrastructure is composed of:
+
+* **Frontend (WebApp)**: The webapp provides the user interface and communicates with the gatewayservice. It handles user interactions and routes requests to the backend. It's designed to be scalable and decoupled from the logic layer.
+
+* **API Gateway**: The gatewayservice acts as the central point of entry to backend services. It handles request routing, service discovery, and authentication, forwarding requests to userservice, authservice, gameService, userinfoapi, llmservice, or wikidata as needed.
+
+* **Backend Services**:
+- authservice: Handles authentication and session management.
+- userservice: Manages user registration and profile data.
+- userinfoapi: Exposes user data to external consumers.
+- llmservice: Connects to the **Empathy API** to generate empathetic hints.
+- wikidata: Interfaces with the **Wikidata API** to retrieve factual information.
+- gameService: Manages the matches data.
+
+* **Database Layer**: A centralized **MongoDB** instance provides persistent storage for users, sessions, and game data. All services needing storage interact through this database.
+
+* **Client-Server Communication**: Users access the system via a browser (webapp), which communicates with the gatewayservice. From there, requests are routed to internal services depending on their nature (authentication, game interaction, user info, etc.).
+
+* **Backend-API Communication**: The llmservice and wikidata services interact with external APIs, enabling integration with third-party data sources and AI-based services.
+
+* **Scalability and Resilience**: The container-based approach enables scalable deployment of individual services. If load increases, instances of services can be added independently. This architecture supports high availability, rapid recovery, and efficient resource usage.
+
+In summary, the system architecture follows modern cloud-native best practices, ensuring high performance, maintainability, scalability, and fault tolerance. It is well-suited for dynamic environments where flexibility and uptime are critical.
+
+The port in which service is launched are the followings:
+[cols="1,1", options="header"]
+|===
+| Service         | Exposed Port
+
+| _mongodb_         | 27017
+| _authservice_     | 8002
+| userservice_      | 8001
+| _userinfoapi_     | 8005
+| _llmservice_      | 8003
+| _gatewayservice_  | 8000
+| _webapp_          | 3000
+
+| _gameservice_     | 8004
+| _wikidata_        | 3005
+|===

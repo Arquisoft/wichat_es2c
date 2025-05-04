@@ -467,7 +467,7 @@ function Game() {
                                 <AwesomeButton
                                     key={index}
                                     type="secondary"
-                                    active={buttonsActive && !timeOut} // Desactivar botones si el tiempo se acaba o están deshabilitados
+                                    //active={buttonsActive && !timeOut} // Desactivar botones si el tiempo se acaba o están deshabilitados
                                     className={`${styles.awsBtn} ${
                                         option === questionData.correctAnswer
                                             ? styles.buttonActive// Estilo para respuesta correcta

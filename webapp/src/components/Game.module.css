@@ -40,10 +40,12 @@
 
 .buttonActive {
     --button-secondary-color-active: green;
+    transition: background-color 10s ease-in-out;
 }
 
 .buttonInactive {
     --button-secondary-color-active: red;
+    transition: background-color 10s ease-in-out;
 }
 
 .fadeIn {
