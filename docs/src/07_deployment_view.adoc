@@ -1,19 +1,16 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
-[[section-deployment-view]]
-
-
 == Deployment View
 
 === Infrastructure Level 1
 
 image::03-context-diagram.PNG[Deployment View]
 
-= Motivation
+==== Motivation
 
 The deployment diagram provides a clear overview of the system's architecture, illustrating how its components interact and are distributed. It helps visualize the structure within a **Dockerized** environment, showing the connections between the web server, database, external APIs, and client. This diagram makes it easier to understand how services are organized and integrated, providing an accessible overview for development, operations, and management teams.
 
-= Quality and/or Performance Features
+==== Quality and/or Performance Features
 
 * **Containerized deployment** ensures environment consistency across development, staging, and production environments. All services—such as authservice, userservice, gatewayservice, and gameservice—run inside Docker containers, ensuring parity across all deployment stages and simplifying testing and debugging.
 
@@ -23,7 +20,7 @@ The deployment diagram provides a clear overview of the system's architecture, i
 
 * **Stateless backend services** (like authservice, llmservice`, gameservice) allow for horizontal scaling. Because user state is stored in **MongoDB**, new instances of services can be added seamlessly to manage load spikes, ensuring reliable performance under high demand.
 
-= Mapping of Building Blocks to Infrastructure
+==== Mapping of Building Blocks to Infrastructure
 
 The application is deployed in a fully **Dockerized environment**, with each service fulfilling a specific role within the system. The infrastructure is composed of:
 
