@@ -13,7 +13,7 @@ allowing us to quickly identify and respond to any anomalies.
 This proactive approach ensures that our project remains robust, scalable,
 and consistently operational.
 
-== Types of Tests Implemented
+=== Types of Tests Implemented
 
 To guarantee code quality and system reliability, we implemented several types of tests aimed at different layers of the application.
 Unit tests were developed using Jest, allowing us to validate individual components and functions in isolation.
