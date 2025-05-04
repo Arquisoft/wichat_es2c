@@ -253,7 +253,7 @@ However, this approach caused severe performance issues, resulting in noticeable
 
 ==== Decision
 
-To improve performance, the application now pre-generates and stores a set of questions in the database at the start of each game.
+To improve performance, the application now pre-generates and stores a set of questions in the database and cache at the start of each game.
 These stored questions are then served to the user dynamically throughout the match, minimizing latency.
 
 ==== Reasoning
