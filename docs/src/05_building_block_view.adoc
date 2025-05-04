@@ -162,12 +162,11 @@ In the user management we do everything about users data and sessions.
 - **Users service**: It manages the new users
 
 ==== 5.3.4 *Game controller*
-The game controller uses all the services we mentioned before to manage everything and allow users to do whatever they want inside the web
+The game controller is in charge of saving the match historic.
 
 ===== Components
 
 - **ExpressApp**:
-The main server using Express.js, which exposes the routes to manage user matches and statistics.
 - Exposed routes:
 - */addMatch*: Adds a match and updates the user's statistics.
 
@@ -181,7 +180,6 @@ The main server using Express.js, which exposes the routes to manage user matche
 
 1. **Start Match**:
 - The client sends an HTTP POST request to /addMatch with details of the match, such as username, questions, selected answers, time, and end time.
-
 2. **Match Handling and Validation**:
 - **ExpressApp** validates the request data (e.g., username and answers).
 - It checks if the user exists in the database (via the **User** model).
