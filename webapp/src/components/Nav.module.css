@@ -88,11 +88,10 @@
 }
 
 .userAvatar {
-    height: 60px;
-    width: 60px;
+    height: 80px;
+    width: 80px;
     border-radius: 50%;
     cursor: pointer;
-    border: 2px solid rgba(255, 255, 255, 0.8);
     transition: box-shadow 0.3s ease-in-out;
 
     margin-left: 2em;
@@ -113,7 +112,7 @@
     z-index: 1000;
     border: 1px solid rgba(0, 174, 255, 0.6);
 
-    margin-right: 0.3em;
+    margin-right: 1em;
 }
 
 .dropdownItem {
