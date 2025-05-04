@@ -110,7 +110,7 @@ The Empathy Connector encapsulates the logic for communicating with external LLM
 
 1. *ContextBuilder* injects the question/answers into a prompt with behavioral rules.
 2. *LLMRouter* chooses the configured model and prepares the API request.
-3. *There is a request to the external API and receives a response.
+3. There is a request to the external API and receives a response.
 4. The response is parsed and returned to the client as a concise hint.
 
 *Models Supported*:
@@ -207,8 +207,6 @@ The exposed route is */addMatch*.
 
 3. **Retrieve User Statistics and Matches**:
 - The client can make GET requests to /userStatistics and /userMatches to get the user's statistics and matches, respectively.
-
-In our application, the **Gateway** serves as the *central entry point* for all client requests. Its main purpose is to *orchestrate communication* between different services, simplifying and unifying access to your backend system.
 
 
 
