@@ -2,7 +2,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 == Building Block View
 
-=== 5.1 Whitebox Overall System
+=== Whitebox Overall System
 
 image::05-Level1.PNG["Level 1"]
 
@@ -19,7 +19,7 @@ Wichat communicates with the following external entities:
 
 This level provides a high-level understanding of Wichat’s role in the system landscape and lays the foundation for further decomposition in Level 2, where internal components and logic are revealed.
 
-=== 5.2 Internal funcionality
+=== Internal funcionality
 
 image::05-Level2.PNG["Level 2"]
 
@@ -31,7 +31,7 @@ The system consists of the following top-level components:
 - *Llm Service*: Interfaces with an AI-based hint bot to provide context assistance.
 - *User Management*: It is responsible for user registration, users sessions and information about user historical.
 
-==== 5.3.1 Empathy Connector (LLM Service)
+==== Empathy Connector (LLM Service)
 image::05-Llmservice.PNG["Level 2"]
 
 The Empathy Connector encapsulates the logic for communicating with external LLM APIs (EmpathyAI) to generate context-based hints. This module is exposed as a RESTful service and relies on a structured flow of request transformation, API communication, and response handling.
@@ -54,7 +54,7 @@ The Empathy Connector encapsulates the logic for communicating with external LLM
 *Models Supported*:
 - **EmpathyAI** (Qwen and Mistral)
 
-==== 5.3.2 Question Generator
+==== Question Generator
 
 image::05-Wikidata-Diagram.PNG["Level 2"]
 
@@ -104,7 +104,7 @@ Answer Subdocument:
 - **Birds**: Questions about bird species
 
 
-==== 5.3.3 User Management
+==== User Management
 
 image::05-User management.PNG["Level 2"]
 
@@ -129,7 +129,7 @@ Session:
 | `createdAt` | The timestamp indicating when the user account was created.
 |===
 
-==== 5.3.4 *Game Service*
+==== *Game Service*
 The game Service is in charge of saving the match historic.
 The exposed route is */addMatch*.
 
@@ -186,7 +186,7 @@ Answers:
 | `correct` | Boolean indicating if this is the correct answer.
 | `selected`| Boolean indicating if the user selected this answer.
 |===
-==== 5.3.5 Gateway
+==== Gateway
 
 **Gateway** serves as the *central entry point* for all client requests. Its main purpose is to *orchestrate communication* between different services, simplifying and unifying access to your backend system.
 
