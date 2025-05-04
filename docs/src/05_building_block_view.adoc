@@ -77,7 +77,6 @@ Wichat communicates with the following external entities:
 
 - *User*: The player interacts with the application via a browser interface. Users receive questions, provide answers, and can request hints through the UI.
 - *Wikidata API*: Wichat sends SPARQL queries to Wikidata to get structured data used for generating trivia questions.
-- *MongoDB*: This is the application's primary database, used to persist game-related information such as generated questions, user sessions, and gameplay statistics.
 - *Empathy AI Bot*: An external AI service that receives user queries (e.g., help or hints) and returns context-aware suggestions to support the player during the game.
 
 This level provides a high-level understanding of Wichat’s role in the system landscape and lays the foundation for further decomposition in Level 2, where internal components and logic are revealed.
@@ -198,20 +197,20 @@ The exposed route is */addMatch*.
 
 ===== Flow
 
-1. **Start Match**:
-- The client sends an HTTP POST request to /addMatch with details of the match, such as username, questions, answers, time, and end time.
-2. **Match Handling and Validation**:
-- **ExpressApp** validates the request data (e.g., username and answers).
-- It checks if the user exists in the database.
-3. **Store Question and Answer**:
+1. **Store Question and Answer**:
 - The question and selected answers are stored in the database.
 
 
-4. **Update User Statistics**:
+2. **Update User Statistics**:
 - User statistics are calculated based on the correct and incorrect answers and the time spent on the match.
 - The final score is calculated using the match's difficulty, correct and incorrect answers, and saved in the **Match** model.
 
+3. **Retrieve User Statistics and Matches**:
+- The client can make GET requests to /userStatistics and /userMatches to get the user's statistics and matches, respectively.
+
 In our application, the **Gateway** serves as the *central entry point* for all client requests. Its main purpose is to *orchestrate communication* between different services, simplifying and unifying access to your backend system.
+
+
 
 ===== MongoDB schema:
 
