@@ -17,14 +17,14 @@ These initial decisions were made based on team expertise, project requirements,
 The following initial architectural decisions were made:
 
 * *Frontend:* React
-* *Backend:* JavaScript with Node.js  (see <<ADR-003>>)
+* *Backend:* JavaScript with Node.js and Express (see <<ADR-003>>)
 * *Database:* MongoDB (see <<ADR-002>>)
 * *Deployment:* Docker
 
 ==== Reasoning
 
 * *React* provides a robust, component-based framework ideal for building dynamic and scalable user interfaces.
-* *JavaScript/Node.js* ensures full-stack JavaScript development, simplifying the technology stack and improving development efficiency.
+* *JavaScript/Node.js and Express* ensures full-stack JavaScript development, simplifying the technology stack and improving development efficiency.
 * *Docker* offers containerization, enabling consistent deployment across different environments and simplifying the CI/CD process.
 
 ==== Consequences
