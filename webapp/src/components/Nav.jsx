@@ -80,7 +80,7 @@ export default function Nav() {
                             aria-expanded={dropdownOpen}
                         >
                             <img
-                                src="/pfp.png"
+                                src="/impPfp_512.png"
                                 alt="User"
                                 className={styles.userAvatar}
                             />
