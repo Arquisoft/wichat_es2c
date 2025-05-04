@@ -174,6 +174,6 @@ Both the user and auth service share a Mongo database that is accessed with mong
 
 
 ## Useful links
-Link to the website -> http://wic2c.duckdns.org/
-Link to project documentation -> https://arquisoft.github.io/wichat_es2c/
-Link to API documentation -> http://wic2c.duckdns.org:8005/api-docs/
+- Link to the website -> http://wic2c.duckdns.org/
+- Link to project documentation -> https://arquisoft.github.io/wichat_es2c/
+- Link to API documentation -> http://wic2c.duckdns.org:8005/api-docs/
