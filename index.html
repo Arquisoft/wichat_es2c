@@ -1661,7 +1661,7 @@ The exposed route is <strong>/addMatch</strong>.</p>
 <h3 id="_infrastructure_level_1">7.1. Infrastructure Level 1</h3>
 <div class="imageblock">
 <div class="content">
-<img src="./images/03-context-diagram.PNG" alt="Deployment View">
+<img src="./images/07-Diagram.PNG" alt="Deployment View">
 </div>
 </div>
 <div class="sect3">
@@ -2970,36 +2970,73 @@ These stored questions are then served to the user dynamically throughout the ma
 <p>Open-source and designed for modern web applications.</p>
 </div>
 <div class="paragraph">
-<p>Supports scripting complex user flows (e.g., login → actions → logout).</p>
-</div>
-<div class="paragraph">
-<p>Integrates well with CI/CD pipelines.</p>
-</div>
-<div class="paragraph">
-<p>Provides detailed reports (latency, RPS, error rates) and supports exporting metrics to Prometheus/Grafana.</p>
-</div>
-<div class="paragraph">
-<p>Lightweight compared to alternatives like JMeter.</p>
+<p>Lightweight and easy to use compared to other options.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_alternatives_considered_9">9.14.4. Alternatives Considered</h4>
+<h4 id="_alternatives_considered_9">9.14.4. Alternatives considered</h4>
 <div class="paragraph">
-<p><strong>JMeter</strong>
-<strong> Pros:
-</strong>* Mature tool with GUI for test design.
-<strong>* Extensive protocol support (HTTP, WebSockets, etc.).
-</strong> Cons:
-<strong>* Steeper learning curve.
-</strong>* Resource-heavy for large-scale tests.</p>
+<p><strong>JMeter</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Mature tool with GUI for test design.</p>
+</li>
+<li>
+<p>Extensive protocol support (HTTP, WebSockets, etc.).</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Cons:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Steeper learning curve.</p>
+</li>
+<li>
+<p>Resource-heavy for large-scale tests.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p><strong>Locust</strong>
-<strong> Pros:
-</strong>* Python-based, easy to extend.
-<strong>* Distributed testing support.
-</strong> Cons:
-<strong>*</strong> Requires more setup for advanced scenarios.</p>
+<p><strong>Gatling</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pros:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Allows for easy scripting using Scala and provides an expressive DSL.</p>
+</li>
+<li>
+<p>Good integration with CI/CD systems.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Cons:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>More complex setup and configuration compared to Artillery.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect3">
