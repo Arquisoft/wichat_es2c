@@ -13,6 +13,9 @@ ifndef::imagesdir[:imagesdir: ../images]
 |<Node.js>
 |<An open-source, cross-platform runtime environment that allows you to run JavaScript(or TypeScript in our case) code outside of a web browser. We are using it in the back-end. We are using it in the front-end part of the app.>
 
+|<Express>
+|<A minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications. We are using it in the back-end.>
+
 |<React>
 |<React is an open-source JavaScript library used to build user interfaces.We are using it in the front-end part of the app.>
 

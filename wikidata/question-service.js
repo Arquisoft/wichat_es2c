@@ -1,13 +1,11 @@
 const express = require("express");
 const cors = require("cors");
-const {json} = require("express");
 const { Question, Answer } = require('./wikidata-model');
 const app = express();
 app.use(cors());
 const mongoose = require('mongoose');
 const axios = require("axios");
 app.use(express.json());
-let added = false;
 const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/userdb';
 mongoose.connect(mongoUri);
 const PORT = 3005;

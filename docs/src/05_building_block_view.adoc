@@ -1,71 +1,9 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
-[[section-building-block-view]]
-
-
 == Building Block View
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Content
-The building block view shows the static decomposition of the system into building blocks (modules, components, subsystems, classes, interfaces, packages, libraries, frameworks, layers, partitions, tiers, functions, macros, operations, data structures, ...) as well as their dependencies (relationships, associations, ...)
+=== Whitebox Overall System
 
-This view is mandatory for every architecture documentation.
-In analogy to a house this is the _floor plan_.
-
-.Motivation
-Maintain an overview of your source code by making its structure understandable through
-abstraction.
-
-This allows you to communicate with your stakeholder on an abstract level without disclosing implementation details.
-
-.Form
-The building block view is a hierarchical collection of black boxes and white boxes
-(see figure below) and their descriptions.
-
-image::05_building_blocks-EN.png["Hierarchy of building blocks"]
-
-*Level 1* is the white box description of the overall system together with black
-box descriptions of all contained building blocks.
-
-*Level 2* zooms into some building blocks of level 1.
-Thus it contains the white box description of selected building blocks of level 1, together with black box descriptions of their internal building blocks.
-
-*Level 3* zooms into selected building blocks of level 2, and so on.
-
-
-.Further Information
-
-See https://docs.arc42.org/section-5/[Building Block View] in the arc42 documentation.
-
-****
-endif::arc42help[]
-
-=== 5.1 Whitebox Overall System
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Here you describe the decomposition of the overall system using the following white box template. It contains
-
- * an overview diagram
- * a motivation for the decomposition
- * black box descriptions of the contained building blocks. For these we offer you alternatives:
-
-   ** use _one_ table for a short and pragmatic overview of all contained building blocks and their interfaces
-   ** use a list of black box descriptions of the building blocks according to the black box template (see below).
-   Depending on your choice of tool this list could be sub-chapters (in text files), sub-pages (in a Wiki) or nested elements (in a modeling tool).
-
-
- * (optional:) important interfaces, that are not explained in the black box templates of a building block, but are very important for understanding the white box.
-Since there are so many ways to specify interfaces why do not provide a specific template for them.
- In the worst case you have to specify and describe syntax, semantics, protocols, error handling,
- restrictions, versions, qualities, necessary compatibilities and many things more.
-In the best case you will get away with examples or simple signatures.
-
-****
-endif::arc42help[]
 image::05-Level1.PNG["Level 1"]
 
 At this level, Wichat is presented as a single building block (whitebox)
@@ -81,7 +19,7 @@ Wichat communicates with the following external entities:
 
 This level provides a high-level understanding of Wichat’s role in the system landscape and lays the foundation for further decomposition in Level 2, where internal components and logic are revealed.
 
-=== 5.2 Internal funcionality
+=== Internal funcionality
 
 image::05-Level2.PNG["Level 2"]
 
@@ -93,7 +31,7 @@ The system consists of the following top-level components:
 - *Llm Service*: Interfaces with an AI-based hint bot to provide context assistance.
 - *User Management*: It is responsible for user registration, users sessions and information about user historical.
 
-==== 5.3.1 Empathy Connector (LLM Service)
+==== Empathy Connector (LLM Service)
 image::05-Llmservice.PNG["Level 2"]
 
 The Empathy Connector encapsulates the logic for communicating with external LLM APIs (EmpathyAI) to generate context-based hints. This module is exposed as a RESTful service and relies on a structured flow of request transformation, API communication, and response handling.
@@ -116,7 +54,7 @@ The Empathy Connector encapsulates the logic for communicating with external LLM
 *Models Supported*:
 - **EmpathyAI** (Qwen and Mistral)
 
-==== 5.3.2 Question Generator
+==== Question Generator
 
 image::05-Wikidata-Diagram.PNG["Level 2"]
 
@@ -166,7 +104,7 @@ Answer Subdocument:
 - **Birds**: Questions about bird species
 
 
-==== 5.3.3 User Management
+==== User Management
 
 image::05-User management.PNG["Level 2"]
 
@@ -191,7 +129,7 @@ Session:
 | `createdAt` | The timestamp indicating when the user account was created.
 |===
 
-==== 5.3.4 *Game Service*
+==== *Game Service*
 The game Service is in charge of saving the match historic.
 The exposed route is */addMatch*.
 
@@ -248,7 +186,7 @@ Answers:
 | `correct` | Boolean indicating if this is the correct answer.
 | `selected`| Boolean indicating if the user selected this answer.
 |===
-==== 5.3.5 Gateway
+==== Gateway
 
 **Gateway** serves as the *central entry point* for all client requests. Its main purpose is to *orchestrate communication* between different services, simplifying and unifying access to your backend system.
 

@@ -17,14 +17,14 @@ These initial decisions were made based on team expertise, project requirements,
 The following initial architectural decisions were made:
 
 * *Frontend:* React
-* *Backend:* JavaScript with Node.js  (see <<ADR-003>>)
+* *Backend:* JavaScript with Node.js and Express (see <<ADR-003>>)
 * *Database:* MongoDB (see <<ADR-002>>)
 * *Deployment:* Docker
 
 ==== Reasoning
 
 * *React* provides a robust, component-based framework ideal for building dynamic and scalable user interfaces.
-* *JavaScript/Node.js* ensures full-stack JavaScript development, simplifying the technology stack and improving development efficiency.
+* *JavaScript/Node.js and Express* ensures full-stack JavaScript development, simplifying the technology stack and improving development efficiency.
 * *Docker* offers containerization, enabling consistent deployment across different environments and simplifying the CI/CD process.
 
 ==== Consequences
@@ -253,7 +253,7 @@ However, this approach caused severe performance issues, resulting in noticeable
 
 ==== Decision
 
-To improve performance, the application now pre-generates and stores a set of questions in the database at the start of each game.
+To improve performance, the application now pre-generates and stores a set of questions in the database and cache at the start of each game.
 These stored questions are then served to the user dynamically throughout the match, minimizing latency.
 
 ==== Reasoning
@@ -452,30 +452,26 @@ The team chose Artillery as the primary load testing tool.
 
 Open-source and designed for modern web applications.
 
-Supports scripting complex user flows (e.g., login → actions → logout).
+Lightweight and easy to use compared to other options.
 
-Integrates well with CI/CD pipelines.
-
-Provides detailed reports (latency, RPS, error rates) and supports exporting metrics to Prometheus/Grafana.
-
-Lightweight compared to alternatives like JMeter.
-
-==== Alternatives Considered
+==== Alternatives considered
 
 *JMeter*
-** Pros:
-*** Mature tool with GUI for test design.
-*** Extensive protocol support (HTTP, WebSockets, etc.).
-** Cons:
-*** Steeper learning curve.
-*** Resource-heavy for large-scale tests.
 
-*Locust*
 ** Pros:
-*** Python-based, easy to extend.
-*** Distributed testing support.
+  *** Mature tool with GUI for test design.
+  *** Extensive protocol support (HTTP, WebSockets, etc.).
 ** Cons:
-*** Requires more setup for advanced scenarios.
+  *** Steeper learning curve.
+  *** Resource-heavy for large-scale tests.
+
+*Gatling*
+
+** Pros:
+  *** Allows for easy scripting using Scala and provides an expressive DSL.
+  *** Good integration with CI/CD systems.
+** Cons:
+  *** More complex setup and configuration compared to Artillery.
 
 ==== Consequences
 
