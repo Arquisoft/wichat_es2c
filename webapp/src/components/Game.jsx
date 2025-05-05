@@ -43,6 +43,7 @@ function Game() {
     const timerComponent = useRef(null); // Referencia al componente del temporizador
     const [gameQuestions, setGameQuestions] = useState([]);
     const [score,setScore] = useState(0);
+    const isCooldown = useRef(false);
 
     useEffect(() => {
         if (showDifficultyModal) {
@@ -131,7 +132,10 @@ function Game() {
     };
 
     const handleButtonClick = async (index, category) => {
+        if (isCooldown.current) return;
         if (!questionData) return;
+
+        isCooldown.current = true;
 
         //Limpio el chatbot
         clearChat();
@@ -163,6 +167,9 @@ function Game() {
             const bonusTime = difficulty === 1 ? 8 : 12;
             timerComponent.current.restTime(bonusTime);
         }
+        setTimeout(() => {
+            isCooldown.current = false; // Liberar cooldown después de 300ms
+        }, 300);
 
         await fetchNewQuestion(category);
         setButtonsActive(true);
@@ -474,7 +481,7 @@ function Game() {
                                             : styles.buttonInactive // Estilo para respuesta incorrecta
 
                                     }`}
-                                    onPress={() => handleButtonClick(index, selectedCategory)}
+                                    onMouseDown={() => handleButtonClick(index, selectedCategory)}
                                 >
                                     {option}
                                 </AwesomeButton>

@@ -30,6 +30,8 @@
     --button-danger-color-active: #af2929;
     --button-danger-border: none;
 
+    transition: background-color 0.5s ease, color 0.5s ease;
+
     width: 100%;
     height: 100%;
     display: flex;
