@@ -1,25 +1,30 @@
 .boxContainer {
   width: 100%;
   display: flex;
+  max-width: 600px;
   flex-direction: column;
   align-items: center; /**/
   justify-content: center; /**/
   text-align: center; /**/
   padding: 2rem;
-  background-color: #C4DBF6;
+  background-color: #0056b3;
   border-radius: 10px;
   box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.4); /* Sombra en todos los lados */
 
-  margin-top: 2rem;
+  margin-top: 12rem;
 }
 
-.logoAplicacion{
-  /*height: 60px;*/
+.logoAplicacion {
   height: 80px;
   margin-bottom: 0.35rem;
   cursor: pointer;
+  transition: transform 0.3s ease-in-out, filter 0.9s ease-in-out;
 }
 
+.logoAplicacion:hover {
+  filter: drop-shadow(0px 0px 10px #00eaff);
+  transform: scale(1.05);
+}
 .logoAplicacionHome{
   /*height: 60px;*/
   height: 80px;
@@ -27,7 +32,7 @@
 }
 
 .mainContent{
-  background-color: #ebedf0;
+  background-color: white;
   padding: 2rem;
   border-radius: 5px;
 }
@@ -39,3 +44,4 @@
   margin-top: 1.25rem;
   margin-bottom: 0.5rem;
 }
+

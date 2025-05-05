@@ -1,4 +1,5 @@
 const { MongoMemoryServer } = require('mongodb-memory-server');
+const puppeteer = require('puppeteer');
 
 let mongoserver;
 let userservice;
@@ -8,6 +9,18 @@ let gatewayservice;
 let game;
 let wikidata;
 let api;
+
+global.puppeteerConfig = {
+    launch: {
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu'
+        ],
+        headless: "new"
+    }
+};
 
 async function startServer() {
     console.log('Starting MongoDB memory server...');

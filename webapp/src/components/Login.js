@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Typography, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
 import "./LoginRegister.css";
+import ParticlesBackground from './ParticlesBackground'; // ✅ Importa el nuevo componente
 
 function Login() {
-
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -48,9 +48,9 @@ function Login() {
 
     return (
         <>
+            <ParticlesBackground />
 
-            <Box className="boxContainer" sx={{maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1}}>
-
+            <Box className="boxContainer" sx={{ maxWidth: 400, mx: 'auto', p: 2, position: 'relative', zIndex: 1 }}>
                 <img
                     src="/wiChatLogos/LogoWichat2_512.png"
                     alt="Logo"
@@ -65,7 +65,17 @@ function Login() {
                 />
 
                 <div className="mainContent">
-                    <Typography variant="h5" component="h1" gutterBottom>
+                    <Typography
+                        variant="h5"
+                        component="h1"
+                        gutterBottom
+                        sx={{
+                            fontFamily: '"Orbitron", sans-serif',
+                            letterSpacing: '1.5px',
+                            fontWeight: 500,
+                            color: '#00bcd4'
+                        }}
+                    >
                         Login
                     </Typography>
 
@@ -94,7 +104,7 @@ function Login() {
                         />
 
                         {error && (
-                            <Typography color="error" sx={{mt: 2}}>
+                            <Typography color="error" sx={{ mt: 2 }}>
                                 {error}
                             </Typography>
                         )}
@@ -103,16 +113,23 @@ function Login() {
                             type="submit"
                             variant="contained"
                             fullWidth
-                            sx={{mt: 3}}
+                            sx={{
+                                mt: 3,
+                                backgroundColor: '#00bcd4',
+                                color: 'white',
+                                '&:hover': {
+                                    backgroundColor: '#0056b3',
+                                },
+                            }}
                             disabled={loading}
                         >
-                            {loading ? <CircularProgress size={24}/> : 'Login'}
+                            {loading ? <CircularProgress size={24} /> : 'Login'}
                         </Button>
 
-                        <Box sx={{mt: 2, textAlign: 'center'}}>
+                        <Box sx={{ mt: 2, textAlign: 'center' }}>
                             <Typography variant="body2">
                                 Don't have an account?{' '}
-                                <a href="/signup" style={{textDecoration: 'none'}}>
+                                <a href="/signup" style={{ textDecoration: 'none' }}>
                                     Register here
                                 </a>
                             </Typography>

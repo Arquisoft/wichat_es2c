@@ -1,70 +1,199 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
-[[section-building-block-view]]
-
-
 == Building Block View
-
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Content
-The building block view shows the static decomposition of the system into building blocks (modules, components, subsystems, classes, interfaces, packages, libraries, frameworks, layers, partitions, tiers, functions, macros, operations, data structures, ...) as well as their dependencies (relationships, associations, ...)
-
-This view is mandatory for every architecture documentation.
-In analogy to a house this is the _floor plan_.
-
-.Motivation
-Maintain an overview of your source code by making its structure understandable through
-abstraction.
-
-This allows you to communicate with your stakeholder on an abstract level without disclosing implementation details.
-
-.Form
-The building block view is a hierarchical collection of black boxes and white boxes
-(see figure below) and their descriptions.
-
-image::05_building_blocks-EN.png["Hierarchy of building blocks"]
-
-*Level 1* is the white box description of the overall system together with black
-box descriptions of all contained building blocks.
-
-*Level 2* zooms into some building blocks of level 1.
-Thus it contains the white box description of selected building blocks of level 1, together with black box descriptions of their internal building blocks.
-
-*Level 3* zooms into selected building blocks of level 2, and so on.
-
-
-.Further Information
-
-See https://docs.arc42.org/section-5/[Building Block View] in the arc42 documentation.
-
-****
-endif::arc42help[]
 
 === Whitebox Overall System
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-Here you describe the decomposition of the overall system using the following white box template. It contains
+image::05-Level1.PNG["Level 1"]
 
- * an overview diagram
- * a motivation for the decomposition
- * black box descriptions of the contained building blocks. For these we offer you alternatives:
+At this level, Wichat is presented as a single building block (whitebox)
+that interacts with external actors and systems.
+It serves as the central unit responsible for generating trivia questions,
+managing gameplay, and assisting users with the help of an AI chatbot.
 
-   ** use _one_ table for a short and pragmatic overview of all contained building blocks and their interfaces
-   ** use a list of black box descriptions of the building blocks according to the black box template (see below).
-   Depending on your choice of tool this list could be sub-chapters (in text files), sub-pages (in a Wiki) or nested elements (in a modeling tool).
+Wichat communicates with the following external entities:
+
+- *User*: The player interacts with the application via a browser interface. Users receive questions, provide answers, and can request hints through the UI.
+- *Wikidata API*: Wichat sends SPARQL queries to Wikidata to get structured data used for generating trivia questions.
+- *Empathy AI Bot*: An external AI service that receives user queries (e.g., help or hints) and returns context-aware suggestions to support the player during the game.
+
+This level provides a high-level understanding of Wichat’s role in the system landscape and lays the foundation for further decomposition in Level 2, where internal components and logic are revealed.
+
+=== Internal funcionality
+
+image::05-Level2.PNG["Level 2"]
+
+The system consists of the following top-level components:
+
+- *User Interface (UI)*: Developed in React, it handles all user interactions and displays the game content.
+- *Game Service*: Manages the game data in database.
+- *Question Generator*: Gets data from Wikidata and formats it into quiz questions.
+- *Llm Service*: Interfaces with an AI-based hint bot to provide context assistance.
+- *User Management*: It is responsible for user registration, users sessions and information about user historical.
+
+==== Empathy Connector (LLM Service)
+image::05-Llmservice.PNG["Level 2"]
+
+The Empathy Connector encapsulates the logic for communicating with external LLM APIs (EmpathyAI) to generate context-based hints. This module is exposed as a RESTful service and relies on a structured flow of request transformation, API communication, and response handling.
 
 
- * (optional:) important interfaces, that are not explained in the black box templates of a building block, but are very important for understanding the white box.
-Since there are so many ways to specify interfaces why do not provide a specific template for them.
- In the worst case you have to specify and describe syntax, semantics, protocols, error handling,
- restrictions, versions, qualities, necessary compatibilities and many things more.
-In the best case you will get away with examples or simple signatures.
 
-****
-endif::arc42help[]
+===== Components:
 
-Once we have made progress in the development of the application, the following diagrams should be created according to the chosen implementation
+- *ContextBuilder*: Constructs the full context prompt with game question and answers, including rules and examples.
+- *LLMRouter*: Core orchestrator that handles selection of the appropriate LLM (Empathy), builds the request, and sends it to the external API.
+- *LLMAPI*:  external API that handles the raw response.
+
+===== Flow:
+
+1. *ContextBuilder* injects the question/answers into a prompt with behavioral rules.
+2. *LLMRouter* chooses the configured model and prepares the API request.
+3. There is a request to the external API and receives a response.
+4. The response is parsed and returned to the client as a concise hint.
+
+*Models Supported*:
+- **EmpathyAI** (Qwen and Mistral)
+
+==== Question Generator
+
+image::05-Wikidata-Diagram.PNG["Level 2"]
+
+The Wikidata Question Service encapsulates the logic for generating trivia questions in various categories (capitals, sports, cartoons, and birds) using data obtained from Wikidata. This service is exposed as a RESTful API, and its workflow involves making SPARQL queries to Wikidata, processing the data, and returning dynamic questions.
+
+===== Components:
+
+- **Data Model (Mongoose)**: Uses MongoDB to store the generated questions. The Question model manages the questions and answers for each category.
+- **Question Cache**: Maintains an in-memory cache for the questions by category, updating them every hour if necessary.
+- **SPARQL Queries (Axios)**: SPARQL requests are made to Wikidata to fetch the necessary data for generating questions and answers.
+- **Recently Used Questions**: Tracks questions that have been shown to the user, preventing repetition in a short time frame.
+
+===== Flow:
+
+1. If questions for the requested category are available in the database, one is randomly selected. If not, new questions are generated by querying Wikidata.
+2. The generated questions are stored in the database and the category's cache.
+3. The system ensures that questions are not repeated by tracking which questions have been used recently.
+4. A random question is selected and returned to the client, along with multiple-choice answers and an optional image.
+
+
+===== MongoDB schema:
+Question:
+[cols="1,2", options="header"]
+|===
+| Field         | Description
+
+| `text`        | The question text shown to the user.
+| `answers`     | An array of possible answers. Each answer is an object described below.
+| `image`       | (Optional) URL to an image related to the question.
+| `category`    | A label indicating the thematic category of the question.
+|===
+
+Answer Subdocument:
+
+[cols="1,2", options="header"]
+|===
+| Field      | Description
+
+| `correct`  | Boolean value indicating whether the answer is correct.
+| `text`     | The content of the answer.
+| `selected` | Boolean flag to track whether the user selected this answer (used at runtime).
+|===
+===== Supported Categories:
+- **Capitals**: Questions about the capitals of countries.
+- **Sports**: Questions about sports teams, specifically football.
+- **Cartoons**: Questions about cartoon characters.
+- **Birds**: Questions about bird species
+
+
+==== User Management
+
+image::05-User management.PNG["Level 2"]
+
+In the user management we do everything about users data and sessions.
+
+===== Components:
+
+- **Auth Service**: It's used to manage the user's session in /login
+- **User info Api**: It takes the users data from game in database
+- **Users service**: It manages the new users
+
+===== MongoDB schema:
+
+Session:
+
+[cols="1,2", options="header"]
+|===
+| Field       | Description
+
+| `username`  | The user's unique identifier or name (stored as a string).
+| `password`  | The user's hashed password (stored as a string).
+| `createdAt` | The timestamp indicating when the user account was created.
+|===
+
+==== *Game Service*
+The game Service is in charge of saving the match historic.
+The exposed route is */addMatch*.
+
+===== Flow
+
+1. **Store Question and Answer**:
+- The question and selected answers are stored in the database.
+
+
+2. **Update User Statistics**:
+- User statistics are calculated based on the correct and incorrect answers and the time spent on the match.
+- The final score is calculated using the match's difficulty, correct and incorrect answers, and saved in the **Match** model.
+
+3. **Retrieve User Statistics and Matches**:
+- The client can make GET requests to /userStatistics and /userMatches to get the user's statistics and matches, respectively.
+
+
+
+===== MongoDB schema:
+
+Matches:
+
+[cols="1,2", options="header"]
+|===
+| Field        | Description
+
+| `username`   | Name of the user who played the match.
+| `date`       | Date and time the match was played.
+| `difficulty` | Game difficulty level: `1` for normal, `2` for hard.
+| `score`      | Final score obtained in the match.
+| `time`       | Total time (in seconds) taken to complete the match.
+| `questions`  | Array of question objects used in the match (described below).
+|===
+
+Questions:
+
+Each question includes text and a list of possible answers.
+
+[cols="1,2", options="header"]
+|===
+| Field   | Description
+
+| `text`  | Question prompt shown to the user.
+| `answers` | List of answer options (see next table).
+|===
+
+Answers:
+
+[cols="1,2", options="header"]
+|===
+| Field     | Description
+
+| `text`    | Text content of the answer option.
+| `correct` | Boolean indicating if this is the correct answer.
+| `selected`| Boolean indicating if the user selected this answer.
+|===
+==== Gateway
+
+**Gateway** serves as the *central entry point* for all client requests. Its main purpose is to *orchestrate communication* between different services, simplifying and unifying access to your backend system.
+
+- *API Aggregation*: Combines multiple services (authentication, game logic, user management, LLM, Wikidata) under a single API, so clients don't need to call each one individually.
+- *Routing*: Forwards incoming HTTP requests to the appropriate internal service (e.g., /login goes to Auth Service, /addMatch goes to Game Service).
+- *Simplifies Client Logic*: The frontend only communicates with one service (the Gateway), instead of interacting with each backend service separately.
+- *Monitoring*: Integrates Prometheus metrics to monitor endpoint usage and performance.
+- *Error Handling*: Standardizes error responses from all internal services before returning them to the client.
+
+

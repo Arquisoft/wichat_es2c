@@ -143,7 +143,7 @@ async function addQuestionsSports() {
 
                 // Crear la pregunta sobre el equipo de fútbol
                 return new Question({
-                    text: `¿A qué equipo pertenece esta bandera?`,
+                    text: `¿Which team does this flag own to?`,
                     answers: shuffledAnswers,
                     image: crestUrl,
                     category: 'sports',
@@ -231,7 +231,7 @@ async function addQuestionsCartoons() {
 
                 // Crear la pregunta sobre el personaje animado
                 return new Question({
-                    text: `¿Cómo se llama este personaje de dibujos animados?`,
+                    text: `¿Which cartoon is this?`,
                     answers: shuffledAnswers,
                     image: imageUrl,  // Imagen del personaje
                     category: 'cartoons',
@@ -319,7 +319,7 @@ async function addQuestionsBirds() {
 
                 // Crear la pregunta sobre el ave
                 return new Question({
-                    text: `¿Qué especie de ave es esta?`,
+                    text: `¿Which type of bird is this?`,
                     answers: shuffledAnswers,
                     image: imageUrl,  // Imagen del ave
                     category: 'birds',

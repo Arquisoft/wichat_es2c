@@ -89,7 +89,6 @@ function Game() {
             }
 
             const response = await axios.post(`${apiEndpoint}/askllm`, {
-                model: 'empathy',
                 userQuestion: userMsg,
                 gameQuestion: questionData.question,
                 answers: questionData.choices,
@@ -99,7 +98,7 @@ function Game() {
             return response.data.answer;
         } catch (error) {
             console.error("Error al obtener respuesta del LLM:", error);
-            return "Lo siento, no puedo proporcionarte una pista en este momento.";
+            return "Sorry, I can't give you a hint right now.";
         }
     };
 
@@ -432,8 +431,7 @@ function Game() {
                             {questionData.choices.map((option, index) => (
                                 <AwesomeButton
                                     key={index}
-                                    type="secondary"
-                                    active={buttonsActive && !timeOut}
+                                    type="secondary" // Desactivar botones si el tiempo se acaba o están deshabilitados
                                     className={`${styles.awsBtn} ${
                                         option === questionData.correctAnswer
                                             ? styles.buttonActive

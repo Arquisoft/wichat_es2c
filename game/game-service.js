@@ -161,7 +161,7 @@ app.post('/addMatch', async (req, res) => {
         stats.averageScore = ((stats.averageScore * (stats.gamesPlayed - 1) + lastMatch.score) / stats.gamesPlayed).toFixed(2);
         stats.bestScore = Math.max(stats.bestScore, lastMatch.score).toFixed(2);
         stats.averageTime = ((stats.averageTime * (stats.gamesPlayed - 1) + lastMatch.time) / stats.gamesPlayed).toFixed(2);
-        stats.bestTime = Math.min(stats.bestTime || Infinity, lastMatch.time);
+        stats.bestTime = Math.max(stats.bestTime || Infinity, lastMatch.time);
         stats.rightAnswers += correctAnswers;
         stats.wrongAnswers += incorrectAnswers;
       }

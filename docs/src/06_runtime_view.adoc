@@ -1,5 +1,6 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
+== Runtime view
 
 === Registering an user
 

@@ -1,7 +1,5 @@
 ifndef::imagesdir[:imagesdir: ../images]
 
-[[section-design-decisions]]
-
 == Architecture Decisions
 
 [[ADR-001]]
@@ -19,14 +17,14 @@ These initial decisions were made based on team expertise, project requirements,
 The following initial architectural decisions were made:
 
 * *Frontend:* React
-* *Backend:* JavaScript with Node.js  (see <<ADR-003>>)
+* *Backend:* JavaScript with Node.js and Express (see <<ADR-003>>)
 * *Database:* MongoDB (see <<ADR-002>>)
 * *Deployment:* Docker
 
 ==== Reasoning
 
 * *React* provides a robust, component-based framework ideal for building dynamic and scalable user interfaces.
-* *JavaScript/Node.js* ensures full-stack JavaScript development, simplifying the technology stack and improving development efficiency.
+* *JavaScript/Node.js and Express* ensures full-stack JavaScript development, simplifying the technology stack and improving development efficiency.
 * *Docker* offers containerization, enabling consistent deployment across different environments and simplifying the CI/CD process.
 
 ==== Consequences
@@ -255,7 +253,7 @@ However, this approach caused severe performance issues, resulting in noticeable
 
 ==== Decision
 
-To improve performance, the application now pre-generates and stores a set of questions in the database at the start of each game.
+To improve performance, the application now pre-generates and stores a set of questions in the database and cache at the start of each game.
 These stored questions are then served to the user dynamically throughout the match, minimizing latency.
 
 ==== Reasoning
@@ -348,44 +346,52 @@ We implemented a dual-model system using both **Qwen2.5-Coder-7B-Instruct** and 
 
 
 
-=== ADR 010: Monitoring Strategy
-*Status: Accepted*
-*:date: 07/04/2025* 
 
-==== Context
+=== ADR 010: Monitoring Strategy  
+*Status: Accepted*  📅  
+*Date: 07/04/2025*  
 
-The application required a monitoring solution to track performance metrics, usage, and system health. Since the deployment is hosted on Oracle Cloud VM, Oracle Cloud Monitoring was initially considered as a natural choice due to existing familiarity and integration.
+=== Context
 
-However, Prometheus and Grafana were already configured in the environment, and their open-source flexibility and ecosystem made them a strong alternative.
+The application requires monitoring for:
 
-==== Decision
+* *Application metrics:* Performance (response times), errors, usage.
+* *Infrastructure metrics:* VM resources (CPU, RAM, disk) on Oracle Cloud.
 
-The team chose to implement application monitoring using Prometheus for data collection and Grafana for visualization.
+=== Decision
 
-==== Reasoning
+*Split monitoring approach*:
 
-* Prometheus and Grafana were already partially configured and tested.
-* Broad community support and extensive documentation.
-* Easier to integrate with a variety of services and custom metrics.
-* Enables flexible dashboards and alerting rules tailored to the application’s needs.
+* Application: Prometheus (data collection) + Grafana (visualization).
+* Infrastructure: Oracle Cloud Monitoring (pre-configured for VM).
 
-==== Alternatives considered
+==== Reasoning  
+* **Prometheus/Grafana for Application**:  
+** Already partially configured.  
+** Customizable for app metrics (e.g., endpoint latency).  
+** Open-source with integrations (e.g., Artillery).  
+* **Oracle Cloud Monitoring for Infrastructure**:  
+** Native to Oracle Cloud, minimal setup.  
+** Already monitors other VM services.  
+** Email alerts for thresholds (e.g., CPU > 90%).  
+** Avoids duplicating metrics in Grafana (reduces overhead).  
 
-*Oracle Cloud Monitoring*
+==== Alternatives Considered  
+* **Unified Monitoring in Grafana**:  
+** Pros: Single dashboard.  
+** Cons: Redundant with Oracle, increases VM load.  
+* **Oracle Cloud Monitoring for All**:  
+** Pros: Simplified vendor management.  
+** Cons: Limited app metric customization.  
 
-** Pros:
-  *** Native to Oracle Cloud VM.
-  *** Familiar interface for some team members.
-  *** Integrated with Oracle’s infrastructure metrics and logging.
-** Cons:
-  *** Less customizable for application-specific metrics.
-  *** More limited in community resources and ecosystem tools.
-  *** Requires additional setup to match the flexibility offered by Prometheus/Grafana.
-
-==== Consequences
-
-* Monitoring is decoupled from Oracle Cloud, making it more portable.
-* Dashboards and alerts can be easily customized and extended.
+==== Consequences  
+* **Pros**:  
+** App metrics are portable and tailored.  
+** Infra alerts reuse existing setup.  
+** Clear separation (app vs. infra).  
+* **Cons**:  
+** Context-switching between dashboards.  
+** Two toolchains to maintain.  
 
 
 === ADR 011: DNS and Reverse Proxy Setup
@@ -430,39 +436,51 @@ The team chose to use **DuckDNS** as a free DNS provider and **Nginx** as a reve
 * Future enhancements (e.g., HTTPS, load balancing) can be layered onto the Nginx configuration.
 * Reliance on DuckDNS introduces a small risk of service availability tied to a free third-party provider.
 
+=== ADR 012: Load Testing Tool Selection
+*Status: Accepted*
+*:date: 02/05/2025*
 
+==== Context
 
-[role="arc42help"]
+To ensure the application can handle expected traffic and identify performance bottlenecks, a load testing solution was needed. The tool should be flexible, scriptable, and provide clear metrics for analysis.
 
+==== Decision
 
-ifdef::arc42help[]
-[role="arc42help"]
-****
-.Contents
-Important, expensive, large scale or risky architecture decisions including rationales.
-With "decisions" we mean selecting one alternative based on given criteria.
+The team chose Artillery as the primary load testing tool.
 
-Please use your judgement to decide whether an architectural decision should be documented
-here in this central section or whether you better document it locally
-(e.g. within the white box template of one building block).
+==== Reasoning
 
-Avoid redundancy. 
-Refer to section 4, where you already captured the most important decisions of your architecture.
+Open-source and designed for modern web applications.
 
-.Motivation
-Stakeholders of your system should be able to comprehend and retrace your decisions.
+Supports scripting complex user flows (e.g., login → actions → logout).
 
-.Form
-Various options:
+Integrates well with CI/CD pipelines.
 
-* ADR (https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions[Documenting Architecture Decisions]) for every important decision
-* List or table, ordered by importance and consequences or:
-* more detailed in form of separate sections per decision
+Provides detailed reports (latency, RPS, error rates) and supports exporting metrics to Prometheus/Grafana.
 
-.Further Information
+Lightweight compared to alternatives like JMeter.
 
-See https://docs.arc42.org/section-9/[Architecture Decisions] in the arc42 documentation.
-There you will find links and examples about ADR.
+==== Alternatives Considered
 
-****
-endif::arc42help[]
+*JMeter*
+** Pros:
+*** Mature tool with GUI for test design.
+*** Extensive protocol support (HTTP, WebSockets, etc.).
+** Cons:
+*** Steeper learning curve.
+*** Resource-heavy for large-scale tests.
+
+*Locust*
+** Pros:
+*** Python-based, easy to extend.
+*** Distributed testing support.
+** Cons:
+*** Requires more setup for advanced scenarios.
+
+==== Consequences
+
+Load testing can be automated as part of the deployment pipeline.
+
+Performance baselines and regressions are tracked over time.
+
+Requires maintaining test scripts alongside application changes.

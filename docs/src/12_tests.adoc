@@ -1,0 +1,67 @@
+ifndef::imagesdir[:imagesdir: ../images]
+
+== Testing and Monitoring
+
+We implemented a comprehensive testing and monitoring strategy to ensure the stability and
+reliability of our project. A wide range of automated tests including unit,
+and end-to-end tests were developed to validate the
+functionality of each component and to detect potential issues early.
+These tests help safeguard the system against regressions when introducing
+new features or changes. Additionally, we established continuous
+monitoring processes to track system performance and availability in real time,
+allowing us to quickly identify and respond to any anomalies.
+This proactive approach ensures that our project remains robust, scalable,
+and consistently operational.
+
+=== Types of Tests Implemented
+
+To guarantee code quality and system reliability, we implemented several types of tests aimed at different layers of the application.
+Unit tests were developed using Jest, allowing us to validate individual components and functions in isolation.
+
+To sum up these tests:
+
+* Game tests: We send multiple requests to our /addMatch endpoint, using both valid and invalid data, and ensure that only valid entries are successfully added.
+* Gateway tests: These tests involve sending requests to all gateway endpoints, some with invalid data, and confirming we receive the correct responses or appropriate error messages.
+* LLM tests: We ask our chatbot questions related to a specific answer and make sure it doesn’t reveal the actual answer, while also checking for any unexpected errors.
+* Auth service tests: We verify that the login system works correctly for registered users.
+* User service tests: We add a valid user and ensure that all user restrictions (e.g., username availability, minimum character requirements) function as intended.
+* Add user tests: Similar to the previous tests but focused on the UI; we check form validations and redirection behavior.
+* Game tests (UI): We ensure that all categories and difficulty levels work as expected in the game interface, and that gameplay functions correctly.
+* Login tests: Similar to our auth service tests, but through the UI. We verify login functionality for registered users and ensure proper redirections.
+* Question tests: For parts of the application like match history and rankings where questions are displayed, we verify that the data is shown correctly.
+* Ranking entry tests: We confirm that the ranking system displays user information in the correct order.
+* Wikidata tests: We make sure that questions are properly fetched from Wikidata and stored in our database for faster access.
+
+These tests contribute significantly to our code coverage, which we continuously track using SonarQube to maintain high standards and detect untested or vulnerable areas.
+
+image:12_coverage.png["Coverage tests"]
+
+In addition to unit testing, we created end-to-end (E2E) tests to simulate
+real user interactions and verify that the application behaves correctly from the user’s perspective.
+These tests help ensure that critical user flows remain functional across updates.
+
+Their functionality consists of registering a new user, logging in as them, playing a game, asking the chatbot
+for hints, then, after the game is done, it checks the user's match history and makes sure the match has been added,
+after that it looks at the leaderboard, makes sure it's not empty, looks up its own username in it and makes sure the
+match also shows up there.
+
+To assess performance and scalability, we also conducted load testing,
+which allowed us to evaluate how the system handles high volumes of traffic and to identify potential bottlenecks under stress.
+
+Our load tests consist of adding 10 users per second for 60 seconds into then adding 8 matches per second for another 60 seconds.
+
+Finally, we used Grafana and Prometheus as monitoring tools to help us detect any outrages in real time.
+We use these to monitor default values such as number of requests per minute but also custom values such as matches per minute or sign-ups per minute.
+
+image:12_grafana.jpg["Grafana load tests"]
+
+Where we can see the average time to process a request for really high numbers of requests per minute.
+
+In addition, we also used oracle monitoring services inside our virtual machine for monitoring the virtual machine's resources. (Keep in mind Grafana uses UTC+2 as a timezone, while oracle uses UTC)
+
+image:12_oracle.jpg["Oracle load tests"]
+
+Which shows the use % of the different components of our server, such as its CPU and memory.
+
+
+By combining these different types of testing, we’ve built a strong quality assurance framework that minimizes risk and ensures long-term maintainability.

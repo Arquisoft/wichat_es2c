@@ -10,21 +10,30 @@ const port = 8003;
 // Middleware to parse JSON in request body
 app.use(express.json());
 
+
+const LLM_MODELS = {
+  PRIMARY: 'empathyMistral',
+  SECONDARY: 'empathyQwen',
+  ACTUAL: 'empathyMistral'
+};
+// Define el orden de los modelos para el failover
+const MODEL_FAILOVER_ORDER = [
+  LLM_MODELS.PRIMARY,
+  LLM_MODELS.SECONDARY
+];
+
 // Define configurations for different LLM APIs
 const llmConfigs = {
   gemini: {
     url: (apiKey) => `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
     
-    /*transformRequest: (question) => ({
-      contents: [{ parts: [{ text: question }] }]
-    }),*/  //Le paso tabien el contexto sobre el que tiene que trabajar la IA previamente a la propia pregunta del usuario (role system)
-    transformRequest: (contextPromt, question) => ({  //ESTE contextPromt LO ESTABLEZCO EN SU PROPIO METODO
+    transformRequest: (contextPromt, question) => ({ 
       contents: [{ parts: [{ text: contextPromt + "\n User question:" + question }] }]
     }),
 
     transformResponse: (response) => response.data.candidates[0]?.content?.parts[0]?.text
   },
-  empathy: {
+  empathyQwen: {
     //url: () => 'https://empathyai.staging.empathy.co/v1/chat/completions',
     url: () => 'https://empathyai.prod.empathy.co/v1/chat/completions',
     //transformRequest: (question) => ({
@@ -32,6 +41,21 @@ const llmConfigs = {
       model: "qwen/Qwen2.5-Coder-7B-Instruct",
       messages: [
         { role: "system", content: contextPromt }, //asi sabe como debe comportarse
+        { role: "user", content: question }
+      ]
+    }),
+    transformResponse: (response) => response.data.choices[0]?.message?.content,
+    headers: (apiKey) => ({
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    })
+  },
+  empathyMistral: {
+    url: () => 'https://empathyai.prod.empathy.co/v1/chat/completions',
+    transformRequest: (contextPromt, question) => ({
+      model: "mistralai/Mistral-7B-Instruct-v0.3",
+      messages: [
+        { role: "system", content: contextPromt },
         { role: "user", content: question }
       ]
     }),
@@ -145,7 +169,7 @@ function validateUserInput(req) {
 }
 
 // Generic function to send questions to LLM
-async function sendQuestionToLLM(contextPromt, question, apiKey, model = 'gemini') {
+async function sendQuestionToLLM(contextPromt, question, apiKey, model) {
   try {
     const config = llmConfigs[model];
     if (!config) {
@@ -182,6 +206,10 @@ async function sendQuestionToLLM(contextPromt, question, apiKey, model = 'gemini
       console.error(`Response data: ${JSON.stringify(error.response.data)}`);
       console.error(`Response status: ${error.response.status}`);
     }
+
+
+    //Cambio de modelo
+    LLM_MODELS.ACTUAL = MODEL_FAILOVER_ORDER.find(model => model !== LLM_MODELS.ACTUAL) || LLM_MODELS.PRIMARY;
 
     //return null;
     throw error; //para luego tratarlo mejor en el post ask
@@ -228,11 +256,9 @@ Thus, you must ensure that you give a hint following these rules:\
 
 app.post('/ask', async (req, res) => {
   try {
-    // Check if required fields are present in the request body
     validateRequiredFields(req);
 
-
-    // Validate user input
+    //Validate user input
     const validationResult = validateUserInput(req);
     if (!validationResult.isValid) {
       return res.status(200).json({ 
@@ -241,9 +267,11 @@ app.post('/ask', async (req, res) => {
       });
     }
 
+    const { userQuestion, gameQuestion, answers, correctAnswer } = req.body;
 
-    //const { question, model, apiKey } = req.body;
-    const { model = 'empathy', userQuestion, gameQuestion, answers, correctAnswer } = req.body;
+    //const model = 'empathyMistral';
+    const model = LLM_MODELS.ACTUAL;
+
 
     let apiKey = process.env.LLM_API_KEY;
     if (!apiKey) {
@@ -252,9 +280,6 @@ app.post('/ask', async (req, res) => {
 
     // Configura el contexto con toda la información disponible
     const contextPromt = configureContextPromt(gameQuestion, answers, correctAnswer);
-
-    //const answer = await sendQuestionToLLM(contextPromt, userQuestion, apiKey, model);
-    //res.json({ answer });
 
     try {
       const answer = await sendQuestionToLLM(contextPromt, userQuestion, apiKey, model);

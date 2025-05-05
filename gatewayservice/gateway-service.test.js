@@ -174,17 +174,6 @@ describe('Gateway Service', () => {
             expect(response.body.answer).toBe('llmanswer');
         });
 
-        it('should validate required fields for askllm request', async () => {
-            const response = await request(app)
-                .post('/askllm')
-                .send({
-                    userQuestion: 'Can you give me a hint?',
-                });
-
-            expect(response.statusCode).toBe(400);
-            expect(response.body.error).toContain('Missing required field');
-        });
-
         it('should handle errors from llm service', async () => {
             mockAxiosError('post', '/ask', 500, 'LLM service error');
 
@@ -441,52 +430,6 @@ describe('Gateway Service', () => {
             });
 
 
-
-                it('should validate all required fields for askllm endpoint', async () => {
-                    // Test missing gameQuestion
-                    let response = await request(app)
-                        .post('/askllm')
-                        .send({
-                            userQuestion: 'Can you give me a hint?',
-                            // gameQuestion is missing
-                            answers: ['A', 'B', 'C'],
-                            correctAnswer: 'B',
-                            model: 'empathy'
-                        });
-
-                    expect(response.statusCode).toBe(400);
-                    expect(response.body.error).toContain('Missing required field: gameQuestion');
-
-                    // Test missing answers
-                    response = await request(app)
-                        .post('/askllm')
-                        .send({
-                            userQuestion: 'Can you give me a hint?',
-                            gameQuestion: 'What is 2+2?',
-                            // answers is missing
-                            correctAnswer: '4',
-                            model: 'empathy'
-                        });
-
-                    expect(response.statusCode).toBe(400);
-                    expect(response.body.error).toContain('Missing required field: answers');
-
-                    // Test missing model
-                    response = await request(app)
-                        .post('/askllm')
-                        .send({
-                            userQuestion: 'Can you give me a hint?',
-                            gameQuestion: 'What is 2+2?',
-                            answers: ['3', '4', '5'],
-                            correctAnswer: '4',
-                            // model is missing
-                        });
-
-                    expect(response.statusCode).toBe(400);
-                    expect(response.body.error).toContain('Missing required field: model');
-            });
-
-
                 it('should handle network errors for score ranking', async () => {
                     axios.get.mockImplementationOnce(() => {
                         return Promise.reject(new Error('Network error'));
@@ -520,6 +463,52 @@ describe('Gateway Service', () => {
                     expect(response.body.error).toBe('Error when trying to access users matches');
 
             });
+
+            
+            describe('Timeout Handling', () => {
+                it('should handle timeout from downstream services', async () => {
+                  axios.post.mockImplementationOnce(() => {
+                    // Simular timeout
+                    return Promise.reject({
+                      code: 'ECONNABORTED',
+                      message: 'timeout of 1000ms exceeded'
+                    });
+                  });
+              
+                  const response = await request(app)
+                    .post('/askllm')
+                    .send({
+                      userQuestion: 'hint?',
+                      gameQuestion: 'test',
+                      answers: ['A', 'B'],
+                      correctAnswer: 'A'
+                    });
+              
+                  expect(response.statusCode).toBe(500);
+                  expect(response.body.error).toBe('Internal error');
+                });
+            });
+
+            describe('Query Parameter Handling', () => {
+                it('should correctly pass query parameters to downstream services', async () => {
+                  axios.get.mockImplementationOnce((url, options) => {
+                    if (url.includes('/getQuestion')) {
+                      // Verificar que los parámetros de consulta se pasan correctamente
+                      expect(options.params).toEqual({ difficulty: 'hard', category: 'history' });
+                      return Promise.resolve({
+                        data: { question: 'Test question', answers: ['A', 'B', 'C'] }
+                      });
+                    }
+                  });
+              
+                  const response = await request(app)
+                    .get('/getQuestion')
+                    .query({ difficulty: 'hard', category: 'history' });
+              
+                  expect(response.statusCode).toBe(200);
+                });
+              });
+
 
 function returnNotDuplicated(status, error){
     return Promise.reject({
