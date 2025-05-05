@@ -4,7 +4,7 @@ ifndef::imagesdir[:imagesdir: ../images]
 
 === Infrastructure Level 1
 
-image::03-context-diagram.PNG[Deployment View]
+image::07-Diagram.PNG[Deployment View]
 
 ==== Motivation
 
