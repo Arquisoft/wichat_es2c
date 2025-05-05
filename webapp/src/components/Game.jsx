@@ -481,6 +481,7 @@ function Game() {
                                             : styles.buttonInactive // Estilo para respuesta incorrecta
 
                                     }`}
+                                    onPress={() => handleButtonClick(index, selectedCategory)}
                                     onMouseDown={() => handleButtonClick(index, selectedCategory)}
                                 >
                                     {option}
