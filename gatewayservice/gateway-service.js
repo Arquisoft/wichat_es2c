@@ -61,39 +61,10 @@ app.post('/adduser', async (req, res) => {
   }
 });
 
-app.post('/addQuestion', async (req, res) => {
-  try {
-    const userResponse = await axios.post(gameServiceUrl+'/addQuestion', req.body);
-    res.json(userResponse.data);
-  } catch (error) {
-    res.status(error.response.status).json({ error: error.response.data.error });
-  }
-});
-
-
 app.post('/addMatch', async (req, res) => {
   try {
     addMatchCounter.inc();
     const userResponse = await axios.post(gameServiceUrl+'/addMatch', req.body);
-    res.json(userResponse.data);
-  } catch (error) {
-    res.status(error.response.status).json({ error: error.response.data.error });
-  }
-});
-
-app.post('/endMatch', async (req, res) => {
-  try {
-    const userResponse = await axios.post(gameServiceUrl+'/endMatch', req.body);
-    res.json(userResponse.data);
-  } catch (error) {
-    res.status(error.response.status).json({ error: error.response.data.error });
-  }
-});
-
-
-app.post('/addQuestions', async (req, res) => {
-  try {
-    const userResponse = await axios.post(wikidataServiceUrl+'/addQuestions', req.body);
     res.json(userResponse.data);
   } catch (error) {
     res.status(error.response.status).json({ error: error.response.data.error });
@@ -110,7 +81,6 @@ app.get('/getQuestion', async (req, res) => {
     res.status(error.response.status).json({ error: error.response.data.error });
   }
 });
-
 
 app.post('/askllm', async (req, res) => {
   try {
@@ -160,7 +130,6 @@ app.get('/userStatistics', async (req, res) => {
   }
 });
 
-
 //Obtiene los usuarios de la API de usuarios (userinfo-service)
 app.get('/users', async (req, res) => {
   try {
@@ -183,6 +152,7 @@ app.get('/users', async (req, res) => {
     }
   }
 });
+
 // get los matches de un usuario específico desde userinfo-service
 app.get('/userinfo/matches/:username', async (req, res) => {
   try {

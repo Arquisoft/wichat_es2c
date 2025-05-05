@@ -16,18 +16,13 @@ function Game() {
 
     const [difficulty, setDifficulty] = useState(1);
     const [showDifficultyModal, setShowDifficultyModal] = useState(true);
-    const [difficultyModalFadeIn, setDifficultyModalFadeIn] = useState(true);
-    const [questionData, setQuestionData] = useState(null); // Estado para la pregunta actual
-    const [selectedAnswer, setSelectedAnswer] = useState(null); // Estado para la respuesta seleccionada
-    const [isCorrect, setIsCorrect] = useState(false); // Estado para saber si la respuesta es correcta
-    const [msgs, setMsgs] = useState(["Ask me anything"]); // Mensajes del chatbot
-    const [open, setOpen] = useState(false);
+    const [difficultyModalFadeIn, setDifficultyModalFadeIn] = useState(false);
+    const [questionData, setQuestionData] = useState(null);
+    const [msgs, setMsgs] = useState(["Ask me anything"]);
     const [buttonsActive, setButtonsActive] = useState(true);
-    const [timeOut, setTimeOut] = useState(false); // Estado para controlar el tiempo
-    const [showTimeOutModal, setShowTimeOutModal] = useState(false); // Modal para el tiempo agotado
-    const [fadeIn, setFadeIn] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(60); // Tiempo inicial
-    const [gameStartTime, setGameStartTime] = useState(null); // Nuevo estado para registrar cuando inicia la partida
+    const [timeOut, setTimeOut] = useState(false);
+    const [showTimeOutModal, setShowTimeOutModal] = useState(false);
+    const [gameStartTime, setGameStartTime] = useState(null);
     const [finished, setFinished] = useState(false);
     const [questionQueue, setQuestionQueue] = useState([]);
     const [selectedDifficulty, setSelectedDifficulty] = useState(null);
@@ -40,9 +35,9 @@ function Game() {
     ];
     const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
     const [initialLoad, setInitialLoad] = useState(true);
-    const timerComponent = useRef(null); // Referencia al componente del temporizador
+    const timerComponent = useRef(null);
     const [gameQuestions, setGameQuestions] = useState([]);
-    const [score,setScore] = useState(0);
+    const [score, setScore] = useState(0);
 
     useEffect(() => {
         if (showDifficultyModal) {
@@ -72,18 +67,9 @@ function Game() {
         } catch (error) {
             console.error("Error preloading questions:", error);
         } finally {
-            setIsLoadingQuestions(false); // Desactivar loading
+            setIsLoadingQuestions(false);
         }
     };
-
-    useEffect(() => {
-        if (questionData && questionData.image) {
-            const img = new Image();
-            img.src = questionData.image;
-            img.onload = () => {
-            };
-        }
-    }, [questionData?.image]);
 
     const handleDifficultySelect = (level, category) => {
         setDifficulty(level);
@@ -98,7 +84,6 @@ function Game() {
 
     const getMessage = async (userMsg) => {
         try {
-            // Verificar que tenemos datos de la pregunta actual
             if (!questionData) {
                 return "No hay una pregunta activa en este momento.";
             }
@@ -125,7 +110,6 @@ function Game() {
         setMsgs(prevMsgs => [...prevMsgs, response]);
     };
 
-    //Al responder pregunta o acabarse el juego, se limpia el chat para que no se acumule info entre preguntas diferentes
     const clearChat = () => {
         setMsgs(["Ask me anything"]);
     };
@@ -133,16 +117,12 @@ function Game() {
     const handleButtonClick = async (index, category) => {
         if (!questionData) return;
 
-        //Limpio el chatbot
         clearChat();
-
         setButtonsActive(false);
 
         const selectedOption = questionData.choices[index];
-        setSelectedAnswer(selectedOption);
         const isAnswerCorrect = selectedOption === questionData.correctAnswer;
 
-        // Store question data locally instead of sending to API immediately
         const newQuestion = {
             text: questionData.question,
             answers: questionData.choices.map((option, i) => ({
@@ -155,11 +135,9 @@ function Game() {
         setGameQuestions(prevQuestions => [...prevQuestions, newQuestion]);
 
         if (isAnswerCorrect) {
-            setIsCorrect(true);
             const bonusTime = difficulty === 1 ? 6 : 3;
             timerComponent.current.addTime(bonusTime);
         } else {
-            setIsCorrect(false);
             const bonusTime = difficulty === 1 ? 8 : 12;
             timerComponent.current.restTime(bonusTime);
         }
@@ -183,7 +161,7 @@ function Game() {
 
     const fetchNewQuestionOG = async (category) => {
         if (initialLoad) {
-            setIsLoadingQuestions(true); // Solo mostrar loading en carga inicial
+            setIsLoadingQuestions(true);
         }
 
         try {
@@ -206,14 +184,6 @@ function Game() {
         }
     };
 
-    useEffect(() => {
-        if (open) {
-            setTimeout(() => setFadeIn(true), 250);
-        } else {
-            setFadeIn(false);
-        }
-    }, [open]);
-
     const handleHomeClick = () => {
         window.location.href = '/home';
     };
@@ -233,7 +203,7 @@ function Game() {
         timerComponent.current.reset();
     };
 
-    const saveGame = async (gameTime,gameEndTime) => {
+    const saveGame = async (gameTime, gameEndTime) => {
         try {
             const totalQuestions = gameQuestions.length;
             const correctAnswers = gameQuestions.filter(q =>
@@ -242,9 +212,10 @@ function Game() {
             const incorrectAnswers = gameQuestions.filter(q =>
                 q.answers.find(a => !a.correct && a.selected)
             ).length;
-            let finalScore = (difficulty * (correctAnswers * 25)) - (incorrectAnswers * 5); //calculated in the database again to make sure users cant edit it
-            if(finalScore < 0) finalScore = 0;
+            let finalScore = (difficulty * (correctAnswers * 25)) - (incorrectAnswers * 5);
+            if (finalScore < 0) finalScore = 0;
             setScore(finalScore);
+            
             for (let i = 0; i < totalQuestions; i++) {
                 const question = gameQuestions[i];
                 await axios.post(`${apiEndpoint}/addMatch`, {
@@ -274,7 +245,7 @@ function Game() {
                 gameTime = Math.floor((gameEndTime - gameStartTime) / 1000);
             }
             if (gameQuestions.length > 0) {
-                saveGame(gameTime,gameEndTime);
+                saveGame(gameTime, gameEndTime);
             }
             setTimeOut(true);
             setShowTimeOutModal(true);
@@ -285,7 +256,6 @@ function Game() {
         <>
             <Nav />
             <div className={styles.containerLayout}>
-
                 {isLoadingQuestions && (
                     <div className={styles.loadingOverlay}>
                         <div className={styles.loadingContent}>
@@ -299,8 +269,6 @@ function Game() {
                     open={showDifficultyModal}
                     onClose={null}
                     disableEscapeKeyDown
-                    aria-labelledby="difficulty-modal-title"
-                    aria-describedby="difficulty-modal-description"
                 >
                     <Box
                         className={difficultyModalFadeIn ? styles.fadeIn : styles.fadeOut}
@@ -418,7 +386,6 @@ function Game() {
                             ))}
                         </div>
 
-                        {/* Botón aceptar */}
                         <AwesomeButton
                             type="primary"
                             size="medium"
@@ -434,14 +401,14 @@ function Game() {
                         </AwesomeButton>
                     </Box>
                 </Modal>
-                {/* Sección de la imagen */}
+                
                 {questionData && questionData.image && (
                     <div className={styles.imageContainer}>
                         <img
-                            src={questionData.image} // Usa la URL de la imagen desde la API
+                            src={questionData.image}
                             alt="Game"
                             onError={(e) => {
-                                e.target.src = `${process.env.PUBLIC_URL}/imagen_por_defecto.jpg`; // Imagen por defecto si falla
+                                e.target.src = `${process.env.PUBLIC_URL}/imagen_por_defecto.jpg`;
                             }}
                         />
                     </div>
@@ -455,24 +422,20 @@ function Game() {
                                 ref={timerComponent}
                                 maxTime={difficulty === 1 ? 60 : 45}
                                 onTimeOut={handleTimeOut}
-                            ></CountdownTimer>
+                            />
                         </div>
                     )}
 
-
-                    {/* Opciones en Grid */}
                     {questionData && (
                         <div className={styles.optionsGrid}>
                             {questionData.choices.map((option, index) => (
                                 <AwesomeButton
                                     key={index}
-                                    type="secondary"
-                                    //active={buttonsActive && !timeOut} // Desactivar botones si el tiempo se acaba o están deshabilitados
+                                    type="secondary" // Desactivar botones si el tiempo se acaba o están deshabilitados
                                     className={`${styles.awsBtn} ${
                                         option === questionData.correctAnswer
-                                            ? styles.buttonActive// Estilo para respuesta correcta
-                                            : styles.buttonInactive // Estilo para respuesta incorrecta
-
+                                            ? styles.buttonActive
+                                            : styles.buttonInactive
                                     }`}
                                     onPress={() => handleButtonClick(index, selectedCategory)}
                                 >
@@ -482,7 +445,6 @@ function Game() {
                         </div>
                     )}
 
-                    {/* Sección para mostrar el chatbot */}
                     <div className={styles.chatContainer}>
                         <PopChat
                             messages={msgs}
@@ -493,7 +455,6 @@ function Game() {
                         />
                     </div>
 
-                    {/* Modal para el tiempo agotado */}
                     <Modal
                         open={showTimeOutModal}
                         onClose={null}
@@ -523,9 +484,9 @@ function Game() {
                             <h2>Your score: {score}</h2>
                             <h2>Do you want to try again?</h2>
                             <ButtonContainer>
-                                <HomeButton onClick={handleHomeClick}></HomeButton>
-                                <ChartButton onClick={handleChartClick}></ChartButton>
-                                <ReplayButton onClick={handleReplayClick}></ReplayButton>
+                                <HomeButton onClick={handleHomeClick} />
+                                <ChartButton onClick={handleChartClick} />
+                                <ReplayButton onClick={handleReplayClick} />
                             </ButtonContainer>
                         </Box>
                     </Modal>

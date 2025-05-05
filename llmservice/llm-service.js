@@ -184,9 +184,6 @@ async function sendQuestionToLLM(contextPromt, question, apiKey, model) {
       ...(config.headers ? config.headers(apiKey) : {})
     };
 
-    //const response = await axios.post(url, requestData, { headers });
-    //return config.transformResponse(response);
-
     const response = await axios.post(url, requestData, { 
       headers,
       timeout: 12000  // 12 segundos de timeout
