@@ -452,30 +452,26 @@ The team chose Artillery as the primary load testing tool.
 
 Open-source and designed for modern web applications.
 
-Supports scripting complex user flows (e.g., login → actions → logout).
+Lightweight and easy to use compared to other options.
 
-Integrates well with CI/CD pipelines.
-
-Provides detailed reports (latency, RPS, error rates) and supports exporting metrics to Prometheus/Grafana.
-
-Lightweight compared to alternatives like JMeter.
-
-==== Alternatives Considered
+==== Alternatives considered
 
 *JMeter*
-** Pros:
-*** Mature tool with GUI for test design.
-*** Extensive protocol support (HTTP, WebSockets, etc.).
-** Cons:
-*** Steeper learning curve.
-*** Resource-heavy for large-scale tests.
 
-*Locust*
 ** Pros:
-*** Python-based, easy to extend.
-*** Distributed testing support.
+  *** Mature tool with GUI for test design.
+  *** Extensive protocol support (HTTP, WebSockets, etc.).
 ** Cons:
-*** Requires more setup for advanced scenarios.
+  *** Steeper learning curve.
+  *** Resource-heavy for large-scale tests.
+
+*Gatling*
+
+** Pros:
+  *** Allows for easy scripting using Scala and provides an expressive DSL.
+  *** Good integration with CI/CD systems.
+** Cons:
+  *** More complex setup and configuration compared to Artillery.
 
 ==== Consequences
 
